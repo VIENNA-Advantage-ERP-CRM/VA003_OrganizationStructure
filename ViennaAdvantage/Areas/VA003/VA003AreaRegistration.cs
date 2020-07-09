@@ -27,9 +27,9 @@ namespace ViennaAdvantage.Areas.VA003
 
             /* ==>  Here include all css files in style bundle......see example below....  */
 
-            //style.Include("~/Areas/VA003/Contents/OrgStructure.css");
+            style.Include("~/Areas/VA003/Contents/OrgStructure.css");
 
-            style.Include("~/Areas/VA003/Contents/OrgStructureall.min.css");
+
             ScriptBundle script = new ScriptBundle("~/Areas/VA003/Scripts/VA003Js");
 
             /*-------------------------------------------------------
@@ -41,6 +41,8 @@ namespace ViennaAdvantage.Areas.VA003
                 );
 
             //script.Include("~/Areas/VA003/Scripts/apps/orgstructure/orgstructureall.min.js");
+            //style.Include("~/Areas/VA003/Contents/OrgStructureall.min.css");
+
             VAdvantage.ModuleBundles.RegisterScriptBundle(script, "VA003", 10);
             VAdvantage.ModuleBundles.RegisterStyleBundle(style, "VA003", 10);
         }

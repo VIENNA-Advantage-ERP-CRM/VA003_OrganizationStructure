@@ -56,7 +56,7 @@
       <HintPath>D:\Dll\Web\CrystalDecisions.Shared.dll</HintPath>
     </Reference>
     <Reference Include="DevExpress.Web.v14.2">
-      <HintPath>D:\Projects\2012\TFS\VAdvantage\ViennaAdvantageWeb\ViennaAdvantageWeb\bin\DevExpress.Web.v14.2.dll</HintPath>
+      <HintPath>DLL\DevExpress.Web.v14.2.dll</HintPath>
     </Reference>
     <Reference Include="DotNetOpenAuth">
       <HintPath>D:\Dll\Web\DotNetOpenAuth.dll</HintPath>
@@ -106,6 +106,9 @@
     <Reference Include="itextsharp">
       <HintPath>D:\Dll\Web\itextsharp.dll</HintPath>
     </Reference>
+    <Reference Include="KJS">
+      <HintPath>DLL\KJS.dll</HintPath>
+    </Reference>
     <Reference Include="Market, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\VAdvantage\ViennaAdvantageWeb\ViennaAdvantageWeb\bin\Market.dll</HintPath>
@@ -125,11 +128,11 @@
       <HintPath>DLL\Mono.Security.dll</HintPath>
     </Reference>
     <Reference Include="MySql.Data">
-      <HintPath>D:\Dll\Web\MySql.Data.dll</HintPath>
+      <HintPath>DLL\MySql.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.5.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>DLL\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Npgsql">
       <HintPath>DLL\Npgsql.dll</HintPath>
@@ -137,9 +140,8 @@
     <Reference Include="NPOI">
       <HintPath>D:\Dll\Web\NPOI.dll</HintPath>
     </Reference>
-    <Reference Include="Oracle.ManagedDataAccess, Version=4.121.1.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Users\karan\Desktop\Oracle.ManagedDataAccess.dll</HintPath>
+    <Reference Include="Oracle.ManagedDataAccess">
+      <HintPath>DLL\Oracle.ManagedDataAccess.dll</HintPath>
     </Reference>
     <Reference Include="PdfSharp">
       <HintPath>DLL\PdfSharp.dll</HintPath>
@@ -285,6 +287,16 @@
     <Folder Include="App_Data\" />
     <Folder Include="Images\" />
     <Folder Include="Properties\DataSources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ViennaAdvantageSvc\ViennaAdvantageSvc.csproj">
+      <Project>{7a3d3a2f-81b9-41c5-a297-df96e78226b8}</Project>
+      <Name>ViennaAdvantageSvc</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ViennaAdvantage\ViennaAdvantage.csproj">
+      <Project>{b15d02cb-d93e-412b-8aeb-ee039264fa70}</Project>
+      <Name>ViennaAdvantage</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
