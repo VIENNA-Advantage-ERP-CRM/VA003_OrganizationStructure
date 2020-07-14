@@ -11,21 +11,21 @@
     VA003.OrgStructure.AddNode = function (trID, orgStructure, parent_ID, nameLength, valueLength) {
         var treID = trID;
         var winNo = orgStructure.windowNo;
-        var $root = $('<div>');
+        var $root = $('<div class="vis-formouterwrpdiv">');
         var $topfields = $('<div style="width:100%" class="VA003-form-top-fields">');
         var ch = null;
         var self = this;
         var $btnOK = null;
         var $btnCancel = null;
 
-        var $value = $('<input maxlength="' + valueLength + '" type="text" data-name="searchkey">');
-        var $name = $('<input style="background-color:#ffb6c1"  maxlength="' + nameLength + '"  type="text" data-name="name">');
+        var $value = $('<input maxlength="' + valueLength + '" type="text" data-name="searchkey" placeholder=" " data-placeholder="">');
+        var $name = $('<input class="vis-ev-col-mandatory" maxlength="' + nameLength + '"  type="text" data-name="name" placeholder=" " data-placeholder="">');
         // var $desc = $('<input type="text" data-name="desc">');
 
 
         function createDesign() {
-            $topfields.append($('<div class="VA003-form-data"></div>').append('<label>' + VIS.Msg.getMsg("SearchKey") + '</label>').append($value));
-            $topfields.append($('<div class="VA003-form-data"></div>').append('<label>' + VIS.Msg.getMsg("Name") + '</label>').append($name));
+            $topfields.append($('<div class="VA003-form-data input-group vis-input-wrap">').append($('<div class="vis-control-wrap">').append($value).append('<label>' + VIS.Msg.getMsg("SearchKey") + '</label>')));
+            $topfields.append($('<div class="VA003-form-data input-group vis-input-wrap">').append($('<div class="vis-control-wrap">').append($name).append('<label>' + VIS.Msg.getMsg("Name") + '</label>')));
             // $topfields.append($('<div class="vis-os-form-data"></div>').append('<label>' + VIS.Msg.getMsg("Description") + '</label>').append($desc));
 
 
@@ -63,10 +63,12 @@
 
             $name.on("change", function () {
                 if ($name.val().length > 0) {
-                    $name.css("background-color", "white");
+                    //$name.css("background-color", "white");
+                    $name.removeClass('vis-ev-col-mandatory')
                 }
                 else {
-                    $name.css("background-color", "#ffb6c1");
+                    //$name.css("background-color", "#ffb6c1");
+                    $name.addClass('vis-ev-col-mandatory');
                 }
             });
 
