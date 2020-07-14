@@ -494,8 +494,9 @@ namespace VIS.Models
                 trees.IsSummary = true;
                 trees.NodeID = root.Node_ID;
                 trees.IsActive = true;
-                trees.color = "#1aa0ed";
-                trees.ImageSource = "Areas/VA003/Images/orgstr-root-folder.png";
+                trees.color = "rgba(var(--v-c-on-primary), 1)";
+                //trees.ImageSource = "Areas/VA003/Images/orgstr-root-folder.png";
+                trees.ImageSource = "fa fa-folder-open-o";
                 trees.ParentID = root.Parent_ID;
                 trees.TreeParentID = root.Parent_ID;
             }
@@ -573,12 +574,12 @@ namespace VIS.Models
             if (lstInActiveOrg.IndexOf(id) > -1)
             {
                 newTrees.IsActive = false;
-                newTrees.bColor = "#C0BEBE";
+                newTrees.bColor = "rgba(0, 132, 196, 0.7)";
             }
             else
             {
                 newTrees.IsActive = true;
-                newTrees.bColor = "#9c9c9c";
+                newTrees.bColor = "#0084c4";
             }
             newTrees.ImageSource = "Areas/VA003/Images/orgstr-org.png";
             lstSummary.Add(id);
@@ -1716,9 +1717,10 @@ namespace VIS.Models
                 trees.TableName = tableName;
                 trees.NodeID = root.Node_ID;
                 trees.IsSummary = true;
-                trees.color = "#1aa0ed";
+                trees.color = "rgba(var(--v-c-on-primary), 1)";
                 trees.TreeParentID = root.Parent_ID;
-                trees.ImageSource = "Areas/VA003/Images/orgstr-root-folder.png";
+                //trees.ImageSource = "Areas/VA003/Images/orgstr-root-folder.png";
+                trees.ImageSource = "fa fa-folder-open-o";
                 trees.Visibility = "none";
                 trees.DeleteVisibility = "none";
             }
@@ -1795,7 +1797,7 @@ namespace VIS.Models
             newTrees.NodeID = id;
             newTrees.TreeParentID = parent_ID;
             newTrees.color = "white";
-            newTrees.bColor = "#9c9c9c";
+            newTrees.bColor = "#0084c4";
             newTrees.ImageSource = "Areas/VA003/Images/orgstr-org.png";
             newTrees.Visibility = "inherit";
             newTrees.DeleteVisibility = "inherit";

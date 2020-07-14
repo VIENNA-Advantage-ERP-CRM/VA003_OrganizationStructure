@@ -87,8 +87,8 @@
 
         //var $btnAddChildNode = null;
 
-        var $btnGenerateReport = $('<button class="VA003-genrate-report">' + VIS.Msg.getMsg("VA003_GenrateReportingHierarchy") + '</button>');
-        var $btnRefresh = $('<button class="VA003-refresh"></button>');
+        var $btnGenerateReport = $('<button class="VA003-genrate-report"><i class="vis vis-cog"></i>' + VIS.Msg.getMsg("VA003_GenrateReportingHierarchy") + '</button>');
+        var $btnRefresh = $('<button class="VA003-refresh"><i class="vis vis-refresh"></i></button>');
         var $btnExpandLeftTree = $('<button title="' + VIS.Msg.getMsg('VA003_ExpandTree') + '" class="VA003-expand"></button>');
         var $btnExpandRightTree = null;
         var $toolbarDiv = $('<div class="vis-awindow-header vis-menuTitle">');
@@ -134,7 +134,7 @@
         };
 
         function createHeader() {
-            $btncloseChart = $('<a href="javascript:void(0)"  class="vis-mainMenuIcons vis-icon-menuclose"></a>');
+            $btncloseChart = $('<a href="javascript:void(0)"  class="vis-icon-menuclose vis vis-mark"></a>');
 
             var pheader = $('<p>' + VIS.Msg.getMsg("VA003_OrgStructure") + ' </p>');
             $root.append($toolbarDiv.append($btncloseChart).append(pheader));
@@ -158,22 +158,22 @@
         };
 
         function createBusyIndicator() {
-            $bsyDiv = $("<div>");
-            $bsyDiv.css("position", "absolute");
-            $bsyDiv.css("bottom", "0");
-            $bsyDiv.css("background", "url('" + VIS.Application.contextUrl + "Areas/VIS/Images/busy.gif') no-repeat");
-            $bsyDiv.css("background-position", "center center");
-            $bsyDiv.css("width", "98%");
-            $bsyDiv.css("height", "98%");
-            $bsyDiv.css('text-align', 'center');
-            $bsyDiv.css('z-index', '1000');
+            $bsyDiv = $('<div class="vis-busyindicatorouterwrap"><div class="vis-busyindicatorinnerwrap"><i class="vis-busyindicatordiv"></i></div></div>');
+            //$bsyDiv.css("position", "absolute");
+            //$bsyDiv.css("bottom", "0");
+            //$bsyDiv.css("background", "url('" + VIS.Application.contextUrl + "Areas/VIS/Images/busy.gif') no-repeat");
+            //$bsyDiv.css("background-position", "center center");
+            //$bsyDiv.css("width", "98%");
+            //$bsyDiv.css("height", "98%");
+            //$bsyDiv.css('text-align', 'center');
+            //$bsyDiv.css('z-index', '1000');
             $bsyDiv[0].style.visibility = "hidden";
             $root.append($bsyDiv);
         };
 
         function createRightPanel() {
 
-            var $divRightInnerContainer = $('<div style="width:100%;height:100%;float:left;  border-left: 4px solid #abbcc3;padding: 15px;padding-right:5px">');
+            var $divRightInnerContainer = $('<div class="VA003-rightinnerwrapper">');
 
 
 
@@ -182,9 +182,9 @@
             var $addDiv = $('<div>');
 
             $ulRightTree = $('<ul class="VA003-topRight-icons">');
-            $btnRefreshRight = $('<li><a  style="padding:0px" ><span style="height:31px;width:31px" class="VA003-Refresh-icon"></span></a></li>');
-            $btnAddNode = $('<li><a  style="padding:0px" title="' + VIS.Msg.getMsg('VA003_AddNode') + '"><span style="height:31px;width:31px" class="VA003-AddNode-icon"></span></a></li>');
-            $btnAddNewTree = $('<li><a style="padding:0px" title="' + VIS.Msg.getMsg('VA003_AddTree') + '"><span style="height:31px;width:31px" class="VA003-AddTree-icon"></span></a></li>');
+            $btnRefreshRight = $('<li><a  style="padding:0px" ><span style="height:31px;width:31px" class="VA003-Refresh-icon vis vis-refresh"></span></a></li>');
+            $btnAddNode = $('<li><a  style="padding:0px" title="' + VIS.Msg.getMsg('VA003_AddNode') + '"><span style="height:31px;width:31px" class="VA003-AddNode-icon vis vis-tl-2"></span></a></li>');
+            $btnAddNewTree = $('<li><a style="padding:0px" title="' + VIS.Msg.getMsg('VA003_AddTree') + '"><span style="height:31px;width:31px" class="VA003-AddTree-icon vis vis-plus"></span></a></li>');
             $btnExpandRightTree = $('<li ><a style="padding:0px" title="' + VIS.Msg.getMsg('VA003_ExpandTree') + '"><span style="height:31px;width:31px" class="VA003-Expand-icon"></span></a></li>');
 
 
@@ -200,10 +200,12 @@
 
             $root.append($rightdivContainer);
 
+            var $DivRightTopWrap = $('<div class="VA003-righttopdatawrap">');
 
             $divHierarchyCombo = $('<div class="VA003-form-data-drp">');
 
-            $divRightInnerContainer.append($divHierarchyCombo.append($cmbReportHirerchy)).append($addDiv.append($ulRightTree));
+            $divRightInnerContainer.append($DivRightTopWrap);
+            $DivRightTopWrap.append($divHierarchyCombo.append($cmbReportHirerchy)).append($addDiv.append($ulRightTree));
 
             $divRightTree = $('<div style="float:left;width:100%" id="' + $self.windowNo + 'orgrighttree">');
 
@@ -270,10 +272,12 @@
 
             $txtName.on("change", function () {
                 if ($txtName.val().length > 0) {
-                    $txtName.css("background-color", "white");
+                    //$txtName.css("background-color", "white");
+                    $txtName.removeClass('vis-ev-col-mandatory');
                 }
                 else {
-                    $txtName.css("background-color", "#ffb6c1");
+                    //$txtName.css("background-color", "#ffb6c1");
+                    $txtName.addClass('vis-ev-col-mandatory');
                 }
             });
 
@@ -432,15 +436,15 @@
             
             $labelShowOrgUnit = $('<li><label >' + VIS.Msg.getMsg("VA003_ShowOrgUnits") + '</label></li>');
             $liShowOrgUnit.append($showOrUnits).append($labelShowOrgUnit);
-            $btnInfo = $btnHdrSend = $('<img class="VA003-InfoIcon" title="' + VIS.Msg.getMsg("VA003_info").replace('&', '') + '" src="' + VIS.Application.contextUrl + 'Areas/VA003/Images/orgstr-info.png"> </img>'); //$(' <a title="' + VIS.Msg.getMsg('VA003_info') + '" class="VA003-info-icon"></a>');
+            $btnInfo = $btnHdrSend = $('<i class="VA003-InfoIcon vis vis-info" title="' + VIS.Msg.getMsg("VA003_info").replace('&', '') + '"> </i>'); //$(' <a title="' + VIS.Msg.getMsg('VA003_info') + '" class="VA003-info-icon"></a>');
 
             $toolbarDiv.append($btnInfo);
 
             $ulLeft.append($btnSummary).append($btnNewLegalEntity).append($btnaddNewOrg).append($btnSlider).append($liShowOrgUnit);//.append($btnInfo);//.append($btnAddChildNode);
 
             var $ulRight = $('<ul class="VA003-topRight-icons">');
-            $btnUndo = $('<li><a title="' + VIS.Msg.getMsg('VA003_Undo') + '"><span class="VA003-undo-icon"></span></a></li>');
-            $btnSave = $('<li><a title="' + VIS.Msg.getMsg('VA003_Save') + '"><span class="VA003-save-icon"></span></a></li>');
+            $btnUndo = $('<li><a title="' + VIS.Msg.getMsg('VA003_Undo') + '"><span class="VA003-undo-icon vis vis-ignore"></span></a></li>');
+            $btnSave = $('<li><a title="' + VIS.Msg.getMsg('VA003_Save') + '"><span class="VA003-undo-icon vis vis-save"></span></a></li>');
             $ulRight.append($btnUndo).append($btnSave);
 
             setStatus(true);
@@ -550,7 +554,7 @@
                 select: onSelect,
                 // template: "#= item.text #<input type='hidden' class='data-id' value='#= item.NodeID #' data-summary='#= item.IsSummary #' />"
 
-                template: "<img src='" + VIS.Application.contextUrl + "#= item.ImageSource #' style='vertical-align: text-top;float: left;margin: 4px 0px 0px 10px;'>" +
+                template: "<img src='" + VIS.Application.contextUrl + "#= item.ImageSource #' style='vertical-align: text-top;float: left;margin: 4px 0px 0px 10px;'><i class='#= item.ImageSource #'></i>" +
                     "<p style='min-width:122px;border-radius:4px;margin:0px;padding: 7px 10px 7px 38px; background-color:#= item.bColor #; color: #= item.color #'>#= item.text #</p>" +
                     "<input type='hidden' class='data-id' value='#= item.NodeID #' data-active='#= item.IsActive #' data-summary='#= item.IsSummary #' data-orgparentid='#= item.OrgParentID #' data-parentid='#= item.ParentID #'  " +
                     " data-legal='#= item.IsLegal #'  data-Treeparentid='#= item.TreeParentID #' data-treeid='" + AD_Tree_ID + "' />",
@@ -561,13 +565,13 @@
 
             window.setTimeout(function () {
 
-                divLeftTree.find('.k-treeview').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
-                divLeftTree.find('.k-in').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
-                divLeftTree.find('.k-state-hover').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
-                divLeftTree.find('.k-state-focused').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
-                divLeftTree.find('.k-state-selected').css({ 'border-color': 'rgba(229, 228, 225, 1)', 'background-color': '#DADADA', '-webkit-box-shadow': 'rgba(229, 228, 225, 1)', 'padding': '4px' });
-                divLeftTree.find('.k-state-selected').css({ 'border-color': 'rgba(229, 228, 225, 1)', 'background-color': '#DADADA', '-webkit-box-shadow': 'rgba(229, 228, 225, 1)', 'padding': '4px', 'box-shadow': 'transparent' });
-                divLeftTree.find('.k-state-focused.k-state-selected').css({ 'box-shadow': 'none', '-webkit-box-shadow': 'none' });
+                //divLeftTree.find('.k-treeview').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
+                divLeftTree.find('.k-in').css({ 'cursor': 'pointer' });
+                //divLeftTree.find('.k-state-hover').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
+                //divLeftTree.find('.k-state-focused').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
+                //divLeftTree.find('.k-state-selected').css({ 'border-color': 'rgba(229, 228, 225, 1)', 'background-color': '#DADADA', '-webkit-box-shadow': 'rgba(229, 228, 225, 1)'});
+                //divLeftTree.find('.k-state-selected').css({ 'border-color': 'rgba(229, 228, 225, 1)', 'background-color': '#DADADA', '-webkit-box-shadow': 'rgba(229, 228, 225, 1)', 'box-shadow': 'transparent' });
+                //divLeftTree.find('.k-state-focused.k-state-selected').css({ 'box-shadow': 'none', '-webkit-box-shadow': 'none' });
             }, 100);
 
             $self.sizeChanged();
@@ -578,32 +582,33 @@
         };
 
         function createCenterPanel() {
-            $divFormWrap = $('<div class="VA003-form-wrap">');
+            $divFormWrap = $('<div class="VA003-form-wrap vis-formouterwrpdiv">');
 
 
-            var $newDiv = $('<div style="width: 100%;float: left;overflow: auto;height: 100%;background-color:white">');
+            var $newDiv = $('<div class="VA003-forminnerwrap">');
 
 
-            var $divFormTop = $('<div style="padding: 15px;padding-bottom:0px;" class="VA003-form-top">');
+            var $divFormTop = $('<div class="VA003-form-top">');
             var $divTopFields = $('<div class="VA003-form-top-fields">');
 
             $newDiv.append($divFormTop)
 
-            $divFormWrap.append($newDiv.append($divFormTop.append($divTopFields)));
+            $lblOrgInfo = $('<label class="VA003-formheadingwrap">' + VIS.Msg.getMsg('VA003_OrgInfo') + '</label>');
+
+            $divFormWrap.append($newDiv.append($divFormTop.append($('<div class="VA003-form-data"></div>').append($lblOrgInfo)).append($divTopFields)));
 
             //$cmbTenant = $('<select data-name="tenant">');
             //$divTopFields.append($(' <div class="VA003-form-data">').append('<label>' + VIS.Msg.getMsg("Tenant") + '</label>').append($cmbTenant));
             //valueChangeEvent($cmbTenant);
-
-            $lblOrgInfo = $('<label style="font-weight: bold;font-size: large;">' + VIS.Msg.getMsg('VA003_OrgInfo') + '</label>');
-            $divTopFields.append($('<div class="VA003-form-data"></div>').append($lblOrgInfo));
+            
+            //$divTopFields.append($('<div class="VA003-form-data"></div>').append($lblOrgInfo));
 
             $txtSerackKey = $('<input type="text" data-name="searchkey">');
-            $divTopFields.append($(' <div class="VA003-form-data">').append('<label>' + VIS.Msg.getMsg("SearchKey") + '</label>').append($txtSerackKey));
+            $divTopFields.append($('<div class="VA003-form-data input-group vis-input-wrap">').append($('<div class="vis-control-wrap">').append($txtSerackKey).append('<label>' + VIS.Msg.getMsg("SearchKey") + '</label>')));
             valueChangeEvent($txtSerackKey);
 
             $txtName = $('<input type="text" data-name="name">');
-            $divTopFields.append($(' <div class="VA003-form-data">').append('<label>' + VIS.Msg.getMsg("Name") + '</label>').append($txtName));
+            $divTopFields.append($(' <div class="VA003-form-data input-group vis-input-wrap">').append($('<div class="vis-control-wrap">').append($txtName).append('<label>' + VIS.Msg.getMsg("Name") + '</label>')));
             valueChangeEvent($txtName);
 
 
@@ -616,19 +621,19 @@
 
             // $imgUpload = $('<input id="VA003-file-input" type="file"accept="image/png">');
             //    $lblimgUpload = $(' <label for="VA003-file-input" class="VA003-file-label">' + VIS.Msg.getMsg('VA003_Browse') + '</label> ');
-            $lblimgUpload = $('<a style="margin-right:10px;cursor:pointer;float: left;width: 14px;height: 20px;overflow: hidden;display: block;cursor: pointer;"><span class="glyphicon glyphicon-pencil" style="cursor: pointer;"><input type="file" style="position: absolute; top: 0px; right: 0px; opacity: 0;cursor: pointer;"></span></a>');//.append($imgUpload);
-            $btnRemoveBtn = $('<a class="glyphicon glyphicon-remove" style="cursor:pointer"></a>');
+            $lblimgUpload = $('<a><span class="vis vis-pencil" style="cursor: pointer;"><input type="file" style="position: absolute; top: 0px; right: 0px; opacity: 0;cursor: pointer;"></span></a>');//.append($imgUpload);
+            $btnRemoveBtn = $('<a class="vis vis-cross" style="cursor:pointer"></a>');
             $imgUpload = $lblimgUpload.find('input');
 
 
 
-            $divImageWrap.append($('<div class="VA003-image-upload">').append($(' <div style=" position: absolute; float: right;   right: 3px;   bottom: -1px; "> </div>').append($lblimgUpload).append($btnRemoveBtn)));
+            $divImageWrap.append($('<div class="VA003-image-upload">').append($(' <div class="VA003-imageuploadinner"> </div>').append($lblimgUpload).append($btnRemoveBtn)));
             $divFormTop.append($divImageWrap);
 
             /******************************************************/
 
 
-            var $divFullFields = $('<div style="padding:15px" class="VA003-form-fullFields">');
+            var $divFullFields = $('<div class="VA003-form-fullFields">');
             $newDiv.append($divFullFields);
 
             //$txtDesc = $('<textarea data-name="desc" style="width:100%">');
@@ -639,7 +644,7 @@
             var lookups = new VIS.MLocationLookup(ctx, $self.windowNo);
             $txtLocation = new VIS.Controls.VLocation("C_Location_ID", false, false, true, VIS.DisplayType.Location, lookups);
             $($txtLocation.getControl()).data("name", "address");
-            $divFullFields.append($(' <div class="VA003-form-data">').append('<label>' + VIS.Msg.getMsg("Address") + '</label>').append($txtLocation.getControl().addClass('VA003-addressControl')).append($txtLocation.getBtn(0)).append($txtLocation.getBtn(1)));
+            $divFullFields.append($('<div class="VA003-form-data input-group vis-input-wrap">').append($('<div class="vis-control-wrap">').append($txtLocation.getControl().attr('data-hasbtn', ' ').addClass('VA003-addressControl')).append('<label>' + VIS.Msg.getMsg("Address") + '</label>')).append($('<div class="input-group-append">').append($txtLocation.getBtn(0)).append($txtLocation.getBtn(1))));
             //valueChangeEvent($txtLocation.getControl());
 
             $txtLocation.fireValueChanged = locationChanged;
@@ -651,10 +656,10 @@
             //$divFullFields.append($(' <div class="VA003-form-data">').append('<label>' + VIS.Msg.getMsg("VA003_Supervisor") + '</label>').append($txtOrgSuperviser.getControl().css("width", "92%")).append($txtOrgSuperviser.getBtn(0)));
             //valueChangeEvent($txtOrgSuperviser.getControl());
 
-            $btnOpenOverlay = $('<button tabindex="-1" class="vis-controls-txtbtn-table-td2"><img tabindex="-1" src="' + VIS.Application.contextUrl + 'Areas/VIS/Images/base/Info20.png"></button>');
+            $btnOpenOverlay = $('<button tabindex="-1" class="vis-controls-txtbtn-table-td2 input-group-text"><i tabindex="-1" class="fa fa-ellipsis-v"></i></button>');
 
-            $cmbOrgType = $('<select style="width:100%" data-name="orgtype">');
-            $divFullFields.append($(' <div class="VA003-form-data">').append('<label>' + VIS.Msg.getMsg("VA003_OrgType") + '</label>').append($('<div class="VA003-orgtye-containerdiv">').append($cmbOrgType)).append($btnOpenOverlay));
+            $cmbOrgType = $('<select data-name="orgtype" data-hasbtn=" ">');
+            $divFullFields.append($(' <div class="VA003-form-data input-group vis-input-wrap">').append($('<div class="vis-control-wrap">').append($cmbOrgType).append('<label>' + VIS.Msg.getMsg("VA003_OrgType") + '</label>')).append($('<div class="input-group-append">').append($btnOpenOverlay)));
             valueChangeEvent($cmbOrgType);
 
             //$cmbParentaOrg = $('<select data-name="parentorg">');
@@ -662,47 +667,47 @@
             //valueChangeEvent($cmbParentaOrg);
 
             $txtTax = $('<input type="text" data-name="taxid">');
-            $divFullFields.append($(' <div class="VA003-form-data">').append('<label>' + VIS.Msg.getMsg("VA003_TaxID") + '</label>').append($txtTax));
+            $divFullFields.append($(' <div class="VA003-form-data input-group vis-input-wrap">').append($('<div class="vis-control-wrap">').append($txtTax).append('<label>' + VIS.Msg.getMsg("VA003_TaxID") + '</label>')));
             valueChangeEvent($txtTax);
 
             $txtPhone = $('<input type="text" data-name="phone">');
-            $divFullFields.append($(' <div class="VA003-form-data">').append('<label>' + VIS.Msg.getMsg("Phone") + '</label>').append($txtPhone));
+            $divFullFields.append($(' <div class="VA003-form-data input-group vis-input-wrap">').append($('<div class="vis-control-wrap">').append($txtPhone).append('<label>' + VIS.Msg.getMsg("Phone") + '</label>')));
             valueChangeEvent($txtPhone);
 
             $txtEmail = $('<input type="text"  data-name="email">');
-            $divFullFields.append($(' <div class="VA003-form-data">').append('<label>' + VIS.Msg.getMsg("EMail") + '</label>').append($txtEmail));
+            $divFullFields.append($(' <div class="VA003-form-data input-group vis-input-wrap">').append($('<div class="vis-control-wrap">').append($txtEmail).append('<label>' + VIS.Msg.getMsg("EMail") + '</label>')));
             valueChangeEvent($txtEmail);
 
 
             $txtFax = $('<input type="text" data-name="fax">');
-            $divFullFields.append($(' <div class="VA003-form-data">').append('<label>' + VIS.Msg.getMsg("Fax") + '</label>').append($txtFax));
+            $divFullFields.append($(' <div class="VA003-form-data input-group vis-input-wrap">').append($('<div class="vis-control-wrap">').append($txtFax).append('<label>' + VIS.Msg.getMsg("Fax") + '</label>')));
             valueChangeEvent($txtFax);
 
 
             var $divCheckbox = $(' <div class="VA003-form-data">');
 
-            $chkIsLegal = $('<input type="checkbox" data-name="legal" style="width: auto;margin: 3px 10px 0 0;height: auto;">');
-            $divCheckbox.append($(' <div style="width:50%"  class="VA003-form-data">').append($chkIsLegal).append('<label style="  width: auto;float: left;margin-bottom: 0;">' + VIS.Msg.getMsg("VA003_LegalEntity") + '</label>'));
+            $chkIsLegal = $('<input type="checkbox" data-name="legal">');
+            $divCheckbox.append($(' <div style="width:50%; margin-bottom: 15px"  class="VA003-form-data">').append($chkIsLegal).append('<label>' + VIS.Msg.getMsg("VA003_LegalEntity") + '</label>'));
             valueChangeEvent($chkIsLegal);
 
-            $chkIsSummary = $('<input type="checkbox" data-name="summary"  style="width: auto;margin: 3px 10px 0 0;height: auto;">');
-            $divCheckbox.append($(' <div style="width:50%" class="VA003-form-data">').append($chkIsSummary).append('<label style="  width: auto;float: left;margin-bottom: 0;">' + VIS.Msg.getMsg("VA003_SummaryLevel") + '</label>'));
+            $chkIsSummary = $('<input type="checkbox" data-name="summary">');
+            $divCheckbox.append($(' <div style="width:50%; margin-bottom: 15px" class="VA003-form-data">').append($chkIsSummary).append('<label>' + VIS.Msg.getMsg("VA003_SummaryLevel") + '</label>'));
 
             valueChangeEvent($chkIsSummary);
 
-            $chkIsCostCenter = $('<input type="checkbox" data-name="summary"  style="width: auto;margin: 3px 10px 0 0;height: auto;">');
-            $lblCostCenter = $(' <div style="width:50%" class="VA003-form-data">').append($chkIsCostCenter).append('<label style="  width: auto;float: left;margin-bottom: 0;">' + VIS.Msg.translate(VIS.Env.getCtx(), "IsCostCenter") + '</label>');
+            $chkIsCostCenter = $('<input type="checkbox" data-name="summary">');
+            $lblCostCenter = $(' <div style="width:50%; margin-bottom: 15px" class="VA003-form-data">').append($chkIsCostCenter).append('<label>' + VIS.Msg.translate(VIS.Env.getCtx(), "IsCostCenter") + '</label>');
             $divCheckbox.append($lblCostCenter);
 
-            $chkIsProfitCenter = $('<input type="checkbox" data-name="summary"  style="width: auto;margin: 3px 10px 0 0;height: auto;">');
-            $lblProfitCenter = $(' <div style="width:50%" class="VA003-form-data">').append($chkIsProfitCenter).append('<label style="  width: auto;float: left;margin-bottom: 0;">' + VIS.Msg.translate(VIS.Env.getCtx(), "IsProfitCenter") + '</label>');
+            $chkIsProfitCenter = $('<input type="checkbox" data-name="summary">');
+            $lblProfitCenter = $(' <div style="width:50%; margin-bottom: 15px" class="VA003-form-data">').append($chkIsProfitCenter).append('<label>' + VIS.Msg.translate(VIS.Env.getCtx(), "IsProfitCenter") + '</label>');
             $divCheckbox.append($lblProfitCenter);
 
             $divFullFields.append($divCheckbox);
 
             var $divActiveCheckbox = $(' <div class="VA003-form-data">');
-            $chkIsActive = $('<input type="checkbox" data-name="Active"  style="width: auto;margin: 3px 10px 0 0;height: auto;">');
-            $divActiveCheckbox.append($(' <div style="width:50%" class="VA003-form-data">').append($chkIsActive).append('<label style="  width: auto;float: left;margin-bottom: 0;">' + VIS.Msg.getMsg("VA003_Active") + '</label>'));
+            $chkIsActive = $('<input type="checkbox" data-name="Active">');
+            $divActiveCheckbox.append($(' <div style="width:50%" class="VA003-form-data">').append($chkIsActive).append('<label>' + VIS.Msg.getMsg("VA003_Active") + '</label>'));
             valueChangeEvent($chkIsActive);
 
             $chkIsActive.prop("checked", true);
@@ -964,23 +969,23 @@
             if (isLegal) {
                 if (isActive) {
                     $(e.sourceNode).data('uid')
-                    $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "#dc8a20");
+                    $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(var(--v-c-on-secondary), 1)");
                 }
                 else {
-                    $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "#F4C993");
+                    $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(var(--v-c-on-secondary), .1)");
                 }
             }
             else if (isSummary) {
                 if (isActive) {
-                    $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "#9c9c9c");
+                    $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(var(--v-c-on-secondary), .5)");
                 }
                 else {
-                    $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "#C0BEBE");
+                    $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(var(--v-c-on-secondary), .3)");
                 }
             }
             else {
                 if (isActive) {
-                    $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(43, 174, 250, 0.78)");
+                    $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(var(--v-c-primary), 1)");
                 }
                 else {
                     $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(166, 222, 255, 1)");
@@ -1275,12 +1280,12 @@
 
             window.setTimeout(function () {
 
-                divLeftTree.find('.k-treeview').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
-                divLeftTree.find('.k-in').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
-                divLeftTree.find('.k-state-hover').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
-                divLeftTree.find('.k-state-focused').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
-                divLeftTree.find('.k-state-selected').css({ 'border-color': 'rgba(229, 228, 225, 1)', 'background-color': '#DADADA', '-webkit-box-shadow': 'rgba(229, 228, 225, 1)', 'padding': '4px' });
-                divLeftTree.find('.k-state-selected').css({ 'border-color': 'rgba(229, 228, 225, 1)', 'background-color': '#DADADA', '-webkit-box-shadow': 'rgba(229, 228, 225, 1)', 'padding': '4px', 'box-shadow': 'transparent' });
+                //divLeftTree.find('.k-treeview').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
+                divLeftTree.find('.k-in').css({ 'cursor': 'pointer' });
+                //divLeftTree.find('.k-state-hover').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
+                //divLeftTree.find('.k-state-focused').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
+                //divLeftTree.find('.k-state-selected').css({ 'border-color': 'rgba(229, 228, 225, 1)', 'background-color': '#DADADA', '-webkit-box-shadow': 'rgba(229, 228, 225, 1)', 'padding': '4px' });
+                //divLeftTree.find('.k-state-selected').css({ 'border-color': 'rgba(229, 228, 225, 1)', 'background-color': '#DADADA', '-webkit-box-shadow': 'rgba(229, 228, 225, 1)', 'padding': '4px', 'box-shadow': 'transparent' });
                 divLeftTree.find('.k-state-focused.k-state-selected').css({ 'box-shadow': 'none', '-webkit-box-shadow': 'none' });
             }, 100);
         };
@@ -1558,7 +1563,7 @@
         };
 
         function hideImage() {
-            $($imageControl.parent()).css("background-color", "#F4F4F4");
+            $($imageControl.parent()).css("background-color", "rgba(var(--v-c-secondary), .4)");
             $imageControl.attr('src', null);
             $imageControl.hide();
         };
@@ -1706,7 +1711,8 @@
 
         function setMandatoryColor(flag) {
             if (flag) {
-                $txtName.css("background-color", "#ffb6c1");
+                //$txtName.css("background-color", "#ffb6c1");
+                $txtName.addClass('vis-ev-col-mandatory');
                 //   $txtSerackKey.css("background-color", '#ffb6c1');
             }
             else {
@@ -1714,7 +1720,8 @@
                     //  $txtSerackKey.css("background-color", '#F4F4F4');
                 }
                 else {
-                    $txtName.css("background-color", "white");
+                    //$txtName.css("background-color", "white");
+                    $txtName.removeClass('vis-ev-col-mandatory');
                     // $txtSerackKey.css("background-color", 'white');
                 }
             }
@@ -1741,12 +1748,12 @@
             if (disabled) {
                 bgColor = "#F4F4F4";
             }
-            $txtEmail.css("background-color", bgColor);
-            $txtPhone.css("background-color", bgColor);
-            $txtFax.css("background-color", bgColor);
-            $txtTax.css("background-color", bgColor);
-            $cmbOrgType.css("background-color", bgColor);
-            $txtLocation.getControl().css("background", bgColor);
+            //$txtEmail.css("background-color", bgColor);
+            //$txtPhone.css("background-color", bgColor);
+            //$txtFax.css("background-color", bgColor);
+            //$txtTax.css("background-color", bgColor);
+            //$cmbOrgType.css("background-color", bgColor);
+            //$txtLocation.getControl().css("background", bgColor);
             //$txtLocation.getBtn(0).css("background", bgColor);
             //$txtLocation.getBtn(1).css("background", bgColor);
 
@@ -1854,26 +1861,26 @@
 
                                 if ($chkIsLegal.is(':checked')) {
                                     if (isActve) {
-                                        bgColor = "#dc8a20";
+                                        bgColor = "rgba(var(--v-c-on-secondary), 1)";
                                     }
                                     else {
-                                        bgColor = "#F4C993";
+                                        bgColor = "rgba(var(--v-c-on-secondary), .1)";
                                     }
                                     imgSource = "Areas/VA003/Images/orgstr-legal-entity.PNG";
                                 }
                                 else if ($chkIsSummary.is(':checked')) {
                                     if (isActve) {
-                                        bgColor = "#9c9c9c";
+                                        bgColor = "rgba(var(--v-c-on-secondary), .5)";
                                     }
                                     else {
-                                        bgColor = "#C0BEBE";
+                                        bgColor = "rgba(var(--v-c-on-secondary), .3)";
                                     }
 
                                     imgSource = "Areas/VA003/Images/orgstr-org.png";
                                 }
                                 else {
                                     if (isActve) {
-                                        bgColor = "rgba(43, 174, 250, 0.78)";
+                                        bgColor = "rgba(var(--v-c-primary), 1)";
                                     }
                                     else {
                                         bgColor = "rgba(166, 222, 255, 1)";
@@ -1938,23 +1945,23 @@
                                 if ($chkIsLegal.is(':checked')) {
                                     if (isActve) {
 
-                                        $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "#dc8a20");
+                                        $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(var(--v-c-on-secondary), 1)");
                                     }
                                     else {
-                                        $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "#F4C993");
+                                        $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(var(--v-c-on-secondary), .1)");
                                     }
                                 }
                                 else if ($chkIsSummary.is(':checked')) {
                                     if (isActve) {
-                                        $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "#9c9c9c");
+                                        $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(var(--v-c-on-secondary), .5)");
                                     }
                                     else {
-                                        $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "#C0BEBE");
+                                        $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(var(--v-c-on-secondary), .3)");
                                     }
                                 }
                                 else {
                                     if (isActve) {
-                                        $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(43, 174, 250, 0.78)");
+                                        $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(var(--v-c-primary), 1)");
                                     }
                                     else {
                                         $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(166, 222, 255, 1)");
@@ -2250,10 +2257,10 @@
                     dragAndDrop: doDrag,
                     drop: onHierarchyDrop,
                     select: onSelectRht,
-                    template: "<div style='float: left;border-radius: 4px; background: #= item.bColor #;'><img src='" + VIS.Application.contextUrl + "#= item.ImageSource #' style='vertical-align: text-top;float: left;margin: 4px 0px 0px 10px; '>" +
+                    template: "<div style='float: left;border-radius: 4px;display: inline-flex; align-items: center; background: #= item.bColor #;'><img src='" + VIS.Application.contextUrl + "#= item.ImageSource #' style='vertical-align: text-top;float: left;margin: 0px 0px 0px 10px; '><i class='#= item.ImageSource #' style='float: left;'></i>" +
                         "<p style='float: left;min-width:122px;border-radius:4px;margin:0px;padding: 7px 10px 7px 10px;  color: #= item.color #'>#= item.text #</p>" +
                         "<input type='hidden' class='data-id' value='#= item.NodeID #'  data-legal='#= item.IsLegal #'  data-summary='#= item.IsSummary #'  data-parentid='#= item.ParentID #'  data-Treeparentid='#= item.TreeParentID #'   data-treeid='" + trreeid + "' />" +
-                        "</div><div style='float:left'><a style='cursor:pointer;float:left;display:#= item.DeleteVisibility #' title='" + VIS.Msg.getMsg("Delete") + "' class='VA003-delete-link' ></a><a style='cursor:pointer;float:left;display:#= item.Visibility #' title='" + VIS.Msg.getMsg("VA003_Rename") + "'  class='VA003-rename-link' ></a></div>",
+                        "</div><div style='float:left; display: flex; align-items: center;'><a style='display:#= item.DeleteVisibility #' title='" + VIS.Msg.getMsg("Delete") + "' class='VA003-delete-link vis vis-mark' ></a><a style='display:#= item.Visibility #' title='" + VIS.Msg.getMsg("VA003_Rename") + "'  class='VA003-rename-link vis vis-pencil' ></a></div>",
                 });
             }
             else {
@@ -2262,10 +2269,10 @@
                     dragAndDrop: doDrag,
                     drop: onHierarchyDrop,
                     select: onSelectRht,
-                    template: "<div style='float: left;border-radius: 4px; background: #= item.bColor #;'><img src='" + VIS.Application.contextUrl + "#= item.ImageSource #' style='vertical-align: text-top;float: left;margin: 4px 0px 0px 10px; '>" +
+                    template: "<div style='float: left;border-radius: 4px;float: left;border-radius: 4px;display: inline-flex; align-items: center;background: #= item.bColor #;'><img src='" + VIS.Application.contextUrl + "#= item.ImageSource #' style='vertical-align: text-top;float: left;margin: 0px 0px 0px 10px; '><i class='#= item.ImageSource #' style='float: left;'></i>" +
                         "<p style='float: left;min-width:122px;border-radius:4px;margin:0px;padding: 7px 10px 7px 10px;  color: #= item.color #'>#= item.text #</p>" +
                         "<input type='hidden' class='data-id' value='#= item.NodeID #'  data-legal='#= item.IsLegal #'  data-summary='#= item.IsSummary #'  data-parentid='#= item.ParentID #'  data-Treeparentid='#= item.TreeParentID #'   data-treeid='" + trreeid + "' />" +
-                        "</div><div style='float:left;display:#= item.Visibility #'><a style='cursor:pointer;float:left' title='" + VIS.Msg.getMsg("VA003_Rename") + "'  class='VA003-rename-link' ></a></div>",
+                        "</div><div style='float:left;display:#= item.Visibility #'><a title='" + VIS.Msg.getMsg("VA003_Rename") + "'  class='VA003-rename-link vis vis-pencil' ></a></div>",
                 });
             }
 
@@ -2280,13 +2287,13 @@
 
             window.setTimeout(function () {
 
-                $divRightTree.find('.k-treeview').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
-                $divRightTree.find('.k-in').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
-                $divRightTree.find('.k-state-hover').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
-                $divRightTree.find('.k-state-focused').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
-                $divRightTree.find('.k-state-selected').css({ 'border-color': 'rgba(229, 228, 225, 1)', 'background-color': '#DADADA', '-webkit-box-shadow': 'rgba(229, 228, 225, 1)', 'padding': '4px' });
-                $divRightTree.find('.k-state-selected').css({ 'border-color': 'rgba(229, 228, 225, 1)', 'background-color': '#DADADA', '-webkit-box-shadow': 'rgba(229, 228, 225, 1)', 'padding': '4px', 'box-shadow': 'transparent' });
-                $divRightTree.find('.k-state-focused.k-state-selected').css({ 'box-shadow': 'none', '-webkit-box-shadow': 'none' });
+                //$divRightTree.find('.k-treeview').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
+                $divRightTree.find('.k-in').css({ 'cursor': 'pointer'});
+                //$divRightTree.find('.k-state-hover').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
+                //$divRightTree.find('.k-state-focused').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
+                //$divRightTree.find('.k-state-selected').css({ 'border-color': 'rgba(229, 228, 225, 1)', 'background-color': '#DADADA', '-webkit-box-shadow': 'rgba(229, 228, 225, 1)', 'padding': '4px' });
+                //$divRightTree.find('.k-state-selected').css({ 'border-color': 'rgba(229, 228, 225, 1)', 'background-color': '#DADADA', '-webkit-box-shadow': 'rgba(229, 228, 225, 1)', 'padding': '4px', 'box-shadow': 'transparent' });
+                //$divRightTree.find('.k-state-focused.k-state-selected').css({ 'box-shadow': 'none', '-webkit-box-shadow': 'none' });
             }, 100);
 
             $rightdivContainer.off(VIS.Events.onTouchStartOrClick, ".VA003-delete-link");
@@ -2300,13 +2307,13 @@
 
         function onSelectRht(e) {
             window.setTimeout(function () {
-                $divRightTree.find('.k-treeview').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
-                $divRightTree.find('.k-in').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
-                $divRightTree.find('.k-state-hover').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
-                $divRightTree.find('.k-state-focused').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
-                $divRightTree.find('.k-state-selected').css({ 'border-color': 'rgba(229, 228, 225, 1)', 'background-color': '#DADADA', '-webkit-box-shadow': 'rgba(229, 228, 225, 1)', 'padding': '4px' });
-                $divRightTree.find('.k-state-selected').css({ 'border-color': 'rgba(229, 228, 225, 1)', 'background-color': '#DADADA', '-webkit-box-shadow': 'rgba(229, 228, 225, 1)', 'padding': '4px', 'box-shadow': 'transparent' });
-                $divRightTree.find('.k-state-focused.k-state-selected').css({ 'box-shadow': 'none', '-webkit-box-shadow': 'none' });
+                //$divRightTree.find('.k-treeview').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
+                $divRightTree.find('.k-in').css({ 'cursor': 'pointer' });
+                //$divRightTree.find('.k-state-hover').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
+                //$divRightTree.find('.k-state-focused').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
+                //$divRightTree.find('.k-state-selected').css({ 'border-color': 'rgba(229, 228, 225, 1)', 'background-color': '#DADADA', '-webkit-box-shadow': 'rgba(229, 228, 225, 1)', 'padding': '4px' });
+                //$divRightTree.find('.k-state-selected').css({ 'border-color': 'rgba(229, 228, 225, 1)', 'background-color': '#DADADA', '-webkit-box-shadow': 'rgba(229, 228, 225, 1)', 'padding': '4px', 'box-shadow': 'transparent' });
+                //$divRightTree.find('.k-state-focused.k-state-selected').css({ 'box-shadow': 'none', '-webkit-box-shadow': 'none' });
             }, 100);
         };
 
@@ -2319,14 +2326,14 @@
             var treeview = $divRightTree.data("kendoTreeView");
             var existingName = treeview.dataItem(treeview.select()).text;
 
-            var $root1 = $('<div>');
+            var $root1 = $('<div class="vis-formouterwrpdiv">');
             var $topfields1 = $('<div style="width:100%" class="VA003-form-top-fields">');
-            var $name1 = $('<input  maxlength="' + nameLength + '" type="text" data-name="name">');
+            var $name1 = $('<input  maxlength="' + nameLength + '" type="text" data-name="name" placeholder=" " data-placeholder="">');
 
             $name1.val(existingName);
             $name1.select();
 
-            $topfields1.append($('<div class="VA003-form-data"></div>').append('<label>' + VIS.Msg.getMsg("Name") + '</label>').append($name1));
+            $topfields1.append($('<div class="VA003-form-data input-group vis-input-wrap">').append($('<div class="vis-control-wrap">').append($name1).append('<label>' + VIS.Msg.getMsg("Name") + '</label>')));
             $root1.append($topfields1);
             var ch1 = new VIS.ChildDialog();
             ch1.setContent($root1);
@@ -2478,11 +2485,11 @@
         };
 
         function addnewTree(e) {
-            var $root1 = $('<div>');
+            var $root1 = $('<div class="vis-formouterwrpdiv">');
             var $topfields1 = $('<div style="width:100%" class="VA003-form-top-fields">');
-            var $name1 = $('<input maxlength="' + treeLength + '" type="text" data-name="name">')
+            var $name1 = $('<input maxlength="' + treeLength + '" type="text" data-name="name" placeholder=" " data-placeholder="">')
 
-            $topfields1.append($('<div class="VA003-form-data"></div>').append('<label>' + VIS.Msg.getMsg("Name") + '</label>').append($name1));
+            $topfields1.append($('<div class="VA003-form-data input-group vis-input-wrap">').append($('<div class="vis-control-wrap">').append($name1).append('<label>' + VIS.Msg.getMsg("Name") + '</label>')));
             $root1.append($topfields1);
             var ch = new VIS.ChildDialog();
             ch.setContent($root1);
@@ -2575,31 +2582,31 @@
             var $leftDiv = $('<div  class="VA003-infoRoot-leftDiv">');
             $($leftdivContainer.find('.VA003-left-tree')).append($leftContainer);
 
-            var $leftdiv1 = $('<div style="overflow:auto">');
-            var $leftdiv2 = $('<div style="overflow:auto">');
-            var $leftdiv3 = $('<div style="overflow:auto">');
-            var $leftdiv4 = $('<div style="overflow:auto">');
-            var $leftdiv5 = $('<div style="overflow:auto">');
-            var $leftdiv6 = $('<div style="overflow:auto">');
+            var $leftdiv1 = $('<div>');
+            var $leftdiv2 = $('<div>');
+            var $leftdiv3 = $('<div>');
+            var $leftdiv4 = $('<div>');
+            var $leftdiv5 = $('<div>');
+            var $leftdiv6 = $('<div>');
 
-            $leftdiv1.append($('<div class="VA003-Info-Icons" ><img  style="background-color:#9c9c9c" class="VA003-infoRoot-icon" src="' + VIS.Application.contextUrl + 'Areas/VA003/Images/orgstr-org1.png"></div>'));
-            $leftdiv1.append($('<div style="overflow-y;margin-bottom:5px"><div style="overflow:auto"><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('VA003_SummaryNodes') + '</span></div><div style="overflow:auto"><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_SumaryInfo') + '</span></div></div>'));
+            $leftdiv1.append($('<div class="VA003-Info-Icons" ><img class="VA003-infoRoot-icon" src="' + VIS.Application.contextUrl + 'Areas/VA003/Images/orgstr-org1.png"></div>'));
+            $leftdiv1.append($('<div><div><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('VA003_SummaryNodes') + '</span></div><div><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_SumaryInfo') + '</span></div></div>'));
 
-            $leftdiv2.append($('<div class="VA003-Info-Icons"><img  style="background-color:#dc8a20"  class="VA003-infoRoot-icon" src="' + VIS.Application.contextUrl + 'Areas/VA003/Images/orgstr-legal-entity1.png"></div>'));
-            $leftdiv2.append($('<div style="overflow-y;margin-bottom:5px"><div style="overflow:auto"><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('VA003_LegalNodes') + '</span></div><div style="overflow:auto"><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_LegalInfo') + '</span></div></div>'));
+            $leftdiv2.append($('<div class="VA003-Info-Icons"><img src="' + VIS.Application.contextUrl + 'Areas/VA003/Images/orgstr-legal-entity1.png"></div>'));
+            $leftdiv2.append($('<div><div><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('VA003_LegalNodes') + '</span></div><div><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_LegalInfo') + '</span></div></div>'));
 
-            $leftdiv3.append($('<div class="VA003-Info-Icons"><img  style="background-color:rgba(43, 174, 250, 0.78)"  class="VA003-infoRoot-icon" src="' + VIS.Application.contextUrl + 'Areas/VA003/Images/orgstr-store1.png"></div>'));
-            $leftdiv3.append($('<div style="overflow-y;margin-bottom:5px"><div style="overflow:auto"><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('VA003_OrgUnitsNodes') + '</span></div><div style="overflow:auto"><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_NonLegalInfo') + '</span></div></div>'));
+            $leftdiv3.append($('<div class="VA003-Info-Icons"><img class="VA003-infoRoot-icon" src="' + VIS.Application.contextUrl + 'Areas/VA003/Images/orgstr-store1.png"></div>'));
+            $leftdiv3.append($('<div><div><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('VA003_OrgUnitsNodes') + '</span></div><div><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_NonLegalInfo') + '</span></div></div>'));
 
 
-            $leftdiv4.append($('<div class="VA003-Info-Icons"><img    style="background-color:rgba(43, 174, 250, 0.78)"  class="VA003-infoRoot-icon" src="' + VIS.Application.contextUrl + 'Areas/VA003/Images/orgstr-edit.png"></div>'));
-            $leftdiv4.append($('<div style="overflow-y;margin-bottom:5px"><div style="overflow:auto"><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('Edit') + '</span></div><div style="overflow:auto"><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_EditInfo') + '</span></div></div>'));
+            $leftdiv4.append($('<div class="VA003-Info-Icons"><img class="VA003-infoRoot-icon" src="' + VIS.Application.contextUrl + 'Areas/VA003/Images/orgstr-edit.png"></div>'));
+            $leftdiv4.append($('<div><div><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('Edit') + '</span></div><div><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_EditInfo') + '</span></div></div>'));
 
-            $leftdiv5.append($('<div class="VA003-Info-Icons"><img    style="background-color:rgba(43, 174, 250, 0.78)"  class="VA003-infoRoot-icon" src="' + VIS.Application.contextUrl + 'Areas/VA003/Images/orgstr-folder-minus.png"></div>'));
-            $leftdiv5.append($('<div style="overflow-y;margin-bottom:5px"><div style="overflow:auto"><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('VA003_ExpandTree') + '</span></div><div style="overflow:auto"><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_ExpandTreeInfo') + '</span></div></div>'));
+            $leftdiv5.append($('<div class="VA003-Info-Icons"><img class="VA003-infoRoot-icon" src="' + VIS.Application.contextUrl + 'Areas/VA003/Images/orgstr-folder-minus.png"></div>'));
+            $leftdiv5.append($('<div><div><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('VA003_ExpandTree') + '</span></div><div><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_ExpandTreeInfo') + '</span></div></div>'));
 
-            $leftdiv6.append($('<div class="VA003-Info-Icons"><img    style="background-color:rgba(43, 174, 250, 0.78)"  class="VA003-infoRoot-icon" src="' + VIS.Application.contextUrl + 'Areas/VA003/Images/orgstr-folder-add.png"></div>'));
-            $leftdiv6.append($('<div style="overflow-y;margin-bottom:5px"><div style="overflow:auto"><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('VA003_CollapseTree') + '</span></div><div style="overflow:auto"><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_CollapseTreeInfo') + '</span></div></div>'));
+            $leftdiv6.append($('<div class="VA003-Info-Icons"><img class="VA003-infoRoot-icon" src="' + VIS.Application.contextUrl + 'Areas/VA003/Images/orgstr-folder-add.png"></div>'));
+            $leftdiv6.append($('<div><div><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('VA003_CollapseTree') + '</span></div><div><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_CollapseTreeInfo') + '</span></div></div>'));
 
 
 
@@ -2613,12 +2620,12 @@
             var $leftContainer = $('<div  class="VA003-infoRoot-leftDivContainer">');
 
             var $leftDiv = $('<div  class="VA003-infoRoot-leftDiv">');
-            $leftDiv.append($('<div style="margin: 10px;margin-top: 0px;"><div style="overflow:auto"><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('VA003_OrgInfo') + '</span></div><div style="overflow:auto"><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_OrgnizationInfo') + '</span></div></div>'));
+            $leftDiv.append($('<div><div><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('VA003_OrgInfo') + '</span></div><div><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_OrgnizationInfo') + '</span></div></div>'));
 
-            var $leftdiv4 = $('<div style="overflow:auto;float:left;width:100%">');
+            var $leftdiv4 = $('<div style="float:left;width:100%">');
 
-            $leftdiv4.append($('<div class="VA003-Info-Icons"><img    style="background-color:rgba(43, 174, 250, 0.78)"  class="VA003-infoRoot-icon" src="' + VIS.Application.contextUrl + 'Areas/VA003/Images/orgstr-toggle.png"></div>'));
-            $leftdiv4.append($('<div style="overflow-y;margin-bottom:5px"><div style="overflow:auto"><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('VA003_EditUndo') + '</span></div><div style="overflow:auto"><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_EditUndoInfo') + '</span></div></div>'));
+            $leftdiv4.append($('<div class="VA003-Info-Icons"><img class="VA003-infoRoot-icon" src="' + VIS.Application.contextUrl + 'Areas/VA003/Images/orgstr-toggle.png"></div>'));
+            $leftdiv4.append($('<div><div><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('VA003_EditUndo') + '</span></div><div><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_EditUndoInfo') + '</span></div></div>'));
             $leftDiv.append($leftdiv4);
             $divFormWrap.append($leftContainer);
             $leftContainer.append($leftDiv);
@@ -2628,25 +2635,25 @@
             var $leftContainer = $('<div style="margin-top:65px" class="VA003-infoRoot-leftDivContainer">');
 
             var $leftDiv = $('<div  class="VA003-infoRoot-leftDiv">');
-            $leftDiv.append($('<div style="margin: 10px;margin-top: 0px;"><div style="overflow:auto"><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('VA003_ReportingHierarchy') + '</span></div><div style="overflow:auto"><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_HieraryInfo') + '</span></div></div>'));
+            $leftDiv.append($('<div style="display: block; padding: 0 15px;"><div style=" width: 100%; float: left; "><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('VA003_ReportingHierarchy') + '</span></div><div><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_HieraryInfo') + '</span></div></div>'));
             //$leftDiv.append($('<div style="overflow-y;margin-bottom:5px"><div style="overflow:auto"><span data-uid="1005338"  class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('VA003_LegalNodes') + '</span></div><div style="overflow:auto"><span class="VA003-infoRoot-infos">this sis asdf asfa sfdgasi fgaispudft asfa</span></div></div>'));
-            var $leftdiv1 = $('<div style="overflow:auto;float:left;width:100%">');
-            var $leftdiv2 = $('<div style="overflow:auto;float:left;width:100%">');
-            var $leftdiv5 = $('<div style="overflow:auto;float:left;width:100%">');
-            var $leftdiv6 = $('<div style="overflow:auto;float:left;width:100%">');
+            var $leftdiv1 = $('<div>');
+            var $leftdiv2 = $('<div>');
+            var $leftdiv5 = $('<div>');
+            var $leftdiv6 = $('<div>');
 
 
-            $leftdiv5.append($('<div class="VA003-Info-Icons"><img    style="background-color:#616364"  class="VA003-infoRoot-icon" src="' + VIS.Application.contextUrl + 'Areas/VA003/Images/orgstr-folder-minus.png"></div>'));
-            $leftdiv5.append($('<div style="overflow-y;margin-bottom:5px"><div style="overflow:auto"><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('VA003_ExpandTree') + '</span></div><div style="overflow:auto"><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_ExpandTreeInfo') + '</span></div></div>'));
+            $leftdiv5.append($('<div class="VA003-Info-Icons"><img class="VA003-infoRoot-icon" src="' + VIS.Application.contextUrl + 'Areas/VA003/Images/orgstr-folder-minus.png"></div>'));
+            $leftdiv5.append($('<div><div><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('VA003_ExpandTree') + '</span></div><div><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_ExpandTreeInfo') + '</span></div></div>'));
 
-            $leftdiv6.append($('<div class="VA003-Info-Icons"><img    style="background-color:#616364"  class="VA003-infoRoot-icon" src="' + VIS.Application.contextUrl + 'Areas/VA003/Images/orgstr-folder-add.png"></div>'));
-            $leftdiv6.append($('<div style="overflow-y;margin-bottom:5px"><div style="overflow:auto"><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('VA003_CollapseTree') + '</span></div><div style="overflow:auto"><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_CollapseTreeInfo') + '</span></div></div>'));
+            $leftdiv6.append($('<div class="VA003-Info-Icons"><img class="VA003-infoRoot-icon" src="' + VIS.Application.contextUrl + 'Areas/VA003/Images/orgstr-folder-add.png"></div>'));
+            $leftdiv6.append($('<div><div><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('VA003_CollapseTree') + '</span></div><div><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_CollapseTreeInfo') + '</span></div></div>'));
 
-            $leftdiv1.append($('<div class="VA003-Info-Icons"><img    style="background-color:#616364"  class="VA003-infoRoot-icon" src="' + VIS.Application.contextUrl + 'Areas/VA003/Images/orgstr-addtree.png"></div>'));
-            $leftdiv1.append($('<div style="overflow-y;margin-bottom:5px"><div style="overflow:auto"><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('VA003_AddTree') + '</span></div><div style="overflow:auto"><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_AddTreeInfo') + '</span></div></div>'));
+            $leftdiv1.append($('<div class="VA003-Info-Icons"><img class="VA003-infoRoot-icon" src="' + VIS.Application.contextUrl + 'Areas/VA003/Images/orgstr-addtree.png"></div>'));
+            $leftdiv1.append($('<div><div><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('VA003_AddTree') + '</span></div><div><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_AddTreeInfo') + '</span></div></div>'));
 
-            $leftdiv2.append($('<div class="VA003-Info-Icons"><img    style="background-color:#616364"  class="VA003-infoRoot-icon" src="' + VIS.Application.contextUrl + 'Areas/VA003/Images/orgstr-tree-node.png"></div>'));
-            $leftdiv2.append($('<div style="overflow-y;margin-bottom:5px"><div style="overflow:auto"><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('VA003_AddNode') + '</span></div><div style="overflow:auto"><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_AddNodeinfo') + '</span></div></div>'));
+            $leftdiv2.append($('<div class="VA003-Info-Icons"><img class="VA003-infoRoot-icon" src="' + VIS.Application.contextUrl + 'Areas/VA003/Images/orgstr-tree-node.png"></div>'));
+            $leftdiv2.append($('<div><div><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('VA003_AddNode') + '</span></div><div><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_AddNodeinfo') + '</span></div></div>'));
 
             $leftDiv.append($leftdiv1).append($leftdiv2).append($leftdiv5).append($leftdiv6);
             $rightdivContainer.append($leftContainer);
