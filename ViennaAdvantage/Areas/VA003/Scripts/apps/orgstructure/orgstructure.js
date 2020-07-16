@@ -216,8 +216,8 @@
 
         function createOverlay() {
             $ulOverlay = $('<ul  class="vis-apanel-rb-ul">');
-            $ulOverlay.append('<li data-action="zoom" title=' + VIS.Msg.getMsg('Zoom') + ' style="opacity: 1"><img data-action="zoom" src="Areas/VIS/Images/Zoom16.png"></li>');
-            $ulOverlay.append('<li data-action="refresh"  title=' + VIS.Msg.getMsg('Refresh') + ' ><img data-action="refresh" src="Areas/VIS/Images/Refresh16.png"></li>');
+            $ulOverlay.append('<li data-action="zoom" title=' + VIS.Msg.getMsg('Zoom') + ' style="opacity: 1"><i data-action="zoom" class="vis vis-find"></i></li>');
+            $ulOverlay.append('<li data-action="refresh"  title=' + VIS.Msg.getMsg('Refresh') + ' ><i data-action="refresh" class="vis vis-refresh"></i></li>');
         };
 
         function eventHanling() {
@@ -969,23 +969,23 @@
             if (isLegal) {
                 if (isActive) {
                     $(e.sourceNode).data('uid')
-                    $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(var(--v-c-on-secondary), 1)");
+                    $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "#dc8a20");
                 }
                 else {
-                    $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(var(--v-c-on-secondary), .1)");
+                    $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "#F4C993");
                 }
             }
             else if (isSummary) {
                 if (isActive) {
-                    $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(var(--v-c-on-secondary), .5)");
+                    $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "#0084c4");
                 }
                 else {
-                    $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(var(--v-c-on-secondary), .3)");
+                    $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(0, 132, 196, 0.7)");
                 }
             }
             else {
                 if (isActive) {
-                    $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(var(--v-c-primary), 1)");
+                    $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(43, 174, 250, 0.78)");
                 }
                 else {
                     $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(166, 222, 255, 1)");
@@ -1861,26 +1861,26 @@
 
                                 if ($chkIsLegal.is(':checked')) {
                                     if (isActve) {
-                                        bgColor = "rgba(var(--v-c-on-secondary), 1)";
+                                        bgColor = "#dc8a20";
                                     }
                                     else {
-                                        bgColor = "rgba(var(--v-c-on-secondary), .1)";
+                                        bgColor = "#F4C993";
                                     }
                                     imgSource = "Areas/VA003/Images/orgstr-legal-entity.PNG";
                                 }
                                 else if ($chkIsSummary.is(':checked')) {
                                     if (isActve) {
-                                        bgColor = "rgba(var(--v-c-on-secondary), .5)";
+                                        bgColor = "#0084c4";
                                     }
                                     else {
-                                        bgColor = "rgba(var(--v-c-on-secondary), .3)";
+                                        bgColor = "rgba(0, 132, 196, 0.7)";
                                     }
 
                                     imgSource = "Areas/VA003/Images/orgstr-org.png";
                                 }
                                 else {
                                     if (isActve) {
-                                        bgColor = "rgba(var(--v-c-primary), 1)";
+                                        bgColor = "rgba(43, 174, 250, 0.78)";
                                     }
                                     else {
                                         bgColor = "rgba(166, 222, 255, 1)";
@@ -1945,23 +1945,23 @@
                                 if ($chkIsLegal.is(':checked')) {
                                     if (isActve) {
 
-                                        $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(var(--v-c-on-secondary), 1)");
+                                        $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "#dc8a20");
                                     }
                                     else {
-                                        $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(var(--v-c-on-secondary), .1)");
+                                        $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "#F4C993");
                                     }
                                 }
                                 else if ($chkIsSummary.is(':checked')) {
                                     if (isActve) {
-                                        $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(var(--v-c-on-secondary), .5)");
+                                        $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "#0084c4");
                                     }
                                     else {
-                                        $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(var(--v-c-on-secondary), .3)");
+                                        $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(0, 132, 196, 0.7)");
                                     }
                                 }
                                 else {
                                     if (isActve) {
-                                        $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(var(--v-c-primary), 1)");
+                                        $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(43, 174, 250, 0.78)");
                                     }
                                     else {
                                         $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "rgba(166, 222, 255, 1)");
@@ -2620,7 +2620,7 @@
             var $leftContainer = $('<div  class="VA003-infoRoot-leftDivContainer">');
 
             var $leftDiv = $('<div  class="VA003-infoRoot-leftDiv">');
-            $leftDiv.append($('<div><div><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('VA003_OrgInfo') + '</span></div><div><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_OrgnizationInfo') + '</span></div></div>'));
+            $leftDiv.append($('<div style="display: block; padding: 0 15px;"><div style=" width: 100%; float: left; "><span class="VA003-infoRoot-Header" >' + VIS.Msg.getMsg('VA003_OrgInfo') + '</span></div><div><span class="VA003-infoRoot-infos">' + VIS.Msg.getMsg('VA003_OrgnizationInfo') + '</span></div></div>'));
 
             var $leftdiv4 = $('<div style="float:left;width:100%">');
 

@@ -588,7 +588,7 @@ ul.VA003-root-node, ul.VA003-root-node > li ul {
 .VA003-infoRoot {
     position: absolute;
     z-index: 999;
-    background-color: rgba(195, 190, 190, 0.48);
+    background-color: rgba(195, 190, 190, 0.3);
     opacity: 1;
     height: 100%;
     width: 100%;
@@ -616,7 +616,7 @@ ul.VA003-root-node, ul.VA003-root-node > li ul {
     /* margin-top: 200px; */
     /* opacity: 1; */
     display: none;
-    /* z-index: 99; */
+     z-index: 99; 
     position: absolute;
     /* margin-top: 40%; */
     top: 80px;
