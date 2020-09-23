@@ -1,0 +1,75 @@
+﻿html[dir="rtl"] .VA003-leftMiddle-wrap,
+html[dir="rtl"] .VA003-top-buttons,
+html[dir="rtl"] .VA003-left-tree,
+html[dir="rtl"] .VA003-left-tree-wrap,
+html[dir="rtl"] ul.VA003-topLeft-icons,
+html[dir="rtl"] ul.VA003-topLeft-icons > li,
+html[dir="rtl"] ul.VA003-topRight-icons > li
+html[dir="rtl"] ul.VA003-RightTreetopRight-icons > li,
+html[dir="rtl"] .VA003-form-top, 
+html[dir="rtl"] .VA003-form-data {
+    float: right;
+}
+html[dir="rtl"] .VA003-rightinnerwrapper .k-treeview .k-in div,
+html[dir="rtl"] .VA003-left-tree-wrap .k-treeview .k-in img {
+    float: right !important;
+}
+
+html[dir="rtl"] .VA003-right-slide,
+html[dir="rtl"] .VA003-form-wrap,
+html[dir="rtl"] ul.VA003-topRight-icons {
+    float: left;
+}
+
+html[dir="rtl"] .VA003-form-wrap {
+    border-left: none;
+    border-right: 1px solid rgba(var(--v-c-on-secondary), .2);
+}
+
+html[dir="rtl"] .VA003-rightinnerwrapper {
+    border-left: none;
+    border-right: 4px solid rgba(var(--v-c-on-secondary), .2);
+}
+html[dir="rtl"] ul.VA003-topLeft-icons > li,
+html[dir="rtl"] ul.VA003-RightTreetopRight-icons > li {
+    margin-right: 0;
+}
+html[dir="rtl"] ul.VA003-topLeft-icons > li,
+html[dir="rtl"] ul.VA003-RightTreetopRight-icons > li {
+    margin-left: 8px;
+}
+html[dir="rtl"] .VA003-delete-link,
+html[dir="rtl"] .VA003-rename-link {
+    margin-left: 0;
+    margin-right: 10px;
+}
+html[dir="rtl"] .VA003-rightinnerwrapper .k-treeview .k-in div img {
+    margin: 0px 10px 0px 0px !important;
+}
+html[dir="rtl"] .VA003-left-tree-wrap .k-treeview .k-in img {
+    margin: 4px 10px 0px 0px !important;
+}
+html[dir="rtl"] .VA003-left-tree-wrap .k-treeview .k-in p {
+    padding: 7px 38px 7px 10px !important;
+}
+html[dir="rtl"] .VA003-imageuploadinner {
+    right: auto;
+    left: 5px;
+}
+
+html[dir="rtl"] .VA003-imageuploadinner a {
+    margin-left: 0;
+    margin-right: 10px;
+}
+html[dir="rtl"] .VA003-div-reportgeneratediv {
+    left: auto;
+    right: 10px;
+}
+html[dir="rtl"] .VA003-genrate-report i {
+    padding-right: 0;
+    padding-left: 5px;
+}
+html[dir="rtl"] .VA003-form-data-drp {
+    padding-right: 0;
+    padding-left: 10px;
+}

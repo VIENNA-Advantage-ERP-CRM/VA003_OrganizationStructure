@@ -149,7 +149,7 @@
 
 
         function createLeftPanel() {
-            divTreeContainer = $('<div style="padding: 0px;border-right: white;" class="VA003-left-tree-wrap">');
+            divTreeContainer = $('<div style="border-right: white;" class="VA003-left-tree-wrap">');
             $leftdivContainer.append($('<div class="VA003-left-tree" style="padding: 0px;overflow:auto">').append(divTreeContainer)).append($('<div class="VA003-div-reportgeneratediv">').append($btnGenerateReport).append($btnExpandLeftTree).append($btnRefresh));
 
             var treeHeight = $leftdivContainer.outerHeight() - ($buttonsDiv.outerHeight() + $btnGenerateReport.outerHeight() + 130);
