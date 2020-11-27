@@ -1757,18 +1757,7 @@
                 $chkIsProfitCenter.attr('hidden', false);
                 $lblCostCenter.attr('hidden', false);
                 $lblProfitCenter.attr('hidden', false);
-            }
-            //if ($chkIsSummary.is(':checked')) {
-                
-            //    $chkIsLegal.attr('disabled', true);
-            //    $chkIsCostCenter.attr('disabled', true);
-            //    $chkIsProfitCenter.attr('disabled', true);
-            //    $chkIsCostCenter.attr('hidden', true);
-            //    $chkIsProfitCenter.attr('hidden', true);
-            //    $lblCostCenter.attr('hidden', true);
-            //    $lblProfitCenter.attr('hidden', true);             
-            //}
-           
+            }                 
 
             var bgColor = "white";
 
