@@ -2538,7 +2538,8 @@
                     async: true,
                     data: { name: VIS.Utility.encodeText($name1.val().trim()) },
                     success: function (result) {
-                        if (result == null || result == undefined || result.equals("null")) {
+                        result = jQuery.parseJSON(result);
+                        if (result == null || result == undefined ) {
                             $bsyDiv[0].style.visibility = "hidden";
                             return null;
                         }
