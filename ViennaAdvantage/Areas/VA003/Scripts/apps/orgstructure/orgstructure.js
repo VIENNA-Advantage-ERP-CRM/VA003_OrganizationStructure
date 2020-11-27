@@ -1740,8 +1740,35 @@
             $txtLocation.getControl().attr("disabled", disabled);
             $txtLocation.getBtn(0).attr("disabled", disabled);
             $txtLocation.getBtn(1).attr("disabled", disabled);
+           
             //$chkIsSummary.attr("disabled", disabled);
             //$chkIsLegal.attr("disabled", disabled);
+            //hide  profit center and cost center
+            if ($chkIsLegal.is(':checked') || $chkIsSummary.is(':checked'))
+            {
+                $chkIsCostCenter.attr('hidden', true);
+                $chkIsProfitCenter.attr('hidden', true);
+                $lblCostCenter.attr('hidden', true);
+                $lblProfitCenter.attr('hidden', true);
+            }
+            else
+            {
+                $chkIsCostCenter.attr('hidden', false);
+                $chkIsProfitCenter.attr('hidden', false);
+                $lblCostCenter.attr('hidden', false);
+                $lblProfitCenter.attr('hidden', false);
+            }
+            //if ($chkIsSummary.is(':checked')) {
+                
+            //    $chkIsLegal.attr('disabled', true);
+            //    $chkIsCostCenter.attr('disabled', true);
+            //    $chkIsProfitCenter.attr('disabled', true);
+            //    $chkIsCostCenter.attr('hidden', true);
+            //    $chkIsProfitCenter.attr('hidden', true);
+            //    $lblCostCenter.attr('hidden', true);
+            //    $lblProfitCenter.attr('hidden', true);             
+            //}
+           
 
             var bgColor = "white";
 
@@ -2098,11 +2125,11 @@
 
             if (ad_Org_ID > 0) {
                 if ($chkIsSummary.is(':checked')) {
-                    $chkIsSummary.attr('checked', false);
+                    $chkIsSummary.prop('checked', false);
                 }
                 refreshTree = true;
             }
-
+           
             setEanbleDisableControls($chkIsLegal.is(':checked'));
         };
 
@@ -2115,9 +2142,10 @@
 
                         return;
                     }
-                    $chkIsLegal.attr('checked', false);
+                    $chkIsLegal.prop('checked', false);   
+           
                     refreshTree = true;
-                }
+                }                
                 else if (!isSummarySelected && $chkIsSummary.is(':checked')) {
                     if (!VIS.ADialog.ask("VA003_changeToSummary")) {
                         e.preventDefault();
@@ -2126,8 +2154,15 @@
                     $chkIsLegal.attr('checked', false);
                     refreshTree = true;
                 }
+                if ($chkIsSummary.is(':checked')) {
+                    $chkIsLegal.attr('disabled', true);
+                }
+                else
+                {
+                    $chkIsLegal.attr('disabled', false);
+                }
             }
-
+          
             setEanbleDisableControls($chkIsSummary.is(':checked'));
         };
 
