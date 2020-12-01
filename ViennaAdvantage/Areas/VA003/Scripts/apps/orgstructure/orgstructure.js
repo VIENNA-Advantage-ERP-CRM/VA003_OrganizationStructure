@@ -2538,15 +2538,12 @@
                     async: true,
                     data: { name: VIS.Utility.encodeText($name1.val().trim()) },
                     success: function (result) {
-                        result = jQuery.parseJSON(result);
-                        if (result == null || result == undefined ) {
+                        var data = JSON.parse(result);
+                        if (data == null || data == undefined ) {
                             $bsyDiv[0].style.visibility = "hidden";
                             return null;
                         }
-
-                        var data = JSON.parse(result);
                         $cmbReportHirerchy.empty();
-
                         var AllReportHierarchy = data.AllReportHierarchy;
 
                         fillCmbHierarchy(AllReportHierarchy);
