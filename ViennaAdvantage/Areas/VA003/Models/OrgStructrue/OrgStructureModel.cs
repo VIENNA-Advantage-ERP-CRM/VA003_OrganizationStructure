@@ -895,6 +895,9 @@ namespace VIS.Models
                         org.SetIsLegalEntity(data.IsLegalEntity);
                         org.SetIsSummary(data.IsSummary);
                         org.SetIsActive(data.IsActive);
+                        //cost center and profit center
+                        org.SetIsCostCenter(data.costCenter);
+                        org.SetIsProfitCenter(data.profitCenter);
                         if (org.Save())
                         {
                             insertedCount++;
@@ -1188,6 +1191,8 @@ namespace VIS.Models
                 data.IsLegalEntity = org.IsLegalEntity();
                 data.OrgID = orgID;
                 data.IsActive = org.IsActive();
+                data.profitCenter = org.IsProfitCenter();
+                data.costCenter = org.IsCostCenter();
 
                 MOrgInfo info = new MOrgInfo(ctx, org.GetAD_Org_ID(), null);
                 data.C_Location_ID = Util.GetValueOfInt(info.GetC_Location_ID());
