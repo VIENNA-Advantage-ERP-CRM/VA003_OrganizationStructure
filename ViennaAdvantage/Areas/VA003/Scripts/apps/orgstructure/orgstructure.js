@@ -698,10 +698,14 @@
             $chkIsCostCenter = $('<input type="checkbox" data-name="summary">');
             $lblCostCenter = $(' <div style="width:50%; margin-bottom: 15px" class="VA003-form-data">').append($chkIsCostCenter).append('<label>' + VIS.Msg.translate(VIS.Env.getCtx(), "IsCostCenter") + '</label>');
             $divCheckbox.append($lblCostCenter);
+            // when we change cost center value, then save button to be enabled
+            valueChangeEvent($chkIsCostCenter);
 
             $chkIsProfitCenter = $('<input type="checkbox" data-name="summary">');
             $lblProfitCenter = $(' <div style="width:50%; margin-bottom: 15px" class="VA003-form-data">').append($chkIsProfitCenter).append('<label>' + VIS.Msg.translate(VIS.Env.getCtx(), "IsProfitCenter") + '</label>');
             $divCheckbox.append($lblProfitCenter);
+            // when we change profit center value, then save button to be enabled
+            valueChangeEvent($chkIsProfitCenter);
 
             $divFullFields.append($divCheckbox);
 
@@ -1547,6 +1551,20 @@
                     $chkIsActive.prop("checked", false);
                 }
 
+                //set cost center and profit center
+                if (data.profitCenter != undefined && data.profitCenter != null && data.profitCenter != "") {
+                    $chkIsProfitCenter.prop("checked", data.profitCenter);
+                }
+                else {
+                    $chkIsProfitCenter.prop("checked", false);
+                }
+                if (data.costCenter != undefined && data.costCenter != null && data.costCenter != "") {
+                    $chkIsCostCenter.prop("checked", data.costCenter);
+                }
+                else {
+                    $chkIsCostCenter.prop("checked", false);
+                }
+
                 if (data.OrgImage != null && data.OrgImage != undefined && data.OrgImage.length > 0) {
                     $imageControl.show();
                     $($imageControl.parent()).css("background-color", "white");
@@ -1573,14 +1591,15 @@
                 oldValues = {
                     "Tenant": data.Tenant, "SearchKey": data.SearchKey, "Name": data.Name, "TaxID": data.TaxID,
                     "EmailAddess": data.EmailAddess, "Phone": data.Phone, "Fax": data.Fax,
-                    "C_Location_ID": data.C_Location_ID, "IsSummary": data.IsSummary, "IsLegalEntity": data.IsLegalEntity, "OrgImage": data.OrgImage, 'IsActive': data.IsActive
+                    "C_Location_ID": data.C_Location_ID, "IsSummary": data.IsSummary, "IsLegalEntity": data.IsLegalEntity, "OrgImage": data.OrgImage, 'IsActive': data.IsActive,
+                    "costCenter": data.costCenter, "profitCenter": data.profitCenter
                 };
             }
             else {
                 oldValues = {
                     "Tenant": "", "SearchKey": "", "Name": "", "TaxID": "",
                     "EmailAddess": "", "Phone": "", "Fax": "",
-                    "C_Location_ID": "", "IsSummary": "", "IsLegalEntity": "", "OrgImage": "", 'IsActive': ""
+                    "C_Location_ID": "", "IsSummary": "", "IsLegalEntity": "", "OrgImage": "", 'IsActive': "", "costCenter": "", "profitCenter": ""
                 };
             }
         };
@@ -1658,11 +1677,11 @@
             clearControls();
             setMandatoryColor(true);
             changeorgLabelText(true);
-            setEanbleDisableControls(false);
             $chkIsSummary.attr("disabled", true);
             $chkIsLegal.attr("disabled", true);
             $chkIsSummary.prop("checked", false);
             $chkIsLegal.prop("checked", false);
+            setEanbleDisableControls(false);
 
             $chkIsCostCenter.prop("checked", false);
             $chkIsProfitCenter.prop("checked", false);
@@ -1750,6 +1769,8 @@
                 $chkIsProfitCenter.attr('hidden', true);
                 $lblCostCenter.attr('hidden', true);
                 $lblProfitCenter.attr('hidden', true);
+                $chkIsCostCenter.prop('checked', false);   
+                $chkIsProfitCenter.prop('checked', false);   
             }
             else
             {
@@ -1954,8 +1975,9 @@
                                 $bsyDiv[0].style.visibility = "hidden";
                             }
                             else if (!refreshTree) {
-                                $chkIsProfitCenter.prop("checked", false);
-                                $chkIsCostCenter.prop("checked", false);
+                                // commented bcz when we save record, system  not showing value as true, if having on database
+                                //$chkIsProfitCenter.prop("checked", false);
+                                //$chkIsCostCenter.prop("checked", false);
                                 VIS.ADialog.info('Saved');
 
                                 if ($chkIsLegal.is(':checked')) {
@@ -2047,7 +2069,6 @@
         };
 
         function changeOrgPic(e) {
-
             if (ad_Org_ID > 0) {
                 var file = $imgUpload[0].files[0];
 
