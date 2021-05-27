@@ -55,35 +55,35 @@
     <Reference Include="CrystalDecisions.Shared">
       <HintPath>D:\Dll\Web\CrystalDecisions.Shared.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Web.v14.2">
-      <HintPath>DLL\DevExpress.Web.v14.2.dll</HintPath>
-    </Reference>
     <Reference Include="DotNetOpenAuth">
-      <HintPath>D:\Dll\Web\DotNetOpenAuth.dll</HintPath>
+      <HintPath>..\..\VISPRONew_\ViennaAdvantageWeb\Dll\DotNetOpenAuth.dll</HintPath>
     </Reference>
     <Reference Include="Google.Apis">
-      <HintPath>D:\Dll\Web\Google.Apis.dll</HintPath>
+      <HintPath>..\..\VISPRONew_\ViennaAdvantageWeb\Dll\Google.Apis.dll</HintPath>
     </Reference>
     <Reference Include="Google.Apis.Authentication.OAuth2">
-      <HintPath>D:\Dll\Web\Google.Apis.Authentication.OAuth2.dll</HintPath>
+      <HintPath>..\..\VISPRONew_\ViennaAdvantageWeb\Dll\Google.Apis.Authentication.OAuth2.dll</HintPath>
     </Reference>
     <Reference Include="Google.Apis.Calendar.v3">
-      <HintPath>D:\Dll\Web\Google.Apis.Calendar.v3.dll</HintPath>
+      <HintPath>..\..\VISPRONew_\ViennaAdvantageWeb\Dll\Google.Apis.Calendar.v3.dll</HintPath>
     </Reference>
     <Reference Include="Google.Apis.Tasks.v1">
-      <HintPath>D:\Dll\Web\Google.Apis.Tasks.v1.dll</HintPath>
+      <HintPath>..\..\VISPRONew_\ViennaAdvantageWeb\Dll\Google.Apis.Tasks.v1.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Authenticator">
+      <HintPath>..\..\VISPRONew_\ViennaAdvantageWeb\Dll\Google.Authenticator.dll</HintPath>
     </Reference>
     <Reference Include="Google.GData.Client">
-      <HintPath>D:\Dll\Web\Google.GData.Client.dll</HintPath>
+      <HintPath>..\..\VISPRONew_\ViennaAdvantageWeb\Dll\Google.GData.Client.dll</HintPath>
     </Reference>
     <Reference Include="Google.GData.Contacts">
-      <HintPath>D:\Dll\Web\Google.GData.Contacts.dll</HintPath>
+      <HintPath>..\..\VISPRONew_\ViennaAdvantageWeb\Dll\Google.GData.Contacts.dll</HintPath>
     </Reference>
     <Reference Include="Google.GData.Extensions">
-      <HintPath>D:\Dll\Web\Google.GData.Extensions.dll</HintPath>
+      <HintPath>..\..\VISPRONew_\ViennaAdvantageWeb\Dll\Google.GData.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="Google.GData.YouTube">
-      <HintPath>D:\Dll\Web\Google.GData.YouTube.dll</HintPath>
+      <HintPath>..\..\VISPRONew_\ViennaAdvantageWeb\Dll\Google.GData.YouTube.dll</HintPath>
     </Reference>
     <Reference Include="HtmlWebHelper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -91,7 +91,7 @@
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.84.0.0, Culture=neutral, PublicKeyToken=1b03e6acf1164f73">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\Dll\Web\ICSharpCode.SharpZipLib.dll</HintPath>
+      <HintPath>..\..\VISPRONew_\ViennaAdvantageWeb\Dll\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="IKVM.OpenJDK.ClassLibrary">
       <HintPath>DLL\IKVM.OpenJDK.ClassLibrary.dll</HintPath>
@@ -128,11 +128,10 @@
       <HintPath>DLL\Mono.Security.dll</HintPath>
     </Reference>
     <Reference Include="MySql.Data">
-      <HintPath>DLL\MySql.Data.dll</HintPath>
+      <HintPath>..\..\VISPRONew_\ViennaAdvantageWeb\Dll\MySql.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>DLL\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Npgsql">
       <HintPath>DLL\Npgsql.dll</HintPath>
@@ -140,8 +139,8 @@
     <Reference Include="NPOI">
       <HintPath>D:\Dll\Web\NPOI.dll</HintPath>
     </Reference>
-    <Reference Include="Oracle.ManagedDataAccess">
-      <HintPath>DLL\Oracle.ManagedDataAccess.dll</HintPath>
+    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.19.1, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
+      <HintPath>..\packages\Oracle.ManagedDataAccess.19.6.0\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
     </Reference>
     <Reference Include="PdfSharp">
       <HintPath>DLL\PdfSharp.dll</HintPath>
