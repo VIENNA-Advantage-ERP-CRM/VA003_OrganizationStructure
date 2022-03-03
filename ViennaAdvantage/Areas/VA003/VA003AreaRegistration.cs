@@ -3,17 +3,17 @@ using System.Web.Optimization;
 
 namespace ViennaAdvantage.Areas.VA003
 {
-    public class VA003AreaRegistration : AreaRegistration 
+    public class VA003AreaRegistration : AreaRegistration
     {
-        public override string AreaName 
+        public override string AreaName
         {
-            get 
+            get
             {
                 return "VA003";
             }
         }
 
-        public override void RegisterArea(AreaRegistrationContext context) 
+        public override void RegisterArea(AreaRegistrationContext context)
         {
             context.MapRoute(
                 "VA003_default",
@@ -35,13 +35,13 @@ namespace ViennaAdvantage.Areas.VA003
             /*-------------------------------------------------------
                     Here include all js files in style bundle......see example below....
             //     --------------------------------------------------------*/
-            script.Include("~/Areas/VA003/Scripts/apps/orgstructure/orgstructure.js",
-                "~/Areas/VA003/Scripts/apps/orgstructure/addnode.js",
-                "~/Areas/VA003/Scripts/apps/orgstructure/info.js"
-                );
+            //script.Include("~/Areas/VA003/Scripts/apps/orgstructure/orgstructure.js",
+            //    "~/Areas/VA003/Scripts/apps/orgstructure/addnode.js",
+            //    "~/Areas/VA003/Scripts/apps/orgstructure/info.js"
+            //);
 
-            //script.Include("~/Areas/VA003/Scripts/apps/orgstructure/orgstructureall.min.js");
-            //style.Include("~/Areas/VA003/Contents/OrgStructureall.min.css");
+            script.Include("~/Areas/VA003/Scripts/apps/orgstructure/orgstructureall.min.js");
+            style.Include("~/Areas/VA003/Contents/OrgStructureall.min.css");
 
             VAdvantage.ModuleBundles.RegisterScriptBundle(script, "VA003", 10);
             VAdvantage.ModuleBundles.RegisterStyleBundle(style, "VA003", 10);
