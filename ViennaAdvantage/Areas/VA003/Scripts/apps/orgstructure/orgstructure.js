@@ -108,6 +108,7 @@
         var $ulRightTree = null;
         var infoRoot = null;
         var refreshTree = false;
+        var ad_window_Id = 0;
 
         /*
           Initialize Components
@@ -248,7 +249,7 @@
 
             $showOrUnits.on('change', function (e) {
                 refreshLeftTree();
-               
+
 
 
             });
@@ -356,10 +357,25 @@
                     return;
                 }
 
-                var res = VIS.DB.executeQuery("UPDATE AD_OrgInfo SET Logo=null WHERE AD_ORg_ID=" + ad_Org_ID);
-                if (res > 0) {
-                    hideImage();
-                }
+                //var res = VIS.DB.executeQuery("UPDATE AD_OrgInfo SET Logo=null WHERE AD_ORg_ID=" + ad_Org_ID);
+                //if (res > 0) {
+                //    hideImage();
+                //}
+                $.ajax({
+                    url: VIS.Application.contextUrl + "VA003/OrgStructure/ClearOrgLogo",
+                    async: true,
+                    data: { AD_Org_ID: ad_Org_ID },
+                    success: function (result) {
+                        var res = JSON.parse(result);
+                        if (res > 0) {
+                            hideImage();
+                        }
+                    },
+                    error: function (e) {
+                        console.log(e);
+                    }
+                });
+
             }
 
         };
@@ -399,14 +415,29 @@
 
 
         var zoomToWindow = function (record_id, windowName) {
-            var sql = "select ad_window_id from ad_window where name = '" + windowName + "'";// Upper( name)=Upper('user' )
-            var ad_window_Id = 0;
+            //var sql = "select ad_window_id from ad_window where name = '" + windowName + "'";// Upper( name)=Upper('user' )
+            //var ad_window_Id = 0;
             try {
-                var dr = VIS.DB.executeDataReader(sql);
-                if (dr.read()) {
-                    ad_window_Id = dr.getInt(0);
+                //var dr = VIS.DB.executeDataReader(sql);
+                //if (dr.read()) {
+                //    ad_window_Id = dr.getInt(0);
+                //}
+                //dr.dispose();
+
+                if (ad_window_Id > 0) {
+                    $.ajax({
+                        url: VIS.Application.contextUrl + "VA003/OrgStructure/GetWindowName",
+                        async: false,
+                        data: { WindowName: windowName },
+                        success: function (result) {
+                            ad_window_Id = JSON.parse(result);
+                        },
+                        error: function (e) {
+                            console.log(e);
+                        }
+                    });
                 }
-                dr.dispose();
+
                 if (ad_window_Id > 0) {
                     var zoomQuery = new VIS.Query();
                     zoomQuery.addRestriction("AD_OrgType", VIS.Query.prototype.EQUAL, record_id);
@@ -433,7 +464,7 @@
             $btnSlider = $(' <li><a title="' + VIS.Msg.getMsg('Edit') + '" class="VA003-edit-icon"></a></li>');
             $liShowOrgUnit = $('<li class="VA003-shworgchkwrp"></li>');
             $showOrUnits = $('<input type="checkbox" data-name="legal" >');
-            
+
             $labelShowOrgUnit = $('<li><label >' + VIS.Msg.getMsg("VA003_ShowOrgUnits") + '</label></li>');
             $liShowOrgUnit.append($showOrUnits).append($labelShowOrgUnit);
             $btnInfo = $btnHdrSend = $('<i class="VA003-InfoIcon vis vis-info" title="' + VIS.Msg.getMsg("VA003_info").replace('&', '') + '"> </i>'); //$(' <a title="' + VIS.Msg.getMsg('VA003_info') + '" class="VA003-info-icon"></a>');
@@ -600,7 +631,7 @@
             //$cmbTenant = $('<select data-name="tenant">');
             //$divTopFields.append($(' <div class="VA003-form-data">').append('<label>' + VIS.Msg.getMsg("Tenant") + '</label>').append($cmbTenant));
             //valueChangeEvent($cmbTenant);
-            
+
             //$divTopFields.append($('<div class="VA003-form-data"></div>').append($lblOrgInfo));
 
             $txtSerackKey = $('<input type="text" data-name="searchkey">');
@@ -1159,16 +1190,28 @@
 
             var childCount = 0;
 
-            var sql = "SELECT  max(seqNo) FROM AD_TreeNode WHERE AD_Client_ID=" + ctx.getAD_Client_ID() + " AND AD_Tree_ID=" + treeIDs;
-            try {
-                var dr = VIS.DB.executeReader(sql, null, null);
-                if (dr.read()) {
-                    childCount = dr.getString(0);
-                }
-            }
-            catch (ex) {
+            //var sql = "SELECT  max(seqNo) FROM AD_TreeNode WHERE AD_Client_ID=" + ctx.getAD_Client_ID() + " AND AD_Tree_ID=" + treeIDs;
+            //try {
+            //    var dr = VIS.DB.executeReader(sql, null, null);
+            //    if (dr.read()) {
+            //        childCount = dr.getString(0);
+            //    }
+            //}
+            //catch (ex) {
 
-            }
+            //}
+
+            $.ajax({
+                url: VIS.Application.contextUrl + "VA003/OrgStructure/GetMaxSequenceNo",
+                async: false,
+                data: { AD_Client_ID: ctx.getAD_Client_ID(), AD_Tree_ID: treeIDs },
+                success: function (result) {
+                    childCount = JSON.parse(result);
+                },
+                error: function (e) {
+                    console.log(e);
+                }
+            });
 
 
             for (var i = 0; i < chidren.length; i++) {
@@ -1179,7 +1222,7 @@
                     ctx.getAD_Client_ID() + "," +
                     ctx.getAD_Org_ID() + "," +
                     treeIDs + "," +
-                   "sysdate," +
+                    "sysdate," +
                     ctx.getAD_User_ID() + "," +
                     "'" + isActive + "'," +
                     $(chidren[i]).val() + "," +
@@ -1264,7 +1307,7 @@
             if (!isSummarySelected) {
                 $btnSummary.prop("disabled", true);
                 $btnSummary.css('opacity', '0.5');
-            }            
+            }
             else {
                 $btnSummary.prop("disabled", false);
                 $btnSummary.css('opacity', '1');
@@ -1340,14 +1383,14 @@
             for (var i = 0; i < oldSiblings.length; i++) {
                 sql = "UPDATE ";
                 sql += tableName + " SET Parent_ID=" + oldID + ", SeqNo=" + i + ", Updated=SysDate" +
-                                  " WHERE AD_Tree_ID=" + treeid + " AND Node_ID=" + $(oldSiblings[i]).find(".data-id").val();
+                    " WHERE AD_Tree_ID=" + treeid + " AND Node_ID=" + $(oldSiblings[i]).find(".data-id").val();
                 queries.push(sql);
             }
 
             for (var i = 0; i < destinChild.length; i++) {
                 sql = "UPDATE ";
                 sql += tableName + " SET Parent_ID=" + newID + ", SeqNo=" + i + ", Updated=SysDate" +
-                                  " WHERE AD_Tree_ID=" + treeid + " AND Node_ID=" + $(destinChild[i]).find(".data-id").val();
+                    " WHERE AD_Tree_ID=" + treeid + " AND Node_ID=" + $(destinChild[i]).find(".data-id").val();
                 queries.push(sql);
             }
 
@@ -1375,14 +1418,14 @@
             for (var i = 0; i < oldSiblings.length; i++) {
                 sql = "UPDATE ";
                 sql += tableName + " SET Parent_ID=" + oldID + ", SeqNo=" + i + ", Updated=SysDate" +
-                                  " WHERE AD_Tree_ID=" + treeid + " AND Node_ID=" + $(oldSiblings[i]).find(".data-id").val();
+                    " WHERE AD_Tree_ID=" + treeid + " AND Node_ID=" + $(oldSiblings[i]).find(".data-id").val();
                 queries.push(sql);
             }
 
             for (var i = 0; i < destinChild.length; i++) {
                 sql = "UPDATE ";
                 sql += tableName + " SET Parent_ID=" + newID + ", SeqNo=" + i + ", Updated=SysDate" +
-                                  " WHERE AD_Tree_ID=" + treeid + " AND Node_ID=" + $(destinChild[i]).find(".data-id").val();
+                    " WHERE AD_Tree_ID=" + treeid + " AND Node_ID=" + $(destinChild[i]).find(".data-id").val();
                 queries.push(sql);
             }
 
@@ -1623,7 +1666,7 @@
             $chkIsLegal.prop("checked", true);
 
             $chkIsCostCenter.prop("checked", false);
-            $chkIsProfitCenter.prop("checked", false);            
+            $chkIsProfitCenter.prop("checked", false);
             $lblCostCenter.hide();
             $lblProfitCenter.hide();
 
@@ -1759,26 +1802,24 @@
             $txtLocation.getControl().attr("disabled", disabled);
             $txtLocation.getBtn(0).attr("disabled", disabled);
             $txtLocation.getBtn(1).attr("disabled", disabled);
-           
+
             //$chkIsSummary.attr("disabled", disabled);
             //$chkIsLegal.attr("disabled", disabled);
             //hide  profit center and cost center
-            if ($chkIsLegal.is(':checked') || $chkIsSummary.is(':checked'))
-            {
+            if ($chkIsLegal.is(':checked') || $chkIsSummary.is(':checked')) {
                 $chkIsCostCenter.attr('hidden', true);
                 $chkIsProfitCenter.attr('hidden', true);
                 $lblCostCenter.attr('hidden', true);
                 $lblProfitCenter.attr('hidden', true);
-                $chkIsCostCenter.prop('checked', false);   
-                $chkIsProfitCenter.prop('checked', false);   
+                $chkIsCostCenter.prop('checked', false);
+                $chkIsProfitCenter.prop('checked', false);
             }
-            else
-            {
+            else {
                 $chkIsCostCenter.attr('hidden', false);
                 $chkIsProfitCenter.attr('hidden', false);
                 $lblCostCenter.attr('hidden', false);
                 $lblProfitCenter.attr('hidden', false);
-            }                 
+            }
 
             var bgColor = "white";
 
@@ -2139,7 +2180,7 @@
                 }
                 refreshTree = true;
             }
-           
+
             setEanbleDisableControls($chkIsLegal.is(':checked'));
         };
 
@@ -2152,10 +2193,10 @@
 
                         return;
                     }
-                    $chkIsLegal.prop('checked', false);   
-           
+                    $chkIsLegal.prop('checked', false);
+
                     refreshTree = true;
-                }                
+                }
                 else if (!isSummarySelected && $chkIsSummary.is(':checked')) {
                     if (!VIS.ADialog.ask("VA003_changeToSummary")) {
                         e.preventDefault();
@@ -2167,12 +2208,11 @@
                 if ($chkIsSummary.is(':checked')) {
                     $chkIsLegal.attr('disabled', true);
                 }
-                else
-                {
+                else {
                     $chkIsLegal.attr('disabled', false);
                 }
             }
-          
+
             setEanbleDisableControls($chkIsSummary.is(':checked'));
         };
 
@@ -2333,7 +2373,7 @@
             window.setTimeout(function () {
 
                 //$divRightTree.find('.k-treeview').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
-                $divRightTree.find('.k-in').css({ 'cursor': 'pointer'});
+                $divRightTree.find('.k-in').css({ 'cursor': 'pointer' });
                 //$divRightTree.find('.k-state-hover').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
                 //$divRightTree.find('.k-state-focused').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
                 //$divRightTree.find('.k-state-selected').css({ 'border-color': 'rgba(229, 228, 225, 1)', 'background-color': '#DADADA', '-webkit-box-shadow': 'rgba(229, 228, 225, 1)', 'padding': '4px' });
@@ -2510,10 +2550,10 @@
             if ($rightdivContainer.data("isexpanded") == "Y") {
                 $rightdivContainer.data("isexpanded", "N");
                 $rightdivContainer.animate(
-                   { 'width': '35%' }, 800, function () {
-                       $btnSlider.find('img').attr('src', VIS.Application.contextUrl + 'Areas/VA003/Images/arrow-left.png');
-                       ChangeHeirarcyCmboWidth();
-                   });
+                    { 'width': '35%' }, 800, function () {
+                        $btnSlider.find('img').attr('src', VIS.Application.contextUrl + 'Areas/VA003/Images/arrow-left.png');
+                        ChangeHeirarcyCmboWidth();
+                    });
                 $btnSlider.find('a').addClass('VA003-toggle-icon');
                 $btnSlider.find('a').removeClass('VA003-edit-icon');
             }
@@ -2560,7 +2600,7 @@
                     data: { name: VIS.Utility.encodeText($name1.val().trim()) },
                     success: function (result) {
                         var data = JSON.parse(result);
-                        if (data == null || data == undefined ) {
+                        if (data == null || data == undefined) {
                             $bsyDiv[0].style.visibility = "hidden";
                             return null;
                         }

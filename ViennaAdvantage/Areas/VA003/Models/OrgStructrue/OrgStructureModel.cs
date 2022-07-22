@@ -880,7 +880,7 @@ namespace VIS.Models
                     {
 
 
-                        newOrgIDD = InsertNewOrg(org, data.Description, data.IsSummary ? 'Y' : 'N', data.IsLegalEntity ? 'Y' : 'N', data.Name, data.SearchKey, data.IsActive ? 'Y' : 'N', data.costCenter ? 'Y' : 'N', data.profitCenter ? 'Y' : 'N',Util.GetValueOfInt( data.ParentOrg));
+                        newOrgIDD = InsertNewOrg(org, data.Description, data.IsSummary ? 'Y' : 'N', data.IsLegalEntity ? 'Y' : 'N', data.Name, data.SearchKey, data.IsActive ? 'Y' : 'N', data.costCenter ? 'Y' : 'N', data.profitCenter ? 'Y' : 'N', Util.GetValueOfInt(data.ParentOrg));
                     }
                     else
                     {
@@ -1650,7 +1650,7 @@ namespace VIS.Models
 
             MOrg org = null;
 
-            int newOrgIDD = InsertNewOrg(org, description, 'Y', 'N', name, value, 'Y', 'N', 'N',0);
+            int newOrgIDD = InsertNewOrg(org, description, 'Y', 'N', name, value, 'Y', 'N', 'N', 0);
 
             org = new MOrg(ctx, newOrgIDD, null);
 
@@ -1939,11 +1939,37 @@ namespace VIS.Models
             hie.Save();
         }
 
+        /// <summary>
+        /// Update Logo as Null on Org Info
+        /// </summary>
+        /// <param name="AD_Org_ID">Organization ID</param>
+        /// <returns>Query Result</returns>
+        public int ClearOrgLogo(int AD_Org_ID)
+        {
+            return DB.ExecuteQuery("UPDATE AD_OrgInfo SET Logo=null WHERE AD_ORg_ID=" + AD_Org_ID, null, null);
+        }
 
+        /// <summary>
+        /// Get Window ID
+        /// </summary>
+        /// <param name="WindowName">Window Name</param>
+        /// <returns>Window ID</returns>
+        public int GetWindowName(String WindowName)
+        {
+            return Util.GetValueOfInt(DB.ExecuteScalar("SELECT AD_Window_ID FROM AD_Window WHERE Name = '" + WindowName + "'", null, null));
+        }
 
-
-
-
+        /// <summary>
+        /// Get Max Sequnece no from Tree node against Tree ID
+        /// </summary>
+        /// <param name="AD_Client_ID">Client ID</param>
+        /// <param name="AD_Tree_ID">Tree ID</param>
+        /// <returns>Seq No</returns>
+        public int GetMaxSequenceNo(int AD_Client_ID, int AD_Tree_ID)
+        {
+            return Util.GetValueOfInt(DB.ExecuteScalar("SELECT MAX(seqNo) FROM AD_TreeNode WHERE AD_Client_ID=" + AD_Client_ID +
+                                                        @" AND AD_Tree_ID=" + AD_Tree_ID, null, null));
+        }
     }
 
     public class OrgStructureData

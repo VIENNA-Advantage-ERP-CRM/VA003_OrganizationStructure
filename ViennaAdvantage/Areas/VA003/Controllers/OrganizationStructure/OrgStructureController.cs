@@ -168,7 +168,42 @@ namespace VIS.Controllers
             return Json(JsonConvert.SerializeObject(orgStrct.RefreshOrgType()), JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// Update Logo as Null on Org Info
+        /// </summary>
+        /// <param name="AD_Org_ID">Organization ID</param>
+        /// <returns>Query Result</returns>
+        public ActionResult ClearOrgLogo(int AD_Org_ID)
+        {
+            Ctx ctx = Session["ctx"] as Ctx;
+            OrgStructure orgStrct = new OrgStructure(ctx);
+            return Json(JsonConvert.SerializeObject(orgStrct.ClearOrgLogo(AD_Org_ID)), JsonRequestBehavior.AllowGet);
+        }
 
+        /// <summary>
+        /// Get Window ID
+        /// </summary>
+        /// <param name="WindowName">Window Name</param>
+        /// <returns>Window ID</returns>
+        public ActionResult GetWindowName(String WindowName)
+        {
+            Ctx ctx = Session["ctx"] as Ctx;
+            OrgStructure orgStrct = new OrgStructure(ctx);
+            return Json(JsonConvert.SerializeObject(orgStrct.GetWindowName(WindowName)), JsonRequestBehavior.AllowGet);
+        }
+
+        /// <summary>
+        /// Get Max Sequnece no from Tree node against Tree ID
+        /// </summary>
+        /// <param name="AD_Client_ID">Client ID</param>
+        /// <param name="AD_Tree_ID">Tree ID</param>
+        /// <returns>Seq No</returns>
+        public ActionResult GetMaxSequenceNo(int AD_Client_ID, int AD_Tree_ID)
+        {
+            Ctx ctx = Session["ctx"] as Ctx;
+            OrgStructure orgStrct = new OrgStructure(ctx);
+            return Json(JsonConvert.SerializeObject(orgStrct.GetMaxSequenceNo(AD_Client_ID, AD_Tree_ID)), JsonRequestBehavior.AllowGet);
+        }
 
     }
 }
