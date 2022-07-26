@@ -880,7 +880,7 @@ namespace VIS.Models
                     {
 
 
-                        newOrgIDD = InsertNewOrg(org, data.Description, data.IsSummary ? 'Y' : 'N', data.IsLegalEntity ? 'Y' : 'N', data.Name, data.SearchKey, data.IsActive ? 'Y' : 'N', data.costCenter ? 'Y' : 'N', data.profitCenter ? 'Y' : 'N',Util.GetValueOfInt( data.ParentOrg));
+                        newOrgIDD = InsertNewOrg(org, data.Description, data.IsSummary ? 'Y' : 'N', data.IsLegalEntity ? 'Y' : 'N', data.Name, data.SearchKey, data.IsActive ? 'Y' : 'N', data.costCenter ? 'Y' : 'N', data.profitCenter ? 'Y' : 'N', Util.GetValueOfInt(data.ParentOrg));
                     }
                     else
                     {
@@ -1650,7 +1650,7 @@ namespace VIS.Models
 
             MOrg org = null;
 
-            int newOrgIDD = InsertNewOrg(org, description, 'Y', 'N', name, value, 'Y', 'N', 'N',0);
+            int newOrgIDD = InsertNewOrg(org, description, 'Y', 'N', name, value, 'Y', 'N', 'N', 0);
 
             org = new MOrg(ctx, newOrgIDD, null);
 
@@ -1938,11 +1938,160 @@ namespace VIS.Models
 
             hie.Save();
         }
+        /// <summary>
+        ///This function is used to Get Sequence for Tree
+        /// </summary>
+        /// <param name="TreeID"> Id of the current tree</param>
+        /// <returns>Seuence for the selected tree</returns>
+        public int GetSequenceforTree(int TreeID)
+        {
+            string sql = "SELECT  MAX(seqNo) FROM AD_TreeNode WHERE AD_Client_ID=" + ctx.GetAD_Client_ID() + " AND AD_Tree_ID=" + TreeID;
+            return Util.GetValueOfInt(DB.ExecuteScalar(sql, null, null));
+        }
+        /// <summary>
+        /// This function is used to Update Orgnization logo
+        /// </summary>
+        /// <param name="OrgId"> Orgnization Id</param>
+        /// <returns>Updated logo</returns>
+        public int UpdateLogo(int OrgId)
+        {
+            string sql = "UPDATE AD_OrgInfo SET Logo=null WHERE AD_ORg_ID=" + OrgId;
+            return DB.ExecuteQuery(sql, null, null);
+        }
+        /// <summary>
+        /// This function is used to zoom Organization Type window
+        /// </summary>
+        /// <returns>Zoom window Id</returns>
+        public int ZoomToWindow()
+        {
+            string sql = "select ad_window_id from ad_window where name ='Organization Type'";
+            return Util.GetValueOfInt(DB.ExecuteScalar(sql, null, null));
+        }
+        /// <summary>
+        /// This function is used to Insert tree node in Reporting Hierarchy
+        /// <param name="Chidrens"> Child Nodes of tree</param>
+        /// <param name="IsActive"> Active status</param>
+        /// <param name="ParentID"> Parent Node</param>
+        /// <param name="TreeIds">Tree</param>
+        /// </summary>
+        /// <returns></returns>
+        public int InsertTreeNode(string[] Chidrens, string[] IsActive, int ParentID, int TreeIds, int ChildCount)
+        {
+            int res = 0;
+            if (Chidrens.Length > 0 && IsActive.Length > 0)
+            {
+                for (int i = 0; i < Chidrens.Length; i++)
+                {
+                    string sql = @"INSERT INTO AD_TreeNode (AD_Client_ID, AD_Org_ID, AD_Tree_ID, Created, CreatedBy, IsActive, Node_ID, Parent_ID, Updated, Updatedby,seqNo) VALUES(" +
+                     ctx.GetAD_Client_ID() + "," +
+                     ctx.GetAD_Org_ID() + "," +
+                     TreeIds + "," +
+                     "sysdate," +
+                     ctx.GetAD_User_ID() + "," +
+                     "'" + IsActive[i] + "'," +
+                     Chidrens[i] + "," +
+                     ParentID + "," +
+                     "sysdate," +
+                     ctx.GetAD_User_ID() + "," + (ChildCount + 10) + ") ";
+                    ChildCount = ChildCount + 10;
+                    try
+                    {
+                        res = DB.ExecuteQuery(sql, null, null);
+                    }
+                    catch (Exception)
+                    {
+                        //
+                    }
+                }
+            }
+            return res;
+        }
+        /// <summary>
+        /// This function is used to Update Sequence of the tree
+        /// <param name="OldID">Old id before change</param>
+        /// <param name="NewId">Changed new id</param>
+        /// <param name="TreeId">Id of the current tree</param>
+        /// <param name="OldSibling">Old Siblings (Before Change)</param>
+        /// <param name="NodId">Node Id</param>
+        /// </summary>
+        /// <returns></returns>
+        public int UpdateSeuenceOfNode(int OldID, int NewId, int TreeId, string[] OldSibling, string[] NodId, string TableName)
+        {
+            int res = 0;
+            try
+            {
+                if (OldSibling != null && OldSibling.Length > 0)
+                {
+                    for (int i = 0; i < OldSibling.Length; i++)
+                    {
+                        string sql = @"UPDATE " + TableName + " SET Parent_ID=" + OldID + ", SeqNo=" + i + ", Updated=SysDate" +
+                                     "WHERE AD_Tree_ID=" + TreeId + " AND Node_ID=" + OldSibling[i];
+                        res = DB.ExecuteQuery(sql, null, null);
+                    }
+                }
+                if (NodId != null && NodId.Length > 0)
+                {
+                    for (int i = 0; i < NodId.Length; i++)
+                    {
+                        string sql = @"UPDATE " + TableName + " SET Parent_ID=" + NewId + ", SeqNo=" + i + ", Updated=SysDate" +
+                                     " WHERE AD_Tree_ID=" + TreeId + " AND Node_ID=" + NodId[i];
+                        res = DB.ExecuteQuery(sql, null, null);
+                    }
+                }
+            }
+            catch (Exception)
+            {
 
+            }
+            return res;
 
-
-
-
+        }
+        /// <summary>
+        /// This function is used to Update Parent of the tree
+        /// <param name="TreeId">Id of the tree</param>
+        /// <param name="CurrentNode">Current selected Node</param>
+        /// </summary>
+        /// <returns></returns>
+        public int UpdateParentNode(int TreeId, int CurrentNode, int NewIdForOrg, bool IsSummery)
+        {
+            int res = 0;
+            if (IsSummery)
+            {
+                NewIdForOrg = 0;
+            }
+            else
+            {
+                string sql = @"update AD_TreeNode set parent_id=0 WHERE AD_Tree_ID= " + TreeId + " AND  Node_ID=" + CurrentNode;
+                res = DB.ExecuteQuery(sql, null, null);
+            }
+            string sql1 = @"update AD_OrgInfo set parent_org_id=" + NewIdForOrg + " WHERE AD_Org_ID=" + CurrentNode;
+            res = DB.ExecuteQuery(sql1, null, null);
+            return res;
+        }
+        /// <summary>
+        /// This function is used to Update Parent orgnization information of the tree
+        /// <param name="Name">Name of the Org</param>
+        /// <param name="AD_Org_ID">Id of the Org</param>
+        /// </summary>
+        /// <returns></returns>
+        public int UpdateOrgnization(string Name, int Ad_Org_Id)
+        {
+            string sql = @"UPDATE AD_Org SET name='" + Name + "' WHERE AD_Org_ID=" + Ad_Org_Id;
+            return DB.ExecuteQuery(sql, null, null);
+        }
+        /// <summary>
+        /// This function is used to Delete Node of the tree
+        /// <param name="TreeId">Name of the tree</param>
+        /// <param name="NodeId">Id of the tree</param>
+        /// </summary>
+        /// <returns></returns>
+        public int DeleteAD_TreeNode(int TreeId, int Parent_ID)
+        {
+            string sql = @"DELETE FROM AD_TreeNode WHERE AD_Tree_ID=" + TreeId + " AND parent_ID=" + Parent_ID;
+            DB.ExecuteQuery(sql, null, null);
+            string sql1 = @"DELETE FROM AD_TreeNode WHERE AD_Tree_ID=" + TreeId + " AND Node_ID=" + Parent_ID;
+            return DB.ExecuteQuery(sql1, null, null);
+        }
 
     }
 
