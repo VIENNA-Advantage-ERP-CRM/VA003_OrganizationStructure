@@ -74,6 +74,7 @@
         var nameLength = 0;
         var valueLength = 0;
         var treeLength = 0;
+        var ad_window_Id = 0;
 
 
         // New elements-mohit
@@ -248,7 +249,7 @@
 
             $showOrUnits.on('change', function (e) {
                 refreshLeftTree();
-               
+
 
 
             });
@@ -356,7 +357,8 @@
                     return;
                 }
 
-                var res = VIS.DB.executeQuery("UPDATE AD_OrgInfo SET Logo=null WHERE AD_ORg_ID=" + ad_Org_ID);
+                //var res = VIS.DB.executeQuery("UPDATE AD_OrgInfo SET Logo=null WHERE AD_ORg_ID=" + ad_Org_ID);
+                var res = VIS.dataContext.getJSONData(VIS.Application.contextUrl + "OrgStructure/UpdateLogo", { AD_ORg_ID: ad_Org_ID });
                 if (res > 0) {
                     hideImage();
                 }
@@ -399,14 +401,16 @@
 
 
         var zoomToWindow = function (record_id, windowName) {
-            var sql = "select ad_window_id from ad_window where name = '" + windowName + "'";// Upper( name)=Upper('user' )
-            var ad_window_Id = 0;
+            //var sql = "select ad_window_id from ad_window where name = '" + windowName + "'";// Upper( name)=Upper('user' )
             try {
-                var dr = VIS.DB.executeDataReader(sql);
-                if (dr.read()) {
-                    ad_window_Id = dr.getInt(0);
+                //var dr = VIS.DB.executeDataReader(sql);
+                //if (dr.read()) {
+                //    ad_window_Id = dr.getInt(0);
+                //}
+                //dr.dispose();
+                if (ad_window_Id == 0) {
+                    ad_window_Id = VIS.dataContext.getJSONData(VIS.Application.contextUrl + "OrgStructure/ZoomToWindow", null);
                 }
-                dr.dispose();
                 if (ad_window_Id > 0) {
                     var zoomQuery = new VIS.Query();
                     zoomQuery.addRestriction("AD_OrgType", VIS.Query.prototype.EQUAL, record_id);
@@ -433,7 +437,7 @@
             $btnSlider = $(' <li><a title="' + VIS.Msg.getMsg('Edit') + '" class="VA003-edit-icon"></a></li>');
             $liShowOrgUnit = $('<li class="VA003-shworgchkwrp"></li>');
             $showOrUnits = $('<input type="checkbox" data-name="legal" >');
-            
+
             $labelShowOrgUnit = $('<li><label >' + VIS.Msg.getMsg("VA003_ShowOrgUnits") + '</label></li>');
             $liShowOrgUnit.append($showOrUnits).append($labelShowOrgUnit);
             $btnInfo = $btnHdrSend = $('<i class="VA003-InfoIcon vis vis-info" title="' + VIS.Msg.getMsg("VA003_info").replace('&', '') + '"> </i>'); //$(' <a title="' + VIS.Msg.getMsg('VA003_info') + '" class="VA003-info-icon"></a>');
@@ -600,7 +604,7 @@
             //$cmbTenant = $('<select data-name="tenant">');
             //$divTopFields.append($(' <div class="VA003-form-data">').append('<label>' + VIS.Msg.getMsg("Tenant") + '</label>').append($cmbTenant));
             //valueChangeEvent($cmbTenant);
-            
+
             //$divTopFields.append($('<div class="VA003-form-data"></div>').append($lblOrgInfo));
 
             $txtSerackKey = $('<input type="text" data-name="searchkey">');
@@ -1159,39 +1163,44 @@
 
             var childCount = 0;
 
-            var sql = "SELECT  max(seqNo) FROM AD_TreeNode WHERE AD_Client_ID=" + ctx.getAD_Client_ID() + " AND AD_Tree_ID=" + treeIDs;
+            // var sql = "SELECT  max(seqNo) FROM AD_TreeNode WHERE AD_Client_ID=" + ctx.getAD_Client_ID() + " AND AD_Tree_ID=" + treeIDs;
             try {
-                var dr = VIS.DB.executeReader(sql, null, null);
-                if (dr.read()) {
-                    childCount = dr.getString(0);
-                }
+                //var dr = VIS.DB.executeReader(sql, null, null);
+                //if (dr.read()) {
+                //    childCount = dr.getString(0);
+                //}
+                var sequenceNo = VIS.dataContext.getJSONData(VIS.Application.contextUrl + "OrgStructure/LoadSequenceforTree", { TreeId: treeIDs });
+                if (sequenceNo != null)
+                    childCount = sequenceNo;
+
             }
             catch (ex) {
 
             }
-
-
+            var chidrens = [];
+            var isActive = [];
             for (var i = 0; i < chidren.length; i++) {
 
-                var isActive = $(chidren[i]).data("active") == true ? "Y" : "N";
-
-                sql = "INSERT INTO AD_TreeNode (AD_Client_ID, AD_Org_ID, AD_Tree_ID, Created, CreatedBy, IsActive, Node_ID, Parent_ID, Updated, Updatedby,seqNo) VALUES(" +
-                    ctx.getAD_Client_ID() + "," +
-                    ctx.getAD_Org_ID() + "," +
-                    treeIDs + "," +
-                   "sysdate," +
-                    ctx.getAD_User_ID() + "," +
-                    "'" + isActive + "'," +
-                    $(chidren[i]).val() + "," +
-                    parentID + "," +
-                    "sysdate," +
-                    ctx.getAD_User_ID() + "," + (parseInt(childCount) + 10) + ") ";
-                childCount = childCount + 10;
-                queries.push(sql);
+                //var isActive = $(chidren[i]).data("active") == true ? "Y" : "N";
+                //sql = "INSERT INTO AD_TreeNode (AD_Client_ID, AD_Org_ID, AD_Tree_ID, Created, CreatedBy, IsActive, Node_ID, Parent_ID, Updated, Updatedby,seqNo) VALUES(" +
+                //    ctx.getAD_Client_ID() + "," +
+                //    ctx.getAD_Org_ID() + "," +
+                //    treeIDs + "," +
+                //    "sysdate," +
+                //    ctx.getAD_User_ID() + "," +
+                //    "'" + isActive + "'," +
+                //    $(chidren[i]).val() + "," +
+                //    parentID + "," +
+                //    "sysdate," +
+                //    ctx.getAD_User_ID() + "," + (parseInt(childCount) + 10) + ") ";
+                //childCount = childCount + 10;
+                //queries.push(sql);
+                chidrens[i] = $(chidren[i]).val();
+                isActive[i] = $(chidren[i]).data("active") == true ? "Y" : "N";
             }
-
-            console.log(queries);
-            VIS.DB.executeQueries(queries);
+            VIS.dataContext.getJSONData(VIS.Application.contextUrl + "OrgStructure/InsertTreeNode", { Chidrens: chidrens, IsActive: isActive, ParentID: parentID, TreeIds: treeIDs, ChildCount: parseInt(childCount) });
+            //console.log(queries);
+            //VIS.DB.executeQueries(queries);
 
         };
 
@@ -1264,7 +1273,7 @@
             if (!isSummarySelected) {
                 $btnSummary.prop("disabled", true);
                 $btnSummary.css('opacity', '0.5');
-            }            
+            }
             else {
                 $btnSummary.prop("disabled", false);
                 $btnSummary.css('opacity', '1');
@@ -1335,56 +1344,63 @@
         };
 
         function updateSequence(oldSiblings, oldID, destinChild, newID, treeid, isSumarry, currentNodeID, newIDForOrgInfo) {
-            var queries = [];
-            var sql = '';
+            //var queries = [];
+            //var sql = '';
+            var OldSiblings = [];
+            var NodeIDs = [];
             for (var i = 0; i < oldSiblings.length; i++) {
-                sql = "UPDATE ";
-                sql += tableName + " SET Parent_ID=" + oldID + ", SeqNo=" + i + ", Updated=SysDate" +
-                                  " WHERE AD_Tree_ID=" + treeid + " AND Node_ID=" + $(oldSiblings[i]).find(".data-id").val();
-                queries.push(sql);
+                //sql = "UPDATE ";
+                //sql += tableName + " SET Parent_ID=" + oldID + ", SeqNo=" + i + ", Updated=SysDate" +
+                //    " WHERE AD_Tree_ID=" + treeid + " AND Node_ID=" + $(oldSiblings[i]).find(".data-id").val();
+                //queries.push(sql);
+                OldSiblings[i] = VIS.Utility.Util.getValueOfInt($(oldSiblings[i]).find(".data-id").val());
             }
-
             for (var i = 0; i < destinChild.length; i++) {
-                sql = "UPDATE ";
-                sql += tableName + " SET Parent_ID=" + newID + ", SeqNo=" + i + ", Updated=SysDate" +
-                                  " WHERE AD_Tree_ID=" + treeid + " AND Node_ID=" + $(destinChild[i]).find(".data-id").val();
-                queries.push(sql);
+                //sql = "UPDATE ";
+                //sql += tableName + " SET Parent_ID=" + newID + ", SeqNo=" + i + ", Updated=SysDate" +
+                //    " WHERE AD_Tree_ID=" + treeid + " AND Node_ID=" + $(destinChild[i]).find(".data-id").val();
+                //queries.push(sql);
+                NodeIDs[i] = $(destinChild[i]).find(".data-id").val();
             }
-
+            var res = VIS.dataContext.getJSONData(VIS.Application.contextUrl + "OrgStructure/UpdateSequence", { TableName: tableName, OldID: oldID, NewId: newID, TreeId: treeid, OldSibling: OldSiblings, NodId: NodeIds });
             var parentID = newID;
 
-            if (isSumarry) {
-                newIDForOrgInfo = 0;
-            }
-            else {
-                sql = " update AD_TreeNode set parent_id=0 WHERE AD_Tree_ID= " + treeid + " AND  Node_ID=" + currentNodeID;
-                queries.push(sql);
-            }
+            //if (isSumarry) {
+            //    newIDForOrgInfo = 0;
+            //}
+            //else {
+            VIS.dataContext.getJSONData(VIS.Application.contextUrl + "OrgStructure/UpdateParentNode", { TreeId: treeid, CurrentNode: currentNodeID, NewIdForOrg: newIDForOrgInfo, IsSummery: isSumarry });
+                //sql = " update AD_TreeNode set parent_id=0 WHERE AD_Tree_ID= " + treeid + " AND  Node_ID=" + currentNodeID;
+                //queries.push(sql);
+            //}
+            //VIS.dataContext.getJSONData(VIS.Application.contextUrl + "OrgStructure/UpdateParentOrgInfo", { NewID: newIDForOrgInfo, CurrentNode: currentNodeID });
+            //sql = " update AD_OrgInfo set parent_org_id=" + newIDForOrgInfo + " WHERE AD_Org_ID=" + currentNodeID;
+            //queries.push(sql);
 
-            sql = " update AD_OrgInfo set parent_org_id=" + newIDForOrgInfo + " WHERE AD_Org_ID=" + currentNodeID;
-            queries.push(sql);
-
-            console.log(queries);
-            VIS.DB.executeQueries(queries)
+            //console.log(queries);
+            //VIS.DB.executeQueries(queries)
             $bsyDiv[0].style.visibility = "hidden";
         };
 
         function updateSequenceforHierarchy(oldSiblings, oldID, destinChild, newID, treeid, isSumarry, currentNodeID) {
-            var queries = [];
-            var sql = '';
+            var oldSiblings = new Array();
+            var Nodeids = new Array();
             for (var i = 0; i < oldSiblings.length; i++) {
-                sql = "UPDATE ";
-                sql += tableName + " SET Parent_ID=" + oldID + ", SeqNo=" + i + ", Updated=SysDate" +
-                                  " WHERE AD_Tree_ID=" + treeid + " AND Node_ID=" + $(oldSiblings[i]).find(".data-id").val();
-                queries.push(sql);
+                //sql = "UPDATE ";
+                //sql += tableName + " SET Parent_ID=" + oldID + ", SeqNo=" + i + ", Updated=SysDate" +
+                //    " WHERE AD_Tree_ID=" + treeid + " AND Node_ID=" + $(oldSiblings[i]).find(".data-id").val();
+                //queries.push(sql);
+                oldSiblings[i] = VIS.Utility.Util.getValueOfInt($(oldSiblings[i]).find(".data-id").val());
             }
 
             for (var i = 0; i < destinChild.length; i++) {
-                sql = "UPDATE ";
-                sql += tableName + " SET Parent_ID=" + newID + ", SeqNo=" + i + ", Updated=SysDate" +
-                                  " WHERE AD_Tree_ID=" + treeid + " AND Node_ID=" + $(destinChild[i]).find(".data-id").val();
-                queries.push(sql);
+                //sql = "UPDATE ";
+                //sql += tableName + " SET Parent_ID=" + newID + ", SeqNo=" + i + ", Updated=SysDate" +
+                //    " WHERE AD_Tree_ID=" + treeid + " AND Node_ID=" + $(destinChild[i]).find(".data-id").val();
+                //queries.push(sql);
+                Nodeids[i] = $(destinChild[i]).find(".data-id").val();
             }
+            var res = VIS.dataContext.getJSONData(VIS.Application.contextUrl + "OrgStructure/UpdateSequence", { TableName: tableName, OldID: oldID, NewId: newID, TreeId: treeid, OldSibling: oldSiblings, NodId: Nodeids });
 
             var parentID = newID;
 
@@ -1393,8 +1409,8 @@
             //    queries.push(sql);
             //}
 
-            console.log(queries);
-            VIS.DB.executeQueries(queries);
+            console.log(Nodeids);
+            //VIS.DB.executeQueries(queries);
             $bsyDiv[0].style.visibility = "hidden";
         };
 
@@ -1623,7 +1639,7 @@
             $chkIsLegal.prop("checked", true);
 
             $chkIsCostCenter.prop("checked", false);
-            $chkIsProfitCenter.prop("checked", false);            
+            $chkIsProfitCenter.prop("checked", false);
             $lblCostCenter.hide();
             $lblProfitCenter.hide();
 
@@ -1759,26 +1775,24 @@
             $txtLocation.getControl().attr("disabled", disabled);
             $txtLocation.getBtn(0).attr("disabled", disabled);
             $txtLocation.getBtn(1).attr("disabled", disabled);
-           
+
             //$chkIsSummary.attr("disabled", disabled);
             //$chkIsLegal.attr("disabled", disabled);
             //hide  profit center and cost center
-            if ($chkIsLegal.is(':checked') || $chkIsSummary.is(':checked'))
-            {
+            if ($chkIsLegal.is(':checked') || $chkIsSummary.is(':checked')) {
                 $chkIsCostCenter.attr('hidden', true);
                 $chkIsProfitCenter.attr('hidden', true);
                 $lblCostCenter.attr('hidden', true);
                 $lblProfitCenter.attr('hidden', true);
-                $chkIsCostCenter.prop('checked', false);   
-                $chkIsProfitCenter.prop('checked', false);   
+                $chkIsCostCenter.prop('checked', false);
+                $chkIsProfitCenter.prop('checked', false);
             }
-            else
-            {
+            else {
                 $chkIsCostCenter.attr('hidden', false);
                 $chkIsProfitCenter.attr('hidden', false);
                 $lblCostCenter.attr('hidden', false);
                 $lblProfitCenter.attr('hidden', false);
-            }                 
+            }
 
             var bgColor = "white";
 
@@ -2139,7 +2153,7 @@
                 }
                 refreshTree = true;
             }
-           
+
             setEanbleDisableControls($chkIsLegal.is(':checked'));
         };
 
@@ -2152,10 +2166,10 @@
 
                         return;
                     }
-                    $chkIsLegal.prop('checked', false);   
-           
+                    $chkIsLegal.prop('checked', false);
+
                     refreshTree = true;
-                }                
+                }
                 else if (!isSummarySelected && $chkIsSummary.is(':checked')) {
                     if (!VIS.ADialog.ask("VA003_changeToSummary")) {
                         e.preventDefault();
@@ -2167,12 +2181,11 @@
                 if ($chkIsSummary.is(':checked')) {
                     $chkIsLegal.attr('disabled', true);
                 }
-                else
-                {
+                else {
                     $chkIsLegal.attr('disabled', false);
                 }
             }
-          
+
             setEanbleDisableControls($chkIsSummary.is(':checked'));
         };
 
@@ -2333,7 +2346,7 @@
             window.setTimeout(function () {
 
                 //$divRightTree.find('.k-treeview').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
-                $divRightTree.find('.k-in').css({ 'cursor': 'pointer'});
+                $divRightTree.find('.k-in').css({ 'cursor': 'pointer' });
                 //$divRightTree.find('.k-state-hover').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
                 //$divRightTree.find('.k-state-focused').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
                 //$divRightTree.find('.k-state-selected').css({ 'border-color': 'rgba(229, 228, 225, 1)', 'background-color': '#DADADA', '-webkit-box-shadow': 'rgba(229, 228, 225, 1)', 'padding': '4px' });
@@ -2400,16 +2413,18 @@
                     return;
                 }
                 $bsyDiv[0].style.visibility = "visible";
-                var queries = [];
-                var sql = '';
+                // var queries = [];
+                // var sql = '';
 
-                sql = "UPDATE AD_Org SET name='" + VIS.Utility.encodeText($name1.val()) + "' WHERE AD_Org_ID=" + val;
-                queries.push(sql);
+                //sql = "UPDATE AD_Org SET name='" + VIS.Utility.encodeText($name1.val()) + "' WHERE AD_Org_ID=" + val;
+                // queries.push(sql);
 
-                console.log(queries);
-                VIS.DB.executeQueries(queries, null, function (ret) {
-                    console.log(ret);
-                });
+                //console.log(queries);
+                //VIS.DB.executeQueries(queries, null, function (ret) {
+                //    console.log(ret);
+                //});
+                VIS.dataContext.getJSONData(VIS.Application.contextUrl + "OrgStructure/UpdateOrgnization", { Name: VIS.Utility.encodeText($name1.val()), AD_Org_ID: val });
+
                 var treeview = $divRightTree.data("kendoTreeView");
                 treeview.dataItem(treeview.select()).set('text', VIS.Utility.encodeText($name1.val()));
                 //$($(this).closest(".k-item")).find(".data-id").set('text', "New node text");
@@ -2444,20 +2459,23 @@
             var val = $($(this).closest(".k-item")).find(".data-id").val();
             var treeID = $($(this).closest(".k-item")).find(".data-id").data("treeid");
 
-            var queries = [];
-            var sql = '';
+            //var queries = [];
+            //var sql = '';
 
-            sql = "DELETE FROM AD_TreeNode WHERE AD_Tree_ID=" + treeID + " AND parent_ID=" + val;
-            queries.push(sql);
+            //sql = "DELETE FROM AD_TreeNode WHERE AD_Tree_ID=" + treeID + " AND parent_ID=" + val;
+            //queries.push(sql);
 
 
-            sql = "DELETE FROM AD_TreeNode WHERE AD_Tree_ID=" + treeID + " AND Node_ID=" + val;
-            queries.push(sql);
+            //sql = "DELETE FROM AD_TreeNode WHERE AD_Tree_ID=" + treeID + " AND Node_ID=" + val;
+            //queries.push(sql);
 
-            console.log(queries);
-            VIS.DB.executeQueries(queries, null, function (ret) {
-                console.log(ret);
-            });
+            //console.log(queries);
+            //VIS.DB.executeQueries(queries, null, function (ret) {
+            //    console.log(ret);
+            //});
+            VIS.dataContext.getJSONData(VIS.Application.contextUrl + "OrgStructure/DeleteAD_TreeNode", { TreeId: treeID, Parent_ID: val });
+            //VIS.dataContext.getJSONData(VIS.Application.contextUrl + "OrgStructure/DeleteTreeNode", { TreeId: treeID, Node_ID: val });
+
             $bsyDiv[0].style.visibility = "hidden";
 
         };
@@ -2510,10 +2528,10 @@
             if ($rightdivContainer.data("isexpanded") == "Y") {
                 $rightdivContainer.data("isexpanded", "N");
                 $rightdivContainer.animate(
-                   { 'width': '35%' }, 800, function () {
-                       $btnSlider.find('img').attr('src', VIS.Application.contextUrl + 'Areas/VA003/Images/arrow-left.png');
-                       ChangeHeirarcyCmboWidth();
-                   });
+                    { 'width': '35%' }, 800, function () {
+                        $btnSlider.find('img').attr('src', VIS.Application.contextUrl + 'Areas/VA003/Images/arrow-left.png');
+                        ChangeHeirarcyCmboWidth();
+                    });
                 $btnSlider.find('a').addClass('VA003-toggle-icon');
                 $btnSlider.find('a').removeClass('VA003-edit-icon');
             }
@@ -2560,7 +2578,7 @@
                     data: { name: VIS.Utility.encodeText($name1.val().trim()) },
                     success: function (result) {
                         var data = JSON.parse(result);
-                        if (data == null || data == undefined ) {
+                        if (data == null || data == undefined) {
                             $bsyDiv[0].style.visibility = "hidden";
                             return null;
                         }
@@ -2852,7 +2870,7 @@
 
             oldValues = null;
             newValues = null;
-
+            ad_window_Id = null;
             $leftTreeContainer.remove();
             $middleContainer.remove();
             $leftdivContainer.remove();
