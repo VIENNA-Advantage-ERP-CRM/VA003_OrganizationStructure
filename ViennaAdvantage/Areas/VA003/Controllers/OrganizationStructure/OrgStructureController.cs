@@ -31,8 +31,8 @@ namespace VIS.Controllers
             return View();
         }
 
-        //[AjaxAuthorizeAttribute] // redirect to login page if request is not Authorized
-        //[AjaxSessionFilterAttribute] // redirect to Login/Home page if session expire
+        [AjaxAuthorizeAttribute] // redirect to login page if request is not Authorized
+        [AjaxSessionFilterAttribute] // redirect to Login/Home page if session expire
         public ActionResult GetTree(int windowNo, bool showOrgUnits)
         {
             Ctx ctx = Session["ctx"] as Ctx;
