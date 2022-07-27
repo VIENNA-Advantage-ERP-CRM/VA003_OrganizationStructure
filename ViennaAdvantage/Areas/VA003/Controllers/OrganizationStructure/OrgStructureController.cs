@@ -171,7 +171,7 @@ namespace VIS.Controllers
         [AjaxAuthorizeAttribute] // redirect to login page if request is not Authorized
         [AjaxSessionFilterAttribute] // redirect to Login/Home page if session expire
         /// <summary>
-        /// Get Sequence for Tree
+        /// This Method is used to Get Sequence for Tree
         /// </summary>
         /// <param name="TreeID"> Id of the current tree</param>
         /// <returns>Seuence for the selected tree</returns>
@@ -184,7 +184,7 @@ namespace VIS.Controllers
         [AjaxAuthorizeAttribute] // redirect to login page if request is not Authorized
         [AjaxSessionFilterAttribute] // redirect to Login/Home page if session expire
         /// <summary>
-        /// Get Sequence for Tree
+        ///This Method is used to Get Sequence for Tree
         /// </summary>
         /// <param name="AD_ORg_ID"> orgnization Id</param>
         /// <returns>Updated logo</returns>
@@ -195,7 +195,7 @@ namespace VIS.Controllers
             return Json(JsonConvert.SerializeObject(orgStrct.UpdateLogo(AD_ORg_ID)), JsonRequestBehavior.AllowGet);
         }
         /// <summary>
-        /// used to zoom specific window
+        /// This Method is used to zoom specific window
         /// </summary>
         /// <returns>Zoom window Id</returns>
         public ActionResult ZoomToWindow()
@@ -205,7 +205,7 @@ namespace VIS.Controllers
             return Json(JsonConvert.SerializeObject(orgStrct.ZoomToWindow()), JsonRequestBehavior.AllowGet);
         }
         /// <summary>
-        /// used to Insert new node into the tree
+        /// This Method is used to Insert new node into the tree
         /// <param name="Chidrens">Ids of childs</param>
         /// <param name="IsActive">IsActive</param>
         /// <param name="ParentID">Id of the Parent Node</param>
@@ -220,7 +220,7 @@ namespace VIS.Controllers
             return Json(JsonConvert.SerializeObject(orgStrct.InsertTreeNode(Chidrens, IsActive, ParentID, TreeIds, ChildCount)), JsonRequestBehavior.AllowGet);
         }
         /// <summary>
-        /// used to Update Sequence of the tree
+        /// This Method is used to Update Sequence of the tree
         /// <param name="OldID">Old id before change</param>
         /// <param name="NewId">Changed new id</param>
         /// <param name="TreeId">Id of the current tree</param>
@@ -235,7 +235,7 @@ namespace VIS.Controllers
             return Json(JsonConvert.SerializeObject(orgStrct.UpdateSeuenceOfNode(OldID, NewId, TreeId, OldSibling, NodId,TableName)), JsonRequestBehavior.AllowGet);
         }
         /// <summary>
-        /// used to Update Parent of the tree 
+        ///This Method is used to Update Parent Node of the tree 
         /// <param name="TreeId">Id of the tree</param>
         /// <param name="CurrentNode">Current selected Node</param>
         /// </summary>
@@ -246,9 +246,9 @@ namespace VIS.Controllers
             OrgStructure orgStrct = new OrgStructure(ctx);
             return Json(JsonConvert.SerializeObject(orgStrct.UpdateParentNode(TreeId, CurrentNode, NewIdForOrg, IsSummery)), JsonRequestBehavior.AllowGet);
         }
-       
+
         /// <summary>
-        /// used to Update Parent orgnization information of the tree
+        ///This Method is used to Update Parent orgnization information of the tree
         /// <param name="Name">Name of the Org</param>
         /// <param name="AD_Org_ID">Id of the Org</param>
         /// </summary>
@@ -260,7 +260,7 @@ namespace VIS.Controllers
             return Json(JsonConvert.SerializeObject(orgStrct.UpdateOrgnization(Name, AD_Org_ID)), JsonRequestBehavior.AllowGet);
         }
         /// <summary>
-        /// used to Delete Node of the tree
+        /// This Method is used to Delete Node of the tree
         /// <param name="TreeId">Name of the tree</param>
         /// <param name="NodeId">Id of the tree</param>
         /// </summary>

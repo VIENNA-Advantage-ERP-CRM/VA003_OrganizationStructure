@@ -1978,7 +1978,7 @@ namespace VIS.Models
         public int InsertTreeNode(string[] Chidrens, string[] IsActive, int ParentID, int TreeIds, int ChildCount)
         {
             int res = 0;
-            if (Chidrens.Length > 0 && IsActive.Length > 0)
+            if (Chidrens != null && Chidrens.Length > 0)
             {
                 for (int i = 0; i < Chidrens.Length; i++)
                 {
