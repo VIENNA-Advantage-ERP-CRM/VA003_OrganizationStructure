@@ -33,7 +33,7 @@ namespace VIS.Controllers
 
         [AjaxAuthorizeAttribute] // redirect to login page if request is not Authorized
         [AjaxSessionFilterAttribute] // redirect to Login/Home page if session expire
-        public ActionResult GetTree(int windowNo,bool showOrgUnits)
+        public ActionResult GetTree(int windowNo, bool showOrgUnits)
         {
             Ctx ctx = Session["ctx"] as Ctx;
             OrgStructure orgStrct = new OrgStructure(ctx);
@@ -166,9 +166,111 @@ namespace VIS.Controllers
             Ctx ctx = Session["ctx"] as Ctx;
             OrgStructure orgStrct = new OrgStructure(ctx);
             return Json(JsonConvert.SerializeObject(orgStrct.RefreshOrgType()), JsonRequestBehavior.AllowGet);
+        } 
+        
+        [AjaxAuthorizeAttribute] // redirect to login page if request is not Authorized
+        [AjaxSessionFilterAttribute] // redirect to Login/Home page if session expire
+        /// <summary>
+        /// This Method is used to Get Sequence for Tree
+        /// </summary>
+        /// <param name="TreeID"> Id of the current tree</param>
+        /// <returns>Seuence for the selected tree</returns>
+        public ActionResult LoadSequenceforTree(int TreeID)
+        {
+            Ctx ctx = Session["ctx"] as Ctx;
+            OrgStructure orgStrct = new OrgStructure(ctx);
+            return Json(JsonConvert.SerializeObject(orgStrct.GetSequenceforTree(TreeID)), JsonRequestBehavior.AllowGet);
+        }
+        [AjaxAuthorizeAttribute] // redirect to login page if request is not Authorized
+        [AjaxSessionFilterAttribute] // redirect to Login/Home page if session expire
+        /// <summary>
+        ///This Method is used to Get Sequence for Tree
+        /// </summary>
+        /// <param name="AD_ORg_ID"> orgnization Id</param>
+        /// <returns>Updated logo</returns>
+        public ActionResult UpdateLogo(int AD_ORg_ID)
+        {
+            Ctx ctx = Session["ctx"] as Ctx;
+            OrgStructure orgStrct = new OrgStructure(ctx);
+            return Json(JsonConvert.SerializeObject(orgStrct.UpdateLogo(AD_ORg_ID)), JsonRequestBehavior.AllowGet);
+        }
+        /// <summary>
+        /// This Method is used to zoom specific window
+        /// </summary>
+        /// <returns>Zoom window Id</returns>
+        public ActionResult ZoomToWindow()
+        {
+            Ctx ctx = Session["ctx"] as Ctx;
+            OrgStructure orgStrct = new OrgStructure(ctx);
+            return Json(JsonConvert.SerializeObject(orgStrct.ZoomToWindow()), JsonRequestBehavior.AllowGet);
+        }
+        /// <summary>
+        /// This Method is used to Insert new node into the tree
+        /// <param name="Chidrens">Ids of childs</param>
+        /// <param name="IsActive">IsActive</param>
+        /// <param name="ParentID">Id of the Parent Node</param>
+        /// <param name="TreeIds">Id of the trees</param>
+        /// <param name="ChildCount">count of childs</param>
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult InsertTreeNode(string[] Chidrens,string[] IsActive,int ParentID,int TreeIds,int ChildCount)
+        {
+            Ctx ctx = Session["ctx"] as Ctx;
+            OrgStructure orgStrct = new OrgStructure(ctx);
+            return Json(JsonConvert.SerializeObject(orgStrct.InsertTreeNode(Chidrens, IsActive, ParentID, TreeIds, ChildCount)), JsonRequestBehavior.AllowGet);
+        }
+        /// <summary>
+        /// This Method is used to Update Sequence of the tree
+        /// <param name="OldID">Old id before change</param>
+        /// <param name="NewId">Changed new id</param>
+        /// <param name="TreeId">Id of the current tree</param>
+        /// <param name="OldSibling">Old Siblings (Before Change)</param>
+        /// <param name="NodId">Node Id</param>
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult UpdateSequence(int OldID, int NewId, int TreeId,string[] OldSibling,string[] NodId,string TableName)
+        {
+            Ctx ctx = Session["ctx"] as Ctx;
+            OrgStructure orgStrct = new OrgStructure(ctx);
+            return Json(JsonConvert.SerializeObject(orgStrct.UpdateSeuenceOfNode(OldID, NewId, TreeId, OldSibling, NodId,TableName)), JsonRequestBehavior.AllowGet);
+        }
+        /// <summary>
+        ///This Method is used to Update Parent Node of the tree 
+        /// <param name="TreeId">Id of the tree</param>
+        /// <param name="CurrentNode">Current selected Node</param>
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult UpdateParentNode(int TreeId,int CurrentNode,int NewIdForOrg,bool IsSummery)
+        {
+            Ctx ctx = Session["ctx"] as Ctx;
+            OrgStructure orgStrct = new OrgStructure(ctx);
+            return Json(JsonConvert.SerializeObject(orgStrct.UpdateParentNode(TreeId, CurrentNode, NewIdForOrg, IsSummery)), JsonRequestBehavior.AllowGet);
         }
 
-
-
+        /// <summary>
+        ///This Method is used to Update Parent orgnization information of the tree
+        /// <param name="Name">Name of the Org</param>
+        /// <param name="AD_Org_ID">Id of the Org</param>
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult UpdateOrgnization(string Name, int AD_Org_ID)
+        {
+            Ctx ctx = Session["ctx"] as Ctx;
+            OrgStructure orgStrct = new OrgStructure(ctx);
+            return Json(JsonConvert.SerializeObject(orgStrct.UpdateOrgnization(Name, AD_Org_ID)), JsonRequestBehavior.AllowGet);
+        }
+        /// <summary>
+        /// This Method is used to Delete Node of the tree
+        /// <param name="TreeId">Name of the tree</param>
+        /// <param name="NodeId">Id of the tree</param>
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult DeleteAD_TreeNode(int TreeId, int Parent_ID)
+        {
+            Ctx ctx = Session["ctx"] as Ctx;
+            OrgStructure orgStrct = new OrgStructure(ctx);
+            return Json(JsonConvert.SerializeObject(orgStrct.DeleteAD_TreeNode(TreeId, Parent_ID)), JsonRequestBehavior.AllowGet);
+        }
+       
     }
 }
