@@ -34,4 +34,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("1.0.6.0")]  // do not change
 
 
-[assembly: AssemblyFileVersion("1.0.6.0")]
+[assembly: AssemblyFileVersion("2.0.1.0")]
