@@ -38,7 +38,7 @@ namespace ViennaAdvantage.Areas.VA003
             //script.Include("~/Areas/VA003/Scripts/apps/orgstructure/orgstructure.js",
             //    "~/Areas/VA003/Scripts/apps/orgstructure/addnode.js",
             //    "~/Areas/VA003/Scripts/apps/orgstructure/info.js"
-            );
+            //);
 
             script.Include("~/Areas/VA003/Scripts/apps/orgstructure/orgstructureall.min.js");
             style.Include("~/Areas/VA003/Contents/OrgStructureall.min.css");
