@@ -33,11 +33,11 @@ namespace VIS.Controllers
 
         [AjaxAuthorizeAttribute] // redirect to login page if request is not Authorized
         [AjaxSessionFilterAttribute] // redirect to Login/Home page if session expire
-        public ActionResult GetTree(int windowNo,bool showOrgUnits)
+        public ActionResult GetTree(int windowNo, bool showOrgUnits)
         {
             Ctx ctx = Session["ctx"] as Ctx;
             OrgStructure orgStrct = new OrgStructure(ctx);
-            return Json(JsonConvert.SerializeObject(orgStrct.GetTree(windowNo, @Url.Content("~/"), "",showOrgUnits)), JsonRequestBehavior.AllowGet);
+            return Json(JsonConvert.SerializeObject(orgStrct.GetTree(windowNo, @Url.Content("~/"), "", showOrgUnits)), JsonRequestBehavior.AllowGet);
         }
 
         [AjaxAuthorizeAttribute] // redirect to login page if request is not Authorized
@@ -148,15 +148,21 @@ namespace VIS.Controllers
             return Json(JsonConvert.SerializeObject(orgStrct.AddOrgNode(treeID, name, description, value, windowNo, @Url.Content("~/"), parentID)), JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// Add New Tree
+        /// </summary>
+        /// <param name="name">Name</param>
+        /// <param name="IsOrgUnit">Tree for Org Unit</param>
+        /// <returns></returns>
         [AjaxAuthorizeAttribute] // redirect to login page if request is not Authorized
         [AjaxSessionFilterAttribute] // redirect to Login/Home page if session expire
-        public ActionResult AddNewTree(string name)
+        public ActionResult AddNewTree(string name, bool IsOrgUnit)
         {
             Ctx ctx = Session["ctx"] as Ctx;
             OrgStructure orgStrct = new OrgStructure(ctx);
             name = Server.HtmlDecode(name);
 
-            return Json(JsonConvert.SerializeObject(orgStrct.AddNewTree(name)), JsonRequestBehavior.AllowGet);
+            return Json(JsonConvert.SerializeObject(orgStrct.AddNewTree(name, IsOrgUnit)), JsonRequestBehavior.AllowGet);
         }
 
         [AjaxAuthorizeAttribute] // redirect to login page if request is not Authorized
