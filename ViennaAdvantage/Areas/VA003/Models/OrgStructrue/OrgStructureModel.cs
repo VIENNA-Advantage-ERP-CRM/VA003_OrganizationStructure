@@ -29,6 +29,7 @@ namespace VIS.Models
         Ctx ctx = null;
 
         private List<int> lstLegalEntities = new List<int>();
+        private List<int> lstOrgUnits = new List<int>();
         private List<int> lstSummary = new List<int>();
         private List<int> lstInsertedItems = new List<int>();
         List<TreeStructure> LstTrees = new List<TreeStructure>();
@@ -62,9 +63,25 @@ namespace VIS.Models
 
         }
 
+        /// <summary>
+        /// Load Organization Units
+        /// VIS0060: 28 Sep 2022
+        /// </summary>
+        private void LoadLOrganizationUnits()
+        {
+            DataSet ds = DB.ExecuteDataset("SELECT AD_Org_ID FROM AD_Org WHERE IsOrgUnit='Y'");
+            if (ds != null && ds.Tables[0].Rows.Count > 0)
+            {
+                for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                {
+                    lstOrgUnits.Add(Convert.ToInt32(ds.Tables[0].Rows[i]["AD_Org_ID"]));
+                }
+            }
+        }
+
         private void LoadInActiveOrgs()
         {
-            DataSet ds = DB.ExecuteDataset("SELECT AD_Org_ID FROM AD_ORg WHERE IsActive='N'");
+            DataSet ds = DB.ExecuteDataset("SELECT AD_Org_ID FROM AD_Org WHERE IsActive='N'");
             if (ds != null && ds.Tables[0].Rows.Count > 0)
             {
                 for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
@@ -343,6 +360,7 @@ namespace VIS.Models
         public List<TreeStructure> GetTree(int windowNo, string url, string tree_ID, bool showOrgUnits)
         {
             LoadLegalEntities();
+            LoadLOrganizationUnits();
             LoadInActiveOrgs();
             displayOrgUnits = showOrgUnits;
 
@@ -637,8 +655,25 @@ namespace VIS.Models
                 }
                 nTree.ImageSource = "Areas/VA003/Images/orgstr-legal-entity.PNG";
             }
+            else if (lstOrgUnits.IndexOf(id) > -1)
+            {
+                nTree.IsOrgUnit = true;
+                if (lstInActiveOrg.IndexOf(id) > -1)
+                {
+                    nTree.IsActive = false;
+                    nTree.bColor = "rgba(86, 186, 109, 0.6)";
+                }
+                else
+                {
+                    nTree.IsActive = true;
+                    nTree.bColor = "rgba(86, 186, 109, 1)";
+                }
+
+                nTree.ImageSource = "Areas/VA003/Images/orgstr-store.PNG";
+            }
             else
             {
+                nTree.IsOrgUnit = false;
                 if (lstInActiveOrg.IndexOf(id) > -1)
                 {
                     nTree.IsActive = false;
@@ -880,7 +915,7 @@ namespace VIS.Models
                     {
 
 
-                        newOrgIDD = InsertNewOrg(org, data.Description, data.IsSummary ? 'Y' : 'N', data.IsLegalEntity ? 'Y' : 'N', data.Name, data.SearchKey, data.IsActive ? 'Y' : 'N', data.costCenter ? 'Y' : 'N', data.profitCenter ? 'Y' : 'N',Util.GetValueOfInt( data.ParentOrg));
+                        newOrgIDD = InsertNewOrg(org, data.Description, data.IsSummary ? 'Y' : 'N', data.IsLegalEntity ? 'Y' : 'N', data.Name, data.SearchKey, data.IsActive ? 'Y' : 'N', data.costCenter ? 'Y' : 'N', data.profitCenter ? 'Y' : 'N', Util.GetValueOfInt(data.ParentOrg));
                     }
                     else
                     {
@@ -1581,11 +1616,18 @@ namespace VIS.Models
         public List<TreeStructure> CreateTree1(int AD_Tree_ID, string url, int windowNo)
         {
             LoadLegalEntities();
+            LoadLOrganizationUnits();
             LoadInActiveOrgsInTree(AD_Tree_ID);
             MTree tree = new MTree(ctx, Convert.ToInt32(AD_Tree_ID), true, true, null);
             List<TreeStructure> LstTrees = new List<TreeStructure>();
             TreeStructure trees = new TreeStructure();
             trees.AD_Tree_ID = Convert.ToInt32(AD_Tree_ID);
+
+            // VIS0060: Get Where Clause from the selected Tree.
+            if (tree.Get_ColumnIndex("WhereClause") >= 0)
+            {
+                trees.WhereClause = Util.GetValueOfString(tree.Get_Value("WhereClause"));
+            }
             LstTrees.Add(trees);
             GetMenuTreeUI1(trees, tree.GetRootNode(), url, windowNo.ToString(), tree.GetNodeTableName());
 
@@ -1650,7 +1692,7 @@ namespace VIS.Models
 
             MOrg org = null;
 
-            int newOrgIDD = InsertNewOrg(org, description, 'Y', 'N', name, value, 'Y', 'N', 'N',0);
+            int newOrgIDD = InsertNewOrg(org, description, 'Y', 'N', name, value, 'Y', 'N', 'N', 0);
 
             org = new MOrg(ctx, newOrgIDD, null);
 
@@ -1687,10 +1729,18 @@ namespace VIS.Models
             //rep.Tree = CreateTree(treeID, url, windowNo);
 
             LoadLegalEntities();
+            LoadLOrganizationUnits();
             MTree tre = new MTree(ctx, Convert.ToInt32(tree.GetAD_Tree_ID()), true, true, null);
             List<TreeStructure> LstTrees = new List<TreeStructure>();
             TreeStructure trees = new TreeStructure();
             trees.AD_Tree_ID = Convert.ToInt32(tree.GetAD_Tree_ID());
+
+            // VIS0060: Get Where Clause from the selected Tree.
+            if (tree.Get_ColumnIndex("WhereClause") >= 0)
+            {
+                trees.WhereClause = Util.GetValueOfString(tree.Get_Value("WhereClause"));
+            }
+
             LstTrees.Add(trees);
             GetMenuTreeUI1(trees, tre.GetRootNode(), url, windowNo.ToString(), tre.GetNodeTableName());
 
@@ -1746,6 +1796,12 @@ namespace VIS.Models
         private string CreateTree1(TreeStructure trees, System.Windows.Forms.TreeNodeCollection treeNodeCollection, string baseUrl, string windowNo = "")
         {
             StringBuilder sb = new StringBuilder();
+            string orgunit = "'N'";
+
+            if (trees.WhereClause.Length > 0 && trees.WhereClause.Contains("IsOrgUnit"))
+            {
+                orgunit = trees.WhereClause.Substring(trees.WhereClause.IndexOf("=") + 1);
+            }
 
             foreach (var item in treeNodeCollection)
             {
@@ -1758,7 +1814,7 @@ namespace VIS.Models
                 // Applied  check on tree not to show/create org unit
                 MOrg Org = new MOrg(ctx, vt.Node_ID, null);
 
-                if (Org.Get_ColumnIndex("IsOrgUnit") > 0 && Org.IsOrgUnit())
+                if (Org.Get_ColumnIndex("IsOrgUnit") > 0 && (Org.IsOrgUnit() ? "'Y'" : "'N'") != orgunit)
                 {
                     continue;
                 }
@@ -1770,7 +1826,7 @@ namespace VIS.Models
                     {
                         trees.items = new List<TreeStructure>();
                     }
-
+                    newTrees.WhereClause = trees.WhereClause;
                     trees.items.Add(newTrees);
 
                     sb.Append(GetSummaryItemStart1(newTrees, vt.Parent_ID, vt.Node_ID, System.Net.WebUtility.HtmlEncode(vt.SetName), windowNo));
@@ -1847,8 +1903,15 @@ namespace VIS.Models
                 nTree.bColor = "#dc8a20";
                 nTree.ImageSource = "Areas/VA003/Images/orgstr-legal-entity.PNG";
             }
+            else if (lstOrgUnits.IndexOf(id) > -1)
+            {
+                nTree.IsOrgUnit = true;
+                nTree.bColor = "rgba(86, 186, 109, 1)";
+                nTree.ImageSource = "Areas/VA003/Images/orgstr-store.PNG";
+            }
             else
             {
+                nTree.IsOrgUnit = false;
                 nTree.bColor = "rgba(43, 174, 250, 0.78)";
                 nTree.ImageSource = "Areas/VA003/Images/orgstr-store.PNG";
             }
@@ -1861,7 +1924,7 @@ namespace VIS.Models
             return h;
         }
 
-        public OrgStructureLookup AddNewTree(string name)
+        public OrgStructureLookup AddNewTree(string name, bool isorgunit)
         {
             OrgStructureLookup data = new OrgStructureLookup();
 
@@ -1869,6 +1932,13 @@ namespace VIS.Models
             tree.SetName(name);
             tree.SetAD_Table_ID(MTable.Get_Table_ID("AD_Org"));
             tree.SetTreeType("OO");
+
+            // VIS0060: Set where clause on Tree for Organization to specify if it is Tree for Org Unit or not.
+            if (tree.Get_ColumnIndex("WhereClause") >= 0)
+            {
+                tree.Set_Value("WhereClause", isorgunit ? "AD_Org.IsOrgUnit='Y'" : "AD_Org.IsOrgUnit='N'");
+            }
+
             if (tree.Save())
             {
                 CreateReportHeirarchy(tree);
@@ -2007,6 +2077,7 @@ namespace VIS.Models
         public int OrgParentID { get; set; }
         public bool IsSummary { get; set; }
         public bool IsLegal { get; set; }
+        public bool IsOrgUnit { get; set; }
         public bool expanded { get; set; }
         public string TableName { get; set; }
         public string color { get; set; }
@@ -2016,6 +2087,7 @@ namespace VIS.Models
         public string Visibility { get; set; }
         public string DeleteVisibility { get; set; }
         public bool IsActive { get; set; }
+        public string WhereClause { get; set; }
         public List<TreeStructure> items { get; set; }
     }
 
