@@ -131,6 +131,22 @@ namespace VIS.Controllers
             return Json(JsonConvert.SerializeObject(orgStrct.CreateTree1(treeID, @Url.Content("~/"), windowNo)), JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// Create Tree Structure for selected Tree
+        /// </summary>
+        /// <param name="windowNo">Window no</param>
+        /// <param name="treeID">Tree ID</param>
+        /// <param name="LegalEntityIds">LegalEntity IDs</param>
+        /// <returns>TreeData</returns>
+        /// <writer>VIS_0045</writer>
+        [AjaxAuthorizeAttribute] // redirect to login page if request is not Authorized
+        [AjaxSessionFilterAttribute] // redirect to Login/Home page if session expire
+        public ActionResult FRPTCreateTree(int windowNo, int treeID, string LegalEntityIds)
+        {
+            Ctx ctx = Session["ctx"] as Ctx;
+            OrgStructure orgStrct = new OrgStructure(ctx);
+            return Json(JsonConvert.SerializeObject(orgStrct.CreateTree1(treeID, @Url.Content("~/"), windowNo, LegalEntityIds)), JsonRequestBehavior.AllowGet);
+        }
 
         [AjaxAuthorizeAttribute] // redirect to login page if request is not Authorized
         [AjaxSessionFilterAttribute] // redirect to Login/Home page if session expire

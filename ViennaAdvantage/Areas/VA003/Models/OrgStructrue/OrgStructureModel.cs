@@ -65,11 +65,13 @@ namespace VIS.Models
 
         /// <summary>
         /// Load Organization Units
-        /// VIS0060: 28 Sep 2022
+        /// VIS0060: 28 Sep 2022 
         /// </summary>
-        private void LoadLOrganizationUnits()
+        /// <param name="LegalEntityIds">Legal Entity IDs for filter data</param>
+        private void LoadLOrganizationUnits(string LegalEntityIds)
         {
-            DataSet ds = DB.ExecuteDataset("SELECT AD_Org_ID FROM AD_Org WHERE IsOrgUnit='Y'");
+            DataSet ds = DB.ExecuteDataset("SELECT AD_Org_ID FROM AD_Org WHERE " + (string.IsNullOrEmpty(LegalEntityIds) ? "  IsOrgUnit='Y' " :
+                         " IsOrgUnit='Y' AND " + VAdvantage.DataBase.DBFunctionCollection.TypecastColumnAsInt("LegalEntityOrg") + " IN (" + LegalEntityIds + ")"));
             if (ds != null && ds.Tables[0].Rows.Count > 0)
             {
                 for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
@@ -360,7 +362,7 @@ namespace VIS.Models
         public List<TreeStructure> GetTree(int windowNo, string url, string tree_ID, bool showOrgUnits)
         {
             LoadLegalEntities();
-            LoadLOrganizationUnits();
+            LoadLOrganizationUnits(null);
             LoadInActiveOrgs();
             displayOrgUnits = showOrgUnits;
 
@@ -1615,8 +1617,21 @@ namespace VIS.Models
 
         public List<TreeStructure> CreateTree1(int AD_Tree_ID, string url, int windowNo)
         {
+            return CreateTree1(AD_Tree_ID, url, windowNo, null);
+        }
+
+        /// <summary>
+        /// Create Tree
+        /// </summary>
+        /// <param name="AD_Tree_ID">Tree ID</param>
+        /// <param name="url"></param>
+        /// <param name="windowNo"></param>
+        /// <param name="LegalEntityIds">Legal Entity IDs</param>
+        /// <returns>List<TreeStructure></returns>
+        public List<TreeStructure> CreateTree1(int AD_Tree_ID, string url, int windowNo, string LegalEntityIds)
+        {
             LoadLegalEntities();
-            LoadLOrganizationUnits();
+            LoadLOrganizationUnits(LegalEntityIds);
             LoadInActiveOrgsInTree(AD_Tree_ID);
             MTree tree = new MTree(ctx, Convert.ToInt32(AD_Tree_ID), true, true, null);
             List<TreeStructure> LstTrees = new List<TreeStructure>();
@@ -1729,7 +1744,7 @@ namespace VIS.Models
             //rep.Tree = CreateTree(treeID, url, windowNo);
 
             LoadLegalEntities();
-            LoadLOrganizationUnits();
+            LoadLOrganizationUnits(null);
             MTree tre = new MTree(ctx, Convert.ToInt32(tree.GetAD_Tree_ID()), true, true, null);
             List<TreeStructure> LstTrees = new List<TreeStructure>();
             TreeStructure trees = new TreeStructure();
@@ -1807,6 +1822,12 @@ namespace VIS.Models
             {
                 VTreeNode vt = (VTreeNode)item;
                 if (lstInActiveOrgInTree.Contains(vt.Node_ID))
+                {
+                    continue;
+                }
+
+                //VIS_0045: When Load Organization Unit, check it contains in the list or not
+                if (orgunit.Equals("'Y'") && !lstOrgUnits.Contains(vt.Node_ID))
                 {
                     continue;
                 }
