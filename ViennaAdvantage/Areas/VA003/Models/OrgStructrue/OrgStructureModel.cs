@@ -917,7 +917,7 @@ namespace VIS.Models
                     {
 
 
-                        newOrgIDD = InsertNewOrg(org, data.Description, data.IsSummary ? 'Y' : 'N', data.IsLegalEntity ? 'Y' : 'N', data.Name, data.SearchKey, data.IsActive ? 'Y' : 'N', data.costCenter ? 'Y' : 'N', data.profitCenter ? 'Y' : 'N', Util.GetValueOfInt(data.ParentOrg));
+                        newOrgIDD = InsertNewOrg(org, data.Description, data.IsSummary ? 'Y' : 'N', data.IsLegalEntity ? 'Y' : 'N', data.Name, data.SearchKey, data.IsActive ? 'Y' : 'N', data.costCenter ? 'Y' : 'N', data.profitCenter ? 'Y' : 'N', "'N'", Util.GetValueOfInt(data.ParentOrg));
                     }
                     else
                     {
@@ -1107,7 +1107,22 @@ namespace VIS.Models
             return null;
         }
 
-        private int InsertNewOrg(MOrg org, string description, char summary, char legal, string name, string value, char active, char costCenter, char profitCenter, int parentOrg)
+        /// <summary>
+        /// Insert New Organization
+        /// </summary>
+        /// <param name="org">Organization</param>
+        /// <param name="description">Description</param>
+        /// <param name="summary">IsSummary Level</param>
+        /// <param name="legal">Is Legal Entiry</param>
+        /// <param name="name">Name</param>
+        /// <param name="value">Search Key</param>
+        /// <param name="active">Is Active</param>
+        /// <param name="costCenter">Is Cost Center</param>
+        /// <param name="profitCenter">Is Profit Center</param>
+        /// <param name="orgUnit">Is Org Unit</param>
+        /// <param name="parentOrg">Parent Organization</param>
+        /// <returns>Organization ID</returns>
+        private int InsertNewOrg(MOrg org, string description, char summary, char legal, string name, string value, char active, char costCenter, char profitCenter, string orgUnit, int parentOrg)
         {
             char isOrgUnit = 'N';
             bool insertLegalEnt = false;
@@ -1116,6 +1131,13 @@ namespace VIS.Models
             {
                 isOrgUnit = 'Y';
             }
+
+            // VIS0060: Work done to add new node/org as Organization Unit
+            if (orgUnit == "'Y'")
+            {
+                isOrgUnit = 'Y';
+            }
+
             // if insert organization unit
             if (costCenter.ToString().Equals("Y") || profitCenter.ToString().Equals("Y"))
             {
@@ -1706,8 +1728,18 @@ namespace VIS.Models
             //            info.Save();
 
             MOrg org = null;
+            MTree tree = new MTree(ctx, treeID, null);
 
-            int newOrgIDD = InsertNewOrg(org, description, 'Y', 'N', name, value, 'Y', 'N', 'N', 0);
+            // VIS0060: Work done to add new node/org as Organization Unit
+            string orgunit = "'N'";
+            string whereClause = Util.GetValueOfString(tree.Get_Value("WhereClause"));
+
+            if (whereClause.Length > 0 && whereClause.Contains("IsOrgUnit"))
+            {
+                orgunit = whereClause.Substring(whereClause.IndexOf("=") + 1);
+            }
+
+            int newOrgIDD = InsertNewOrg(org, description, 'Y', 'N', name, value, 'Y', 'N', 'N', orgunit, 0);
 
             org = new MOrg(ctx, newOrgIDD, null);
 
@@ -1719,7 +1751,7 @@ namespace VIS.Models
             info.SetIsActive(true);
             info.Save();
 
-            MTree tree = new MTree(ctx, treeID, null);
+
             int childCount = 0;
             var sql = "SELECT  max(seqNo) FROM AD_TreeNode WHERE AD_Client_ID=" + ctx.GetAD_Client_ID() + " AND AD_Tree_ID=" + treeID;
             try
