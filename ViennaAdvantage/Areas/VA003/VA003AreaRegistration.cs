@@ -27,7 +27,7 @@ namespace ViennaAdvantage.Areas.VA003
 
             /* ==>  Here include all css files in style bundle......see example below....  */
 
-            style.Include("~/Areas/VA003/Contents/OrgStructure.css");
+            //style.Include("~/Areas/VA003/Contents/OrgStructure.css");
 
 
             ScriptBundle script = new ScriptBundle("~/Areas/VA003/Scripts/VA003Js");
