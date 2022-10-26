@@ -56,6 +56,9 @@
     <Reference Include="CrystalDecisions.Shared">
       <HintPath>D:\Dll\Web\CrystalDecisions.Shared.dll</HintPath>
     </Reference>
+    <Reference Include="DevExpress.Web.v14.2">
+      <HintPath>DLL\DevExpress.Web.v14.2.dll</HintPath>
+    </Reference>
     <Reference Include="DotNetOpenAuth">
       <HintPath>..\..\VISPRONew_\ViennaAdvantageWeb\Dll\DotNetOpenAuth.dll</HintPath>
     </Reference>
@@ -129,7 +132,7 @@
       <HintPath>DLL\Mono.Security.dll</HintPath>
     </Reference>
     <Reference Include="MySql.Data">
-      <HintPath>..\..\VISPRONew_\ViennaAdvantageWeb\Dll\MySql.Data.dll</HintPath>
+      <HintPath>DLL\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
