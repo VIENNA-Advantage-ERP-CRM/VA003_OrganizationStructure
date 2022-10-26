@@ -37,7 +37,7 @@ namespace VIS.Controllers
         {
             Ctx ctx = Session["ctx"] as Ctx;
             OrgStructure orgStrct = new OrgStructure(ctx);
-            return Json(JsonConvert.SerializeObject(orgStrct.GetTree(windowNo, @Url.Content("~/"), "",showOrgUnits)), JsonRequestBehavior.AllowGet);
+            return Json(JsonConvert.SerializeObject(orgStrct.GetTree(windowNo, @Url.Content("~/"), "", showOrgUnits)), JsonRequestBehavior.AllowGet);
         }
 
         [AjaxAuthorizeAttribute] // redirect to login page if request is not Authorized
@@ -131,6 +131,22 @@ namespace VIS.Controllers
             return Json(JsonConvert.SerializeObject(orgStrct.CreateTree1(treeID, @Url.Content("~/"), windowNo)), JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// Create Tree Structure for selected Tree
+        /// </summary>
+        /// <param name="windowNo">Window no</param>
+        /// <param name="treeID">Tree ID</param>
+        /// <param name="LegalEntityIds">LegalEntity IDs</param>
+        /// <returns>TreeData</returns>
+        /// <writer>VIS_0045</writer>
+        [AjaxAuthorizeAttribute] // redirect to login page if request is not Authorized
+        [AjaxSessionFilterAttribute] // redirect to Login/Home page if session expire
+        public ActionResult FRPTCreateTree(int windowNo, int treeID, string LegalEntityIds)
+        {
+            Ctx ctx = Session["ctx"] as Ctx;
+            OrgStructure orgStrct = new OrgStructure(ctx);
+            return Json(JsonConvert.SerializeObject(orgStrct.CreateTree1(treeID, @Url.Content("~/"), windowNo, LegalEntityIds)), JsonRequestBehavior.AllowGet);
+        }
 
         [AjaxAuthorizeAttribute] // redirect to login page if request is not Authorized
         [AjaxSessionFilterAttribute] // redirect to Login/Home page if session expire
@@ -148,15 +164,21 @@ namespace VIS.Controllers
             return Json(JsonConvert.SerializeObject(orgStrct.AddOrgNode(treeID, name, description, value, windowNo, @Url.Content("~/"), parentID)), JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// Add New Tree
+        /// </summary>
+        /// <param name="name">Name</param>
+        /// <param name="IsOrgUnit">Tree for Org Unit</param>
+        /// <returns></returns>
         [AjaxAuthorizeAttribute] // redirect to login page if request is not Authorized
         [AjaxSessionFilterAttribute] // redirect to Login/Home page if session expire
-        public ActionResult AddNewTree(string name)
+        public ActionResult AddNewTree(string name, bool IsOrgUnit)
         {
             Ctx ctx = Session["ctx"] as Ctx;
             OrgStructure orgStrct = new OrgStructure(ctx);
             name = Server.HtmlDecode(name);
 
-            return Json(JsonConvert.SerializeObject(orgStrct.AddNewTree(name)), JsonRequestBehavior.AllowGet);
+            return Json(JsonConvert.SerializeObject(orgStrct.AddNewTree(name, IsOrgUnit)), JsonRequestBehavior.AllowGet);
         }
 
         [AjaxAuthorizeAttribute] // redirect to login page if request is not Authorized
@@ -166,8 +188,8 @@ namespace VIS.Controllers
             Ctx ctx = Session["ctx"] as Ctx;
             OrgStructure orgStrct = new OrgStructure(ctx);
             return Json(JsonConvert.SerializeObject(orgStrct.RefreshOrgType()), JsonRequestBehavior.AllowGet);
-        } 
-        
+        }
+
         [AjaxAuthorizeAttribute] // redirect to login page if request is not Authorized
         [AjaxSessionFilterAttribute] // redirect to Login/Home page if session expire
         /// <summary>
@@ -213,7 +235,7 @@ namespace VIS.Controllers
         /// <param name="ChildCount">count of childs</param>
         /// </summary>
         /// <returns></returns>
-        public ActionResult InsertTreeNode(string[] Chidrens,string[] IsActive,int ParentID,int TreeIds,int ChildCount)
+        public ActionResult InsertTreeNode(string[] Chidrens, string[] IsActive, int ParentID, int TreeIds, int ChildCount)
         {
             Ctx ctx = Session["ctx"] as Ctx;
             OrgStructure orgStrct = new OrgStructure(ctx);
@@ -228,11 +250,11 @@ namespace VIS.Controllers
         /// <param name="NodId">Node Id</param>
         /// </summary>
         /// <returns></returns>
-        public ActionResult UpdateSequence(int OldID, int NewId, int TreeId,string[] OldSibling,string[] NodId,string TableName)
+        public ActionResult UpdateSequence(int OldID, int NewId, int TreeId, string[] OldSibling, string[] NodId, string TableName)
         {
             Ctx ctx = Session["ctx"] as Ctx;
             OrgStructure orgStrct = new OrgStructure(ctx);
-            return Json(JsonConvert.SerializeObject(orgStrct.UpdateSeuenceOfNode(OldID, NewId, TreeId, OldSibling, NodId,TableName)), JsonRequestBehavior.AllowGet);
+            return Json(JsonConvert.SerializeObject(orgStrct.UpdateSeuenceOfNode(OldID, NewId, TreeId, OldSibling, NodId, TableName)), JsonRequestBehavior.AllowGet);
         }
         /// <summary>
         ///This Method is used to Update Parent Node of the tree 
@@ -240,7 +262,7 @@ namespace VIS.Controllers
         /// <param name="CurrentNode">Current selected Node</param>
         /// </summary>
         /// <returns></returns>
-        public ActionResult UpdateParentNode(int TreeId,int CurrentNode,int NewIdForOrg,bool IsSummery)
+        public ActionResult UpdateParentNode(int TreeId, int CurrentNode, int NewIdForOrg, bool IsSummery)
         {
             Ctx ctx = Session["ctx"] as Ctx;
             OrgStructure orgStrct = new OrgStructure(ctx);
@@ -271,6 +293,6 @@ namespace VIS.Controllers
             OrgStructure orgStrct = new OrgStructure(ctx);
             return Json(JsonConvert.SerializeObject(orgStrct.DeleteAD_TreeNode(TreeId, Parent_ID)), JsonRequestBehavior.AllowGet);
         }
-       
+
     }
 }
