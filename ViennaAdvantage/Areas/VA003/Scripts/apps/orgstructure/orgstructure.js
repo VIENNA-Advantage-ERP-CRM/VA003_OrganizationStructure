@@ -108,6 +108,7 @@
         var $ulRightTree = null;
         var infoRoot = null;
         var refreshTree = false;
+        var whereclause = null;
 
         /*
           Initialize Components
@@ -248,7 +249,7 @@
 
             $showOrUnits.on('change', function (e) {
                 refreshLeftTree();
-               
+
 
 
             });
@@ -433,7 +434,7 @@
             $btnSlider = $(' <li><a title="' + VIS.Msg.getMsg('Edit') + '" class="VA003-edit-icon"></a></li>');
             $liShowOrgUnit = $('<li class="VA003-shworgchkwrp"></li>');
             $showOrUnits = $('<input type="checkbox" data-name="legal" >');
-            
+
             $labelShowOrgUnit = $('<li><label >' + VIS.Msg.getMsg("VA003_ShowOrgUnits") + '</label></li>');
             $liShowOrgUnit.append($showOrUnits).append($labelShowOrgUnit);
             $btnInfo = $btnHdrSend = $('<i class="VA003-InfoIcon vis vis-info" title="' + VIS.Msg.getMsg("VA003_info").replace('&', '') + '"> </i>'); //$(' <a title="' + VIS.Msg.getMsg('VA003_info') + '" class="VA003-info-icon"></a>');
@@ -557,7 +558,7 @@
                 template: "<img src='" + VIS.Application.contextUrl + "#= item.ImageSource #' style='vertical-align: text-top;float: left;margin: 4px 0px 0px 10px;'><i class='#= item.ImageSource #'></i>" +
                     "<p style='min-width:122px;border-radius:4px;margin:0px;padding: 7px 10px 7px 38px; background-color:#= item.bColor #; color: #= item.color #'>#= item.text #</p>" +
                     "<input type='hidden' class='data-id' value='#= item.NodeID #' data-active='#= item.IsActive #' data-summary='#= item.IsSummary #' data-orgparentid='#= item.OrgParentID #' data-parentid='#= item.ParentID #'  " +
-                    " data-legal='#= item.IsLegal #'  data-Treeparentid='#= item.TreeParentID #' data-treeid='" + AD_Tree_ID + "' />",
+                    " data-legal='#= item.IsLegal #' data-isorgunit='#= item.IsOrgUnit #' data-Treeparentid='#= item.TreeParentID #' data-treeid='" + AD_Tree_ID + "' />",
             });
 
             divLeftTree.data("kendoTreeView").select(".k-first");
@@ -600,7 +601,7 @@
             //$cmbTenant = $('<select data-name="tenant">');
             //$divTopFields.append($(' <div class="VA003-form-data">').append('<label>' + VIS.Msg.getMsg("Tenant") + '</label>').append($cmbTenant));
             //valueChangeEvent($cmbTenant);
-            
+
             //$divTopFields.append($('<div class="VA003-form-data"></div>').append($lblOrgInfo));
 
             $txtSerackKey = $('<input type="text" data-name="searchkey">');
@@ -803,6 +804,19 @@
 
             var isSourceSummary = $(e.sourceNode).find(".data-id").data("summary");
 
+            var isorgunit = $(e.sourceNode).find(".data-id").data("isorgunit") ? "'Y'" : "'N'";
+
+            if (whereclause != null && whereclause.length > 0 && whereclause.contains("IsOrgUnit")) {
+                var orgunit = whereclause.substring(whereclause.indexOf("=") + 1);
+                if (isorgunit != orgunit) {
+                    e.preventDefault();
+                    return;
+                }
+            }
+            else if ($(e.sourceNode).find(".data-id").data("isorgunit")) {
+                e.preventDefault();
+                return;
+            }
 
             var destree = $(e.destinationNode).find(".data-id").data("treeid");
             var sourTree = $(e.sourceNode).find(".data-id").data("treeid");
@@ -824,8 +838,6 @@
                 return;
             }
 
-
-
             var isCurrentLegal = $(e.sourceNode).find(".data-id").data("legal");
 
             if ($(e.destinationNode).find(".data-id").data("summary") != true && isCurrentLegal == true)  // if droping legal item on any other node than summary then don't allow this...
@@ -835,13 +847,12 @@
             }
             var isSumarry = $(e.destinationNode).find(".data-id").data("summary");
 
-
             if (isSourceSummary && !isSumarry)  // summary can be child of summary only
             {
                 e.preventDefault();
                 return;
             }
-
+            
             var treeid = $(e.sourceNode).find(".data-id").data("treeid");
 
             var currentNodeID = $(e.sourceNode).find(".data-id").val();
@@ -1179,13 +1190,13 @@
                     ctx.getAD_Client_ID() + "," +
                     ctx.getAD_Org_ID() + "," +
                     treeIDs + "," +
-                   "sysdate," +
+                    "sysdate," +
                     ctx.getAD_User_ID() + "," +
                     "'" + isActive + "'," +
                     $(chidren[i]).val() + "," +
                     parentID + "," +
                     "sysdate," +
-                    ctx.getAD_User_ID() + "," + (parseInt(childCount) + 10) + ") ";
+                    ctx.getAD_User_ID() + "," + (VIS.Utility.Util.getValueOfInt(childCount) + 10) + ") ";
                 childCount = childCount + 10;
                 queries.push(sql);
             }
@@ -1264,7 +1275,7 @@
             if (!isSummarySelected) {
                 $btnSummary.prop("disabled", true);
                 $btnSummary.css('opacity', '0.5');
-            }            
+            }
             else {
                 $btnSummary.prop("disabled", false);
                 $btnSummary.css('opacity', '1');
@@ -1340,14 +1351,14 @@
             for (var i = 0; i < oldSiblings.length; i++) {
                 sql = "UPDATE ";
                 sql += tableName + " SET Parent_ID=" + oldID + ", SeqNo=" + i + ", Updated=SysDate" +
-                                  " WHERE AD_Tree_ID=" + treeid + " AND Node_ID=" + $(oldSiblings[i]).find(".data-id").val();
+                    " WHERE AD_Tree_ID=" + treeid + " AND Node_ID=" + $(oldSiblings[i]).find(".data-id").val();
                 queries.push(sql);
             }
 
             for (var i = 0; i < destinChild.length; i++) {
                 sql = "UPDATE ";
                 sql += tableName + " SET Parent_ID=" + newID + ", SeqNo=" + i + ", Updated=SysDate" +
-                                  " WHERE AD_Tree_ID=" + treeid + " AND Node_ID=" + $(destinChild[i]).find(".data-id").val();
+                    " WHERE AD_Tree_ID=" + treeid + " AND Node_ID=" + $(destinChild[i]).find(".data-id").val();
                 queries.push(sql);
             }
 
@@ -1375,14 +1386,14 @@
             for (var i = 0; i < oldSiblings.length; i++) {
                 sql = "UPDATE ";
                 sql += tableName + " SET Parent_ID=" + oldID + ", SeqNo=" + i + ", Updated=SysDate" +
-                                  " WHERE AD_Tree_ID=" + treeid + " AND Node_ID=" + $(oldSiblings[i]).find(".data-id").val();
+                    " WHERE AD_Tree_ID=" + treeid + " AND Node_ID=" + $(oldSiblings[i]).find(".data-id").val();
                 queries.push(sql);
             }
 
             for (var i = 0; i < destinChild.length; i++) {
                 sql = "UPDATE ";
                 sql += tableName + " SET Parent_ID=" + newID + ", SeqNo=" + i + ", Updated=SysDate" +
-                                  " WHERE AD_Tree_ID=" + treeid + " AND Node_ID=" + $(destinChild[i]).find(".data-id").val();
+                    " WHERE AD_Tree_ID=" + treeid + " AND Node_ID=" + $(destinChild[i]).find(".data-id").val();
                 queries.push(sql);
             }
 
@@ -1623,7 +1634,7 @@
             $chkIsLegal.prop("checked", true);
 
             $chkIsCostCenter.prop("checked", false);
-            $chkIsProfitCenter.prop("checked", false);            
+            $chkIsProfitCenter.prop("checked", false);
             $lblCostCenter.hide();
             $lblProfitCenter.hide();
 
@@ -1759,26 +1770,24 @@
             $txtLocation.getControl().attr("disabled", disabled);
             $txtLocation.getBtn(0).attr("disabled", disabled);
             $txtLocation.getBtn(1).attr("disabled", disabled);
-           
+
             //$chkIsSummary.attr("disabled", disabled);
             //$chkIsLegal.attr("disabled", disabled);
             //hide  profit center and cost center
-            if ($chkIsLegal.is(':checked') || $chkIsSummary.is(':checked'))
-            {
+            if ($chkIsLegal.is(':checked') || $chkIsSummary.is(':checked')) {
                 $chkIsCostCenter.attr('hidden', true);
                 $chkIsProfitCenter.attr('hidden', true);
                 $lblCostCenter.attr('hidden', true);
                 $lblProfitCenter.attr('hidden', true);
-                $chkIsCostCenter.prop('checked', false);   
-                $chkIsProfitCenter.prop('checked', false);   
+                $chkIsCostCenter.prop('checked', false);
+                $chkIsProfitCenter.prop('checked', false);
             }
-            else
-            {
+            else {
                 $chkIsCostCenter.attr('hidden', false);
                 $chkIsProfitCenter.attr('hidden', false);
                 $lblCostCenter.attr('hidden', false);
                 $lblProfitCenter.attr('hidden', false);
-            }                 
+            }
 
             var bgColor = "white";
 
@@ -2139,7 +2148,7 @@
                 }
                 refreshTree = true;
             }
-           
+
             setEanbleDisableControls($chkIsLegal.is(':checked'));
         };
 
@@ -2152,10 +2161,10 @@
 
                         return;
                     }
-                    $chkIsLegal.prop('checked', false);   
-           
+                    $chkIsLegal.prop('checked', false);
+
                     refreshTree = true;
-                }                
+                }
                 else if (!isSummarySelected && $chkIsSummary.is(':checked')) {
                     if (!VIS.ADialog.ask("VA003_changeToSummary")) {
                         e.preventDefault();
@@ -2167,12 +2176,11 @@
                 if ($chkIsSummary.is(':checked')) {
                     $chkIsLegal.attr('disabled', true);
                 }
-                else
-                {
+                else {
                     $chkIsLegal.attr('disabled', false);
                 }
             }
-          
+
             setEanbleDisableControls($chkIsSummary.is(':checked'));
         };
 
@@ -2296,6 +2304,7 @@
             var doDrag = ($cmbReportHirerchy.find('option:selected').data('isdefault') == "Y") ? false : true;
 
             var trreeid = treeData[0].AD_Tree_ID;
+            whereclause = treeData[0].WhereClause;
             if (doDrag) {
                 $divRightTree.kendoTreeView({
                     dataSource: treeData,
@@ -2304,7 +2313,7 @@
                     select: onSelectRht,
                     template: "<div style='float: left;border-radius: 4px;display: inline-flex; align-items: center; background: #= item.bColor #;'><img src='" + VIS.Application.contextUrl + "#= item.ImageSource #' style='vertical-align: text-top;float: left;margin: 0px 0px 0px 10px; '><i class='#= item.ImageSource #' style='float: left;'></i>" +
                         "<p style='float: left;min-width:122px;border-radius:4px;margin:0px;padding: 7px 10px 7px 10px;  color: #= item.color #'>#= item.text #</p>" +
-                        "<input type='hidden' class='data-id' value='#= item.NodeID #'  data-legal='#= item.IsLegal #'  data-summary='#= item.IsSummary #'  data-parentid='#= item.ParentID #'  data-Treeparentid='#= item.TreeParentID #'   data-treeid='" + trreeid + "' />" +
+                        "<input type='hidden' class='data-id' value='#= item.NodeID #'  data-legal='#= item.IsLegal #' data-summary='#= item.IsSummary #'  data-parentid='#= item.ParentID #'  data-Treeparentid='#= item.TreeParentID #' data-treeid='" + trreeid + "' />" +
                         "</div><div style='float:left; display: flex; align-items: center;'><a style='display:#= item.DeleteVisibility #' title='" + VIS.Msg.getMsg("Delete") + "' class='VA003-delete-link vis vis-mark' ></a><a style='display:#= item.Visibility #' title='" + VIS.Msg.getMsg("VA003_Rename") + "'  class='VA003-rename-link vis vis-pencil' ></a></div>",
                 });
             }
@@ -2316,7 +2325,7 @@
                     select: onSelectRht,
                     template: "<div style='float: left;border-radius: 4px;float: left;border-radius: 4px;display: inline-flex; align-items: center;background: #= item.bColor #;'><img src='" + VIS.Application.contextUrl + "#= item.ImageSource #' style='vertical-align: text-top;float: left;margin: 0px 0px 0px 10px; '><i class='#= item.ImageSource #' style='float: left;'></i>" +
                         "<p style='float: left;min-width:122px;border-radius:4px;margin:0px;padding: 7px 10px 7px 10px;  color: #= item.color #'>#= item.text #</p>" +
-                        "<input type='hidden' class='data-id' value='#= item.NodeID #'  data-legal='#= item.IsLegal #'  data-summary='#= item.IsSummary #'  data-parentid='#= item.ParentID #'  data-Treeparentid='#= item.TreeParentID #'   data-treeid='" + trreeid + "' />" +
+                        "<input type='hidden' class='data-id' value='#= item.NodeID #'  data-legal='#= item.IsLegal #' data-summary='#= item.IsSummary #'  data-parentid='#= item.ParentID #'  data-Treeparentid='#= item.TreeParentID #' data-treeid='" + trreeid + "' />" +
                         "</div><div style='float:left;display:#= item.Visibility #'><a title='" + VIS.Msg.getMsg("VA003_Rename") + "'  class='VA003-rename-link vis vis-pencil' ></a></div>",
                 });
             }
@@ -2333,7 +2342,7 @@
             window.setTimeout(function () {
 
                 //$divRightTree.find('.k-treeview').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
-                $divRightTree.find('.k-in').css({ 'cursor': 'pointer'});
+                $divRightTree.find('.k-in').css({ 'cursor': 'pointer' });
                 //$divRightTree.find('.k-state-hover').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
                 //$divRightTree.find('.k-state-focused').css({ 'border-color': 'transparent', 'background-color': 'transparent', '-webkit-box-shadow': 'none' });
                 //$divRightTree.find('.k-state-selected').css({ 'border-color': 'rgba(229, 228, 225, 1)', 'background-color': '#DADADA', '-webkit-box-shadow': 'rgba(229, 228, 225, 1)', 'padding': '4px' });
@@ -2510,10 +2519,10 @@
             if ($rightdivContainer.data("isexpanded") == "Y") {
                 $rightdivContainer.data("isexpanded", "N");
                 $rightdivContainer.animate(
-                   { 'width': '35%' }, 800, function () {
-                       $btnSlider.find('img').attr('src', VIS.Application.contextUrl + 'Areas/VA003/Images/arrow-left.png');
-                       ChangeHeirarcyCmboWidth();
-                   });
+                    { 'width': '35%' }, 800, function () {
+                        $btnSlider.find('img').attr('src', VIS.Application.contextUrl + 'Areas/VA003/Images/arrow-left.png');
+                        ChangeHeirarcyCmboWidth();
+                    });
                 $btnSlider.find('a').addClass('VA003-toggle-icon');
                 $btnSlider.find('a').removeClass('VA003-edit-icon');
             }
@@ -2532,10 +2541,16 @@
         function addnewTree(e) {
             var $root1 = $('<div class="vis-formouterwrpdiv">');
             var $topfields1 = $('<div style="width:100%" class="VA003-form-top-fields">');
-            var $name1 = $('<input maxlength="' + treeLength + '" type="text" data-name="name" placeholder=" " data-placeholder="">')
+            var $topfields2 = $('<div style="width:100%" class="VA003-form-top-fields">');
+            var $name1 = $('<input maxlength="' + treeLength + '" type="text" data-name="name" placeholder=" " data-placeholder="">');
+            var $orgUnitTree = $('<input type="checkbox" data-name="isorgunit">');
 
             $topfields1.append($('<div class="VA003-form-data input-group vis-input-wrap">').append($('<div class="vis-control-wrap">').append($name1).append('<label>' + VIS.Msg.getMsg("Name") + '</label>')));
+            $topfields2.append($('<div style="margin-bottom:15px" class="VA003-form-top-fields">').append($orgUnitTree).append('<label>' + VIS.Msg.getMsg("VA003_OrgUnitTree") + '</label>'));
+
             $root1.append($topfields1);
+            $root1.append($topfields2);
+
             var ch = new VIS.ChildDialog();
             ch.setContent($root1);
             ch.setWidth('350px');
@@ -2557,10 +2572,10 @@
                 $.ajax({
                     url: VIS.Application.contextUrl + "OrgStructure/AddNewTree",
                     async: true,
-                    data: { name: VIS.Utility.encodeText($name1.val().trim()) },
+                    data: { name: VIS.Utility.encodeText($name1.val().trim()), IsOrgUnit: $orgUnitTree.is(':checked') },
                     success: function (result) {
                         var data = JSON.parse(result);
-                        if (data == null || data == undefined ) {
+                        if (data == null || data == undefined) {
                             $bsyDiv[0].style.visibility = "hidden";
                             return null;
                         }
