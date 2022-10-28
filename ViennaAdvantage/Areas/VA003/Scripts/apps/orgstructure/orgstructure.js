@@ -2575,8 +2575,6 @@
             $root1.append($topfields1);
             $root1.append($topfields2);
 
-            $topfields1.append($('<div class="VA003-form-data input-group vis-input-wrap">').append($('<div class="vis-control-wrap">').append($name1).append('<label>' + VIS.Msg.getMsg("Name") + '</label>')));
-            $root1.append($topfields1);
             var ch = new VIS.ChildDialog();
             ch.setContent($root1);
             ch.setWidth('350px');
