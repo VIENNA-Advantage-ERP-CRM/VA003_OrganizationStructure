@@ -109,6 +109,7 @@
         var $ulRightTree = null;
         var infoRoot = null;
         var refreshTree = false;
+        var whereclause = null;
 
         /*
           Initialize Components
@@ -561,7 +562,7 @@
                 template: "<img src='" + VIS.Application.contextUrl + "#= item.ImageSource #' style='vertical-align: text-top;float: left;margin: 4px 0px 0px 10px;'><i class='#= item.ImageSource #'></i>" +
                     "<p style='min-width:122px;border-radius:4px;margin:0px;padding: 7px 10px 7px 38px; background-color:#= item.bColor #; color: #= item.color #'>#= item.text #</p>" +
                     "<input type='hidden' class='data-id' value='#= item.NodeID #' data-active='#= item.IsActive #' data-summary='#= item.IsSummary #' data-orgparentid='#= item.OrgParentID #' data-parentid='#= item.ParentID #'  " +
-                    " data-legal='#= item.IsLegal #'  data-Treeparentid='#= item.TreeParentID #' data-treeid='" + AD_Tree_ID + "' />",
+                    " data-legal='#= item.IsLegal #' data-isorgunit='#= item.IsOrgUnit #' data-Treeparentid='#= item.TreeParentID #' data-treeid='" + AD_Tree_ID + "' />",
             });
 
             divLeftTree.data("kendoTreeView").select(".k-first");
@@ -807,6 +808,19 @@
 
             var isSourceSummary = $(e.sourceNode).find(".data-id").data("summary");
 
+            var isorgunit = $(e.sourceNode).find(".data-id").data("isorgunit") ? "'Y'" : "'N'";
+
+            if (whereclause != null && whereclause.length > 0 && whereclause.contains("IsOrgUnit")) {
+                var orgunit = whereclause.substring(whereclause.indexOf("=") + 1);
+                if (isorgunit != orgunit) {
+                    e.preventDefault();
+                    return;
+                }
+            }
+            else if ($(e.sourceNode).find(".data-id").data("isorgunit")) {
+                e.preventDefault();
+                return;
+            }
 
             var destree = $(e.destinationNode).find(".data-id").data("treeid");
             var sourTree = $(e.sourceNode).find(".data-id").data("treeid");
@@ -1198,7 +1212,7 @@
                 chidrens[i] = $(chidren[i]).val();
                 isActive[i] = $(chidren[i]).data("active") == true ? "Y" : "N";
             }
-            VIS.dataContext.getJSONData(VIS.Application.contextUrl + "OrgStructure/InsertTreeNode", { Chidrens: chidrens, IsActive: isActive, ParentID: parentID, TreeIds: treeIDs, ChildCount: parseInt(childCount) });
+            VIS.dataContext.getJSONData(VIS.Application.contextUrl + "OrgStructure/InsertTreeNode", { Chidrens: chidrens, IsActive: isActive, ParentID: parentID, TreeIds: treeIDs, ChildCount: VIS.Utility.Util.getValueOfInt(childCount) });
             //console.log(queries);
             //VIS.DB.executeQueries(queries);
 
@@ -2309,6 +2323,7 @@
             var doDrag = ($cmbReportHirerchy.find('option:selected').data('isdefault') == "Y") ? false : true;
 
             var trreeid = treeData[0].AD_Tree_ID;
+            whereclause = treeData[0].WhereClause;
             if (doDrag) {
                 $divRightTree.kendoTreeView({
                     dataSource: treeData,
@@ -2550,10 +2565,16 @@
         function addnewTree(e) {
             var $root1 = $('<div class="vis-formouterwrpdiv">');
             var $topfields1 = $('<div style="width:100%" class="VA003-form-top-fields">');
-            var $name1 = $('<input maxlength="' + treeLength + '" type="text" data-name="name" placeholder=" " data-placeholder="">')
+            var $topfields2 = $('<div style="width:100%" class="VA003-form-top-fields">');
+            var $name1 = $('<input maxlength="' + treeLength + '" type="text" data-name="name" placeholder=" " data-placeholder="">');
+            var $orgUnitTree = $('<input type="checkbox" data-name="isorgunit">');
 
             $topfields1.append($('<div class="VA003-form-data input-group vis-input-wrap">').append($('<div class="vis-control-wrap">').append($name1).append('<label>' + VIS.Msg.getMsg("Name") + '</label>')));
+            $topfields2.append($('<div style="margin-bottom:15px" class="VA003-form-top-fields">').append($orgUnitTree).append('<label>' + VIS.Msg.getMsg("VA003_OrgUnitTree") + '</label>'));
+
             $root1.append($topfields1);
+            $root1.append($topfields2);
+
             var ch = new VIS.ChildDialog();
             ch.setContent($root1);
             ch.setWidth('350px');
@@ -2575,7 +2596,7 @@
                 $.ajax({
                     url: VIS.Application.contextUrl + "OrgStructure/AddNewTree",
                     async: true,
-                    data: { name: VIS.Utility.encodeText($name1.val().trim()) },
+                    data: { name: VIS.Utility.encodeText($name1.val().trim()), IsOrgUnit: $orgUnitTree.is(':checked') },
                     success: function (result) {
                         var data = JSON.parse(result);
                         if (data == null || data == undefined) {
