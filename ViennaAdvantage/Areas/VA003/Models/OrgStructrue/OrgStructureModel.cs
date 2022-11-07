@@ -1859,7 +1859,7 @@ namespace VIS.Models
                 }
 
                 //VIS_0045: When Load Organization Unit, check it contains in the list or not
-                if (orgunit.Equals("'Y'") && !lstOrgUnits.Contains(vt.Node_ID))
+                if (orgunit.Equals("'Y'") && !vt.IsSummary && !lstOrgUnits.Contains(vt.Node_ID))
                 {
                     continue;
                 }
