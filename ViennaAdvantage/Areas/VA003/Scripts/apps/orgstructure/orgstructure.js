@@ -1376,7 +1376,7 @@
                 //queries.push(sql);
                 NodeIDs[i] = $(destinChild[i]).find(".data-id").val();
             }
-            var res = VIS.dataContext.getJSONData(VIS.Application.contextUrl + "OrgStructure/UpdateSequence", { TableName: tableName, OldID: oldID, NewId: newID, TreeId: treeid, OldSibling: OldSiblings, NodId: NodeIds });
+            var res = VIS.dataContext.getJSONData(VIS.Application.contextUrl + "OrgStructure/UpdateSequence", { TableName: tableName, OldID: oldID, NewId: newID, TreeId: treeid, OldSibling: OldSiblings, NodId: NodeIDs });
             var parentID = newID;
 
             //if (isSumarry) {
