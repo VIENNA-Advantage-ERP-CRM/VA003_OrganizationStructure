@@ -1122,7 +1122,7 @@ namespace VIS.Models
         /// <param name="orgUnit">Is Org Unit</param>
         /// <param name="parentOrg">Parent Organization</param>
         /// <returns>Organization ID</returns>
-        private int InsertNewOrg(MOrg org, string description, char summary, char legal, string name, string value, char active, char costCenter, char profitCenter, string orgUnit, int parentOrg)
+        private int InsertNewOrg(MOrg newOrg, string description, char summary, char legal, string name, string value, char active, char costCenter, char profitCenter, string orgUnit, int parentOrg)
         {
             char isOrgUnit = 'N';
             bool insertLegalEnt = false;
@@ -1150,74 +1150,97 @@ namespace VIS.Models
                 insertLegalEnt = true;
             }
 
-            int newOrgIDD = MSequence.GetNextID(ctx.GetAD_Client_ID(), "AD_Org", null);
-            string sql = @"INSERT
-                                INTO AD_Org
-                                  (
-                                    AD_CLIENT_ID,
-                                    AD_ORG_ID ,
-                                    CREATED ,
-                                    CREATEDBY ,
-                                    DESCRIPTION ,
-                                    ISACTIVE ,
-                                    ISSUMMARY ,
-                                    NAME ,
-                                    UPDATED ,
-                                    UPDATEDBY ,
-                                    VALUE,
-                                    IsLegalEntity,
-                                    IsCostCenter,
-                                    IsProfitCenter,
-                                    IsOrgUnit,
-                                    LegalEntityOrg
-                                  )
-                                  VALUES (
-                        " + ctx.GetAD_Client_ID() + "," + Convert.ToInt32(newOrgIDD) + ",sysdate," + ctx.GetAD_User_ID() + ",'" + description + "','" + active + "','" + summary + "','" + name + "',sysdate," + ctx.GetAD_User_ID() + ",'" + value + "','" + legal + "','" + costCenter + "','" + profitCenter + "','" + isOrgUnit + "',";
+            //int newOrgIDD = MSequence.GetNextID(ctx.GetAD_Client_ID(), "AD_Org", null);
+            //string sql = @"INSERT
+            //                    INTO AD_Org
+            //                      (
+            //                        AD_CLIENT_ID,
+            //                        AD_ORG_ID ,
+            //                        CREATED ,
+            //                        CREATEDBY ,
+            //                        DESCRIPTION ,
+            //                        ISACTIVE ,
+            //                        ISSUMMARY ,
+            //                        NAME ,
+            //                        UPDATED ,
+            //                        UPDATEDBY ,
+            //                        VALUE,
+            //                        IsLegalEntity,
+            //                        IsCostCenter,
+            //                        IsProfitCenter,
+            //                        IsOrgUnit,
+            //                        LegalEntityOrg
+            //                      )
+            //                      VALUES (
+            //            " + ctx.GetAD_Client_ID() + "," + Convert.ToInt32(newOrgIDD) + ",sysdate," + ctx.GetAD_User_ID() + ",'" + description + "','" + active + "','" + summary + "','" + name + "',sysdate," + ctx.GetAD_User_ID() + ",'" + value + "','" + legal + "','" + costCenter + "','" + profitCenter + "','" + isOrgUnit + "',";
+            //if (insertLegalEnt)
+            //{
+            //    sql += parentOrg;
+            //}
+            //else
+            //{
+            //    sql += "NULL";
+            //}
+            //sql += ")";
+
+            if (newOrg == null)
+                newOrg = new MOrg(ctx, 0, null);
+
+            newOrg.SetAD_Client_ID(ctx.GetAD_Client_ID());
+            newOrg.SetDescription(description);
+            newOrg.SetIsActive(active == 'Y');
+            newOrg.SetIsSummary(summary == 'Y');
+            newOrg.SetName(name);
+            newOrg.SetValue(value);
+            newOrg.SetIsProfitCenter(profitCenter == 'Y');
+            newOrg.SetIsLegalEntity(legal == 'Y');
+            newOrg.SetIsCostCenter(costCenter == 'Y');
+            newOrg.SetIsOrgUnit(isOrgUnit == 'Y');
+            newOrg.SetIsLegalEntity(legal == 'Y');
             if (insertLegalEnt)
             {
-                sql += parentOrg;
+                newOrg.Set_Value("LegalEntityOrg", parentOrg);
             }
-            else
-            {
-                sql += "NULL";
-            }
-            sql += ")";
-            int insertedCount = DB.ExecuteQuery(sql, null, null);
-
-            org = new MOrg(ctx, newOrgIDD, null);
+            newOrg.Save();
 
 
-            int AD_Table_ID = MTable.Get_Table_ID("AD_Org");
 
-            string type = X_AD_ChangeLog.CHANGELOGTYPE_Insert;
+            //int insertedCount = DB.ExecuteQuery(sql, null, null);
 
-            GetChangeLogColumn();
+            //org = new MOrg(ctx, newOrgIDD, null);
 
-            if (!MChangeLog.IsNotLogged(AD_Table_ID, "AD_Org", 0, type))
-            {
-                MRole role = MRole.GetDefault(ctx, false);
-                //	Do we need to log
-                if (MChangeLog.IsLogged(AD_Table_ID, type)		//	im/explicit log
-                    || (role != null && role.IsChangeLog()))//	Role Logging
-                {
-                    CreateLog(org, "AD_CLIENT_ID", ctx.GetAD_Client_ID().ToString(), AD_Table_ID);
-                    CreateLog(org, "AD_ORG_ID", newOrgIDD.ToString(), AD_Table_ID);
-                    CreateLog(org, "CREATED", org.GetCreated().ToShortDateString(), AD_Table_ID);
-                    CreateLog(org, "CREATEDBY", ctx.GetAD_User_ID().ToString(), AD_Table_ID);
-                    CreateLog(org, "DESCRIPTION", description, AD_Table_ID);
-                    CreateLog(org, "ISACTIVE", "Y", AD_Table_ID);
-                    CreateLog(org, "ISSUMMARY", summary.ToString(), AD_Table_ID);
-                    CreateLog(org, "NAME", name, AD_Table_ID);
-                    CreateLog(org, "UPDATED", org.GetUpdated().ToShortDateString(), AD_Table_ID);
-                    CreateLog(org, "UPDATEDBY", ctx.GetAD_User_ID().ToString(), AD_Table_ID);
-                    CreateLog(org, "VALUE", value, AD_Table_ID);
-                    CreateLog(org, "IsLegalEntity", legal.ToString(), AD_Table_ID);
-                }
-            }
 
-            org.PublicAfterSave(true, true);
+            //int AD_Table_ID = MTable.Get_Table_ID("AD_Org");
 
-            return org.GetAD_Org_ID();
+            //string type = X_AD_ChangeLog.CHANGELOGTYPE_Insert;
+
+            //GetChangeLogColumn();
+
+            //if (!MChangeLog.IsNotLogged(AD_Table_ID, "AD_Org", 0, type))
+            //{
+            //    MRole role = MRole.GetDefault(ctx, false);
+            //    //	Do we need to log
+            //    if (MChangeLog.IsLogged(AD_Table_ID, type)		//	im/explicit log
+            //        || (role != null && role.IsChangeLog()))//	Role Logging
+            //    {
+            //        CreateLog(org, "AD_CLIENT_ID", ctx.GetAD_Client_ID().ToString(), AD_Table_ID);
+            //        CreateLog(org, "AD_ORG_ID", newOrgIDD.ToString(), AD_Table_ID);
+            //        CreateLog(org, "CREATED", org.GetCreated().ToShortDateString(), AD_Table_ID);
+            //        CreateLog(org, "CREATEDBY", ctx.GetAD_User_ID().ToString(), AD_Table_ID);
+            //        CreateLog(org, "DESCRIPTION", description, AD_Table_ID);
+            //        CreateLog(org, "ISACTIVE", "Y", AD_Table_ID);
+            //        CreateLog(org, "ISSUMMARY", summary.ToString(), AD_Table_ID);
+            //        CreateLog(org, "NAME", name, AD_Table_ID);
+            //        CreateLog(org, "UPDATED", org.GetUpdated().ToShortDateString(), AD_Table_ID);
+            //        CreateLog(org, "UPDATEDBY", ctx.GetAD_User_ID().ToString(), AD_Table_ID);
+            //        CreateLog(org, "VALUE", value, AD_Table_ID);
+            //        CreateLog(org, "IsLegalEntity", legal.ToString(), AD_Table_ID);
+            //    }
+            //}
+
+            //org.PublicAfterSave(true, true);
+
+            return newOrg.GetAD_Org_ID();
 
         }
 
