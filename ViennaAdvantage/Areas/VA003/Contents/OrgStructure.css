@@ -48,7 +48,7 @@
 }
 
 .VA003-content-wrap {
-    background-color: white;
+    background-color: rgba(var(--v-c-common), 1);
     width: 100%;
     float: left;
     position: relative;
@@ -525,11 +525,10 @@ ul.VA003-root-node, ul.VA003-root-node > li ul {
     padding: 15px;*/
     z-index: 100;
     position: relative;
-    background: #fff;
+    background: rgba(var(--v-c-common), 1);
     height: calc(100% - 43px);
     height: -webkit-calc(100% - 43px);
     height: -moz-calc(100% - 43px);
-
 }
 
 .VA003-right-top {
@@ -588,7 +587,7 @@ ul.VA003-root-node, ul.VA003-root-node > li ul {
 .VA003-infoRoot {
     position: absolute;
     z-index: 999;
-    background-color: rgba(195, 190, 190, 0.3);
+    background-color: rgba(195, 190, 190, 0.2);
     opacity: 1;
     height: 100%;
     width: 100%;
@@ -599,11 +598,12 @@ ul.VA003-root-node, ul.VA003-root-node > li ul {
 .VA003-infoRoot-leftDiv {
     float: left;
     min-height: 200px;
-    background-color: rgba(var(--v-c-on-secondary), 1);
+    background-color: rgba(var(--v-c-secondary), 1);
     /*margin: 10px;*/
     border-radius: 15px;
     opacity: 1;
     width: 100%;
+    box-shadow: rgb(0 0 0 / 20%);
 }
 
 .VA003-infoRoot-leftDivContainer {

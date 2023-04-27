@@ -608,11 +608,11 @@
 
             //$divTopFields.append($('<div class="VA003-form-data"></div>').append($lblOrgInfo));
 
-            $txtSerackKey = $('<input type="text" data-name="searchkey">');
+            $txtSerackKey = $('<input type="text" data-name="searchkey" placeholder=" " data-placeholder="">');
             $divTopFields.append($('<div class="VA003-form-data input-group vis-input-wrap">').append($('<div class="vis-control-wrap">').append($txtSerackKey).append('<label>' + VIS.Msg.getMsg("SearchKey") + '</label>')));
             valueChangeEvent($txtSerackKey);
 
-            $txtName = $('<input type="text" data-name="name">');
+            $txtName = $('<input type="text" data-name="name" placeholder=" " data-placeholder="">');
             $divTopFields.append($(' <div class="VA003-form-data input-group vis-input-wrap">').append($('<div class="vis-control-wrap">').append($txtName).append('<label>' + VIS.Msg.getMsg("Name") + '</label>')));
             valueChangeEvent($txtName);
 
@@ -663,7 +663,7 @@
 
             $btnOpenOverlay = $('<button tabindex="-1" class="vis-controls-txtbtn-table-td2 input-group-text"><i tabindex="-1" class="fa fa-ellipsis-v"></i></button>');
 
-            $cmbOrgType = $('<select data-name="orgtype" data-hasbtn=" ">');
+            $cmbOrgType = $('<select data-name="orgtype" placeholder=" " data-placeholder="" data-hasbtn=" ">');
             $divFullFields.append($(' <div class="VA003-form-data input-group vis-input-wrap">').append($('<div class="vis-control-wrap">').append($cmbOrgType).append('<label>' + VIS.Msg.getMsg("VA003_OrgType") + '</label>')).append($('<div class="input-group-append">').append($btnOpenOverlay)));
             valueChangeEvent($cmbOrgType);
 
@@ -671,42 +671,42 @@
             //$divFullFields.append($(' <div class="VA003-form-data">').append('<label>' + VIS.Msg.getMsg("VA003_ParentOrg") + '</label>').append($cmbParentaOrg));
             //valueChangeEvent($cmbParentaOrg);
 
-            $txtTax = $('<input type="text" data-name="taxid">');
+            $txtTax = $('<input type="text" data-name="taxid" placeholder=" " data-placeholder="">');
             $divFullFields.append($(' <div class="VA003-form-data input-group vis-input-wrap">').append($('<div class="vis-control-wrap">').append($txtTax).append('<label>' + VIS.Msg.getMsg("VA003_TaxID") + '</label>')));
             valueChangeEvent($txtTax);
 
-            $txtPhone = $('<input type="text" data-name="phone">');
+            $txtPhone = $('<input type="text" data-name="phone" placeholder=" " data-placeholder="">');
             $divFullFields.append($(' <div class="VA003-form-data input-group vis-input-wrap">').append($('<div class="vis-control-wrap">').append($txtPhone).append('<label>' + VIS.Msg.getMsg("Phone") + '</label>')));
             valueChangeEvent($txtPhone);
 
-            $txtEmail = $('<input type="text"  data-name="email">');
+            $txtEmail = $('<input type="text"  data-name="email" placeholder=" " data-placeholder="">');
             $divFullFields.append($(' <div class="VA003-form-data input-group vis-input-wrap">').append($('<div class="vis-control-wrap">').append($txtEmail).append('<label>' + VIS.Msg.getMsg("EMail") + '</label>')));
             valueChangeEvent($txtEmail);
 
 
-            $txtFax = $('<input type="text" data-name="fax">');
+            $txtFax = $('<input type="text" data-name="fax" placeholder=" " data-placeholder="">');
             $divFullFields.append($(' <div class="VA003-form-data input-group vis-input-wrap">').append($('<div class="vis-control-wrap">').append($txtFax).append('<label>' + VIS.Msg.getMsg("Fax") + '</label>')));
             valueChangeEvent($txtFax);
 
 
             var $divCheckbox = $(' <div class="VA003-form-data">');
 
-            $chkIsLegal = $('<input type="checkbox" data-name="legal">');
+            $chkIsLegal = $('<input type="checkbox" data-name="legal" placeholder=" " data-placeholder="">');
             $divCheckbox.append($(' <div style="width:50%; margin-bottom: 15px"  class="VA003-form-data">').append($chkIsLegal).append('<label>' + VIS.Msg.getMsg("VA003_LegalEntity") + '</label>'));
             valueChangeEvent($chkIsLegal);
 
-            $chkIsSummary = $('<input type="checkbox" data-name="summary">');
+            $chkIsSummary = $('<input type="checkbox" data-name="summary" placeholder=" " data-placeholder="">');
             $divCheckbox.append($(' <div style="width:50%; margin-bottom: 15px" class="VA003-form-data">').append($chkIsSummary).append('<label>' + VIS.Msg.getMsg("VA003_SummaryLevel") + '</label>'));
 
             valueChangeEvent($chkIsSummary);
 
-            $chkIsCostCenter = $('<input type="checkbox" data-name="summary">');
+            $chkIsCostCenter = $('<input type="checkbox" data-name="summary" placeholder=" " data-placeholder="">');
             $lblCostCenter = $(' <div style="width:50%; margin-bottom: 15px" class="VA003-form-data">').append($chkIsCostCenter).append('<label>' + VIS.Msg.translate(VIS.Env.getCtx(), "IsCostCenter") + '</label>');
             $divCheckbox.append($lblCostCenter);
             // when we change cost center value, then save button to be enabled
             valueChangeEvent($chkIsCostCenter);
 
-            $chkIsProfitCenter = $('<input type="checkbox" data-name="summary">');
+            $chkIsProfitCenter = $('<input type="checkbox" data-name="summary" placeholder=" " data-placeholder="">');
             $lblProfitCenter = $(' <div style="width:50%; margin-bottom: 15px" class="VA003-form-data">').append($chkIsProfitCenter).append('<label>' + VIS.Msg.translate(VIS.Env.getCtx(), "IsProfitCenter") + '</label>');
             $divCheckbox.append($lblProfitCenter);
             // when we change profit center value, then save button to be enabled
