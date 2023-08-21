@@ -721,7 +721,7 @@
 
             $chkIsActive.prop("checked", true);
 
-            $divFullFields.append($divActiveCheckbox);
+            $divFullFields.append($divActiveCheckbox);         
 
             //$cmbWarehouse = $('<select data-name="warehouse">');
             //$divFullFields.append($(' <div class="VA003-form-data">').append('<label>' + VIS.Msg.getMsg("Warehouse") + '</label>').append($cmbWarehouse));
@@ -739,7 +739,7 @@
             //.append($txtFax).append('</br>').append($txtOrgSuperviser.getControl()).append($txtOrgSuperviser.getBtn(0)).append('</br>').append($cmbWarehouse).append('</br>').append($txtLocation.getControl().css("width", "80%")).append($txtLocation.getBtn(0)).append($txtLocation.getBtn(1))
             //.append('</br>').append($btnNewLegalEntity).append('</br>').append($btnSummary).append('</br>').append($btnaddNewOrg).append('</br>').append($btnSave).append('</br>').append($btnUndo);
 
-            $leftdivContainer.append($divFormWrap);
+            $leftdivContainer.append($divFormWrap);           
         };
 
         function changeorgLabelText(newOrg) {
@@ -1280,7 +1280,8 @@
                 $btnNewLegalEntity.css('opacity', '0.5');
 
             }
-            if (!isSummarySelected && !node.data("legal")) {
+          /*  Task ID: -2330 if summary level selected then Organization button disabled */
+            if (isSummarySelected && !node.data("legal")) {
                 $btnaddNewOrg.prop("disabled", true);
                 $btnaddNewOrg.css('opacity', '0.5');
             }
@@ -1289,6 +1290,7 @@
                 $btnSummary.css('opacity', '0.5');
             }
             else {
+
                 $btnSummary.prop("disabled", false);
                 $btnSummary.css('opacity', '1');
             }
