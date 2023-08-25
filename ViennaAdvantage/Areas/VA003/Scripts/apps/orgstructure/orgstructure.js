@@ -16,11 +16,11 @@
         var ctx = VIS.Env.getCtx();
         var ad_Org_ID = 0;// it will hold org id of current org, on new record it will become 0
         var seletedOrgID = 0;// it will hold org id of current org, on new record it will not become 0
-        var selecedSummayNode = 0;// it will hold summary node of current org
+        var selecedSummayNode = 0;// it will hold summary node of current org       
 
 
         var tableName = "";
-        var AD_Tree_ID = 0;
+        var AD_Tree_ID = 0;       
         var $root = $('<div class="VA003-content-wrap">');
         var $leftTreeContainer = $('<div>');
         var $middleContainer = $('<div style="width:200px:height:100%;overflow:auto">');
@@ -32,7 +32,7 @@
         var divTreeContainer = null;
         var $divRightTree = null;
         var $divHierarchyCombo = null;
-
+        
         //var $cmbTenant = null;
         var $txtSerackKey = null;
         var $txtName = null;
@@ -41,6 +41,7 @@
         var $chkIsSummary = null;
         var $chkIsActive = null;
         var $cmbOrgType = null;
+        var lblOrgType = null;
         // var $cmbParentaOrg = null;
         var $txtTax = null;
         var $txtPhone = null;
@@ -243,7 +244,7 @@
             $btnaddNewOrg.on("click", function (e) {
                 if ($btnaddNewOrg.css('opacity') == "0.5") {
                     return;
-                }
+                }                
                 closeSlider();
                 addNewOrg();
             });
@@ -656,7 +657,7 @@
 
 
             //var lookup = VIS.MLookupFactory.getMLookUp(ctx, $self.windowNo, 10424, VIS.DisplayType.Search);
-            //$txtOrgSuperviser = new VIS.Controls.VTextBoxButton("AD_User_ID", true, false, true, VIS.DisplayType.Search, lookup);
+              //$txtOrgSuperviser = new VIS.Controls.VTextBoxButton("AD_User_ID", true, false, true, VIS.DisplayType.Search, lookup);
             //$($txtOrgSuperviser.getControl()).data("name", "orgsuperwiser");
             //$divFullFields.append($(' <div class="VA003-form-data">').append('<label>' + VIS.Msg.getMsg("VA003_Supervisor") + '</label>').append($txtOrgSuperviser.getControl().css("width", "92%")).append($txtOrgSuperviser.getBtn(0)));
             //valueChangeEvent($txtOrgSuperviser.getControl());
@@ -664,7 +665,8 @@
             $btnOpenOverlay = $('<button tabindex="-1" class="vis-controls-txtbtn-table-td2 input-group-text"><i tabindex="-1" class="fa fa-ellipsis-v"></i></button>');
 
             $cmbOrgType = $('<select data-name="orgtype" data-hasbtn=" ">');
-            $divFullFields.append($(' <div class="VA003-form-data input-group vis-input-wrap">').append($('<div class="vis-control-wrap">').append($cmbOrgType).append('<label>' + VIS.Msg.getMsg("VA003_OrgType") + '</label>')).append($('<div class="input-group-append">').append($btnOpenOverlay)));
+             lblOrgType = $('<label >' + VIS.Msg.getMsg("VA003_OrgType") + '</label>');
+             $divFullFields.append($(' <div class="VA003-form-data input-group vis-input-wrap">').append($('<div class="vis-control-wrap">').append($cmbOrgType).append(lblOrgType)).append($('<div class="input-group-append">').append($btnOpenOverlay)));
             valueChangeEvent($cmbOrgType);
 
             //$cmbParentaOrg = $('<select data-name="parentorg">');
@@ -732,15 +734,15 @@
             //$btnaddNewOrg = $('<input type="button" value="New">');
             //$btnSave = $('<input type="button" value="Save">');
             //$btnUndo = $('<input type="button" value="Undo">');
-
+            
             //$root.append($middleContainer);
             //$middleContainer.append($cmbTenant).append('</br>').append($txtSerackKey).append('</br>').append($txtName).append('</br>').append($txtDesc).append('</br>').append($chkIsLegal).append('</br>').append($chkIsSummary).append('</br>').append($cmbOrgType).append('</br>')
             //    .append($cmbParentaOrg).append('</br>').append($txtTax).append('</br>').append($txtEmail).append('</br>').append($txtPhone).append('</br>')
             //.append($txtFax).append('</br>').append($txtOrgSuperviser.getControl()).append($txtOrgSuperviser.getBtn(0)).append('</br>').append($cmbWarehouse).append('</br>').append($txtLocation.getControl().css("width", "80%")).append($txtLocation.getBtn(0)).append($txtLocation.getBtn(1))
             //.append('</br>').append($btnNewLegalEntity).append('</br>').append($btnSummary).append('</br>').append($btnaddNewOrg).append('</br>').append($btnSave).append('</br>').append($btnUndo);
 
-            $leftdivContainer.append($divFormWrap);           
-        };
+            $leftdivContainer.append($divFormWrap);
+           };
 
         function changeorgLabelText(newOrg) {
             if (newOrg) {
@@ -1218,8 +1220,8 @@
 
         };
 
-        function onSelect(e) {
-
+        function onSelect(e) {           
+            
             if (needSave) {
                 if (VIS.ADialog.ask("VA003_SaveExisting")) {
                     var res = save();
@@ -1229,8 +1231,8 @@
                     }
                 }
                 else {
-                    undo();
-                }
+                        undo();
+                    }                
             }
 
             $lblOrgInfo.text(VIS.Msg.getMsg('VA003_OrgInfo'));
@@ -1454,7 +1456,7 @@
 
 
                     ad_Org_ID = data.OrgID;
-                    seletedOrgID = ad_Org_ID;
+                    seletedOrgID = ad_Org_ID;                   
 
                     setOrgDataIntoFields(data, true);
                     $bsyDiv[0].style.visibility = "hidden";
@@ -1702,7 +1704,7 @@
             var ret = checkNeedSave();
             if (ret) {
                 return;
-            }
+            }           
             setStatus(false);
             enableNameValue();
             addEffect($btnaddNewOrg);
@@ -1718,7 +1720,7 @@
             $chkIsCostCenter.prop("checked", false);
             $chkIsProfitCenter.prop("checked", false);
             $lblCostCenter.show();
-            $lblProfitCenter.show();
+            $lblProfitCenter.show();            
         };
 
         function enableNameValue() {
@@ -1802,14 +1804,22 @@
                 $lblProfitCenter.attr('hidden', true);
                 $chkIsCostCenter.prop('checked', false);
                 $chkIsProfitCenter.prop('checked', false);
+                /*Task ID:-1785 When not creating the Organization Unit then Organization type field will not be  hide*/
+                $cmbOrgType.attr("hidden", false);
+                $btnOpenOverlay.show();
+                lblOrgType.show();
             }
             else {
                 $chkIsCostCenter.attr('hidden', false);
                 $chkIsProfitCenter.attr('hidden', false);
                 $lblCostCenter.attr('hidden', false);
                 $lblProfitCenter.attr('hidden', false);
+                /*Task ID:-1785 When create the Organization Unit then Organization type field will be hide*/
+                $cmbOrgType.attr("hidden", true);
+                $btnOpenOverlay.hide();
+                lblOrgType.hide();
             }
-
+            
             var bgColor = "white";
 
             if (disabled) {
@@ -1874,21 +1884,21 @@
 
 
 
-            $bsyDiv[0].style.visibility = "visible";
+            $bsyDiv[0].style.visibility = "visible";            
             window.setTimeout(function () {
-
-                var params = {
-                    OrgID: ad_Org_ID, Tenant: ctx.getAD_Client_ID(), SearchKey: VIS.Utility.encodeText($txtSerackKey.val().trim()), Name: VIS.Utility.encodeText($txtName.val().trim()), C_Location_ID: $txtLocation.getValue(),
-                    TaxID: VIS.Utility.encodeText($txtTax.val().trim()), EmailAddess: VIS.Utility.encodeText($txtEmail.val().trim()), Phone: VIS.Utility.encodeText($txtPhone.val().trim()), Fax: VIS.Utility.encodeText($txtFax.val().trim()),
-                    OrgType: $cmbOrgType.val(), IsActive: $chkIsActive.is(':checked'),
-                    IsSummary: $chkIsSummary.is(':checked'), IsLegalEntity: $chkIsLegal.is(':checked'), ParentIDForSummary: selecedSummayNode, AD_Tree_ID: AD_Tree_ID, showOrgUnit: $showOrUnits.is(':checked'), costCenter: $chkIsCostCenter.is(':checked'), profitCenter: $chkIsProfitCenter.is(':checked')
+                
+                 var params = {
+                        OrgID: ad_Org_ID, Tenant: ctx.getAD_Client_ID(), SearchKey: VIS.Utility.encodeText($txtSerackKey.val().trim()), Name: VIS.Utility.encodeText($txtName.val().trim()), C_Location_ID: $txtLocation.getValue(),
+                        TaxID: VIS.Utility.encodeText($txtTax.val().trim()), EmailAddess: VIS.Utility.encodeText($txtEmail.val().trim()), Phone: VIS.Utility.encodeText($txtPhone.val().trim()), Fax: VIS.Utility.encodeText($txtFax.val().trim()),
+                        OrgType: $cmbOrgType.val(), IsActive: $chkIsActive.is(':checked'),
+                        IsSummary: $chkIsSummary.is(':checked'), IsLegalEntity: $chkIsLegal.is(':checked'), ParentIDForSummary: selecedSummayNode, AD_Tree_ID: AD_Tree_ID, showOrgUnit: $showOrUnits.is(':checked'), costCenter: $chkIsCostCenter.is(':checked'), profitCenter: $chkIsProfitCenter.is(':checked')
                 };
 
 
 
                 if (ad_Org_ID == 0 && oldValues != null && !oldValues.IsSummary) {
                     params["ParentOrg"] = seletedOrgID;
-                }
+                }              
 
                 $.ajax({
                     url: VIS.Application.contextUrl + "OrgStructure/InsertOrUpdateOrg",
@@ -1914,18 +1924,18 @@
                                 ad_Org_ID = parseInt(JSON.parse(result));
                                 var objNewNode = {};
                                 objNewNode["color"] = "white";
-                                objNewNode["NodeID"] = ad_Org_ID;
+                                objNewNode["NodeID"] = ad_Org_ID;                         
                                 objNewNode["text"] = VIS.Utility.encodeText($txtName.val());
                                 objNewNode["IsSummary"] = false;
-
+                                                               
                                 var isSummary = $chkIsSummary.is(':checked');
                                 var isleg = $chkIsLegal.is(':checked');
                                 var bgColor = '';
-                                var imgSource = '';
-
+                                var imgSource = '';                               
+                               
 
                                 var selectedNode = divLeftTree.data("kendoTreeView").select();
-
+                               
                                 if ($chkIsLegal.is(':checked')) {
                                     if (isActve) {
                                         bgColor = "#dc8a20";
@@ -1979,10 +1989,10 @@
                                     seletedOrgID = ad_Org_ID;
                                 }
 
-
+                               
                                 var newChild = divLeftTree.data("kendoTreeView").append({
                                     text: VIS.Utility.encodeText($txtName.val()),
-
+                                                                      
                                     'bColor': bgColor,
                                     'color': "white", 'NodeID': ad_Org_ID,
                                     'IsSummary': isSummary,
@@ -1993,7 +2003,7 @@
                                     'IsLegal': isleg,
                                     'IsActive': isActve
                                 }, selectedNode);
-
+                                
                                 divLeftTree.data("kendoTreeView").select(newChild);
 
                                 divLeftTree.data("kendoTreeView").trigger('select', { node: newChild });
@@ -2002,7 +2012,7 @@
                                 $chkIsProfitCenter.prop("checked", false);
                                 $chkIsCostCenter.prop("checked", false);
                                 VIS.ADialog.info('Saved');
-                                $bsyDiv[0].style.visibility = "hidden";
+                                $bsyDiv[0].style.visibility = "hidden";                               
                             }
                             else if (!refreshTree) {
                                 // commented bcz when we save record, system  not showing value as true, if having on database
