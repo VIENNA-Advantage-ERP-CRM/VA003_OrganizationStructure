@@ -111,9 +111,12 @@
         var infoRoot = null;
         var refreshTree = false;
         var whereclause = null;
-        /*VIS_427 Defined boolean variable*/
+        /*VIS_427 Defined boolean variable so that if user click add new org 
+          button then popup will be shown if its value is false*/
         var IsSelectedLegalEntity = false;
-        var IsOrganizationUnit = true;
+        /*VIS_427 Defined boolean variable to check whether selected record is
+         non legal entity*/
+        var IsNonLegalEntity = false;
 
         /*
           Initialize Components
@@ -1478,9 +1481,12 @@
                         IsSelectedLegalEntity = false;
                     }
                     /*VIS_427 16/02/2024 If the records is non legal entity then set boolean value false*/
-                    if (!data.IsLegalEntity && !data.profitCenter && !data.costCenter && !data.IsSummary)
+                    if (!data.IsLegalEntity && !data.profitCenter && !data.costCenter && !data.IsSummary) {
+                        IsNonLegalEntity = true;
+                    }
+                    else
                     {
-                        IsOrganizationUnit = false;
+                        IsNonLegalEntity = false;
                     }
                     setOrgDataIntoFields(data, true);
                     $bsyDiv[0].style.visibility = "hidden";
@@ -1636,12 +1642,11 @@
                 }
                 setMandatoryColor(false);
                 /*VIS_427 16/02/2024 If the records is legal entity then disable all checkboxes*/
-                if (!IsOrganizationUnit) {
+                if (IsNonLegalEntity) {
                     $chkIsCostCenter.prop("disabled", true);
                     $chkIsProfitCenter.prop("disabled", true);
                     $chkIsSummary.prop("disabled", true);
                     $chkIsLegal.prop("disabled", true);
-                    IsOrganizationUnit = true;
                 }
                 else {
                     $chkIsCostCenter.prop("disabled", false);
