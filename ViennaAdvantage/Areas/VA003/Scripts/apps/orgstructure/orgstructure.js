@@ -1996,7 +1996,7 @@
                                 }
                                 else {
                                     if (isActve) {
-                                        //VIS_427 If the record created is Organization Unit then the color of record shoul be green
+                                        //VIS_427 If the record created is Organization Unit then the color of record should be green
                                         if ($chkIsCostCenter.is(':checked') || $chkIsProfitCenter.is(':checked')) {
                                             bgColor = "rgba(86, 186, 109, 1)";
                                         }
