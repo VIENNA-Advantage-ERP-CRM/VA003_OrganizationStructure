@@ -111,6 +111,12 @@
         var infoRoot = null;
         var refreshTree = false;
         var whereclause = null;
+        /*VIS_427 Defined boolean variable so that if user click add new org 
+          button then popup will be shown if its value is false*/
+        var IsSelectedLegalEntity = false;
+        /*VIS_427 Defined boolean variable to check whether selected record is
+         non legal entity*/
+        var IsNonLegalEntity = false;
 
         /*
           Initialize Components
@@ -244,7 +250,14 @@
             $btnaddNewOrg.on("click", function (e) {
                 if ($btnaddNewOrg.css('opacity') == "0.5") {
                     return;
-                }                
+                }
+                /*VIS_427 16/02/2024 If no legal entity is selected then on click of Add new 
+                 Organization it will show a popup*/
+                if (!IsSelectedLegalEntity)
+                {
+                    VIS.ADialog.info("VA003_SelectLegalEntityFirst");
+                    return;
+                }
                 closeSlider();
                 addNewOrg();
             });
@@ -1282,8 +1295,9 @@
                 $btnNewLegalEntity.css('opacity', '0.5');
 
             }
-          /*  Task ID: -2330 if summary level selected then Organization button disabled */
-            if (isSummarySelected && !node.data("legal")) {
+            /*  Task ID: -2330 if summary level selected then Organization button disabled */
+            //VIS_427 Identified that when summary level is selected then Add new organization button shoulnot be disabled
+            if (!isSummarySelected && !node.data("legal")) {
                 $btnaddNewOrg.prop("disabled", true);
                 $btnaddNewOrg.css('opacity', '0.5');
             }
@@ -1456,8 +1470,24 @@
 
 
                     ad_Org_ID = data.OrgID;
-                    seletedOrgID = ad_Org_ID;                   
-
+                    seletedOrgID = ad_Org_ID;
+                    /*VIS_427 16/02/2024 If the record is legal entity then set boolean value true*/
+                    if (data.IsLegalEntity)
+                    {
+                        IsSelectedLegalEntity = true;
+                    }
+                    else
+                    {
+                        IsSelectedLegalEntity = false;
+                    }
+                    /*VIS_427 16/02/2024 If the records is non legal entity then set boolean value false*/
+                    if (!data.IsLegalEntity && !data.profitCenter && !data.costCenter && !data.IsSummary) {
+                        IsNonLegalEntity = true;
+                    }
+                    else
+                    {
+                        IsNonLegalEntity = false;
+                    }
                     setOrgDataIntoFields(data, true);
                     $bsyDiv[0].style.visibility = "hidden";
                 },
@@ -1611,6 +1641,19 @@
                     updateOldValue(data);
                 }
                 setMandatoryColor(false);
+                /*VIS_427 16/02/2024 If the records is legal entity then disable all checkboxes*/
+                if (IsNonLegalEntity) {
+                    $chkIsCostCenter.prop("disabled", true);
+                    $chkIsProfitCenter.prop("disabled", true);
+                    $chkIsSummary.prop("disabled", true);
+                    $chkIsLegal.prop("disabled", true);
+                }
+                else {
+                    $chkIsCostCenter.prop("disabled", false);
+                    $chkIsProfitCenter.prop("disabled", false);
+                    $chkIsSummary.prop("disabled", false);
+                    $chkIsLegal.prop("disabled", false);
+                }
             }
         };
 
@@ -1809,7 +1852,8 @@
                 $btnOpenOverlay.show();
                 lblOrgType.show();
             }
-            else {
+            else
+            {
                 $chkIsCostCenter.attr('hidden', false);
                 $chkIsProfitCenter.attr('hidden', false);
                 $lblCostCenter.attr('hidden', false);
@@ -1957,7 +2001,13 @@
                                 }
                                 else {
                                     if (isActve) {
-                                        bgColor = "rgba(43, 174, 250, 0.78)";
+                                        //VIS_427 If the record created is Organization Unit then the color of record should be green
+                                        if ($chkIsCostCenter.is(':checked') || $chkIsProfitCenter.is(':checked')) {
+                                            bgColor = "rgba(86, 186, 109, 1)";
+                                        }
+                                        else{
+                                            bgColor = "rgba(43, 174, 250, 0.78)";
+                                        }
                                     }
                                     else {
                                         bgColor = "rgba(166, 222, 255, 1)";
