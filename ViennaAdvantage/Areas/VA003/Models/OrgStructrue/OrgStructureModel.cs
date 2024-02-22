@@ -596,7 +596,7 @@ namespace VIS.Models
                 newTrees.IsActive = false;
                 newTrees.bColor = "rgba(0, 132, 196, 0.7)";
             }
-            /*VIS_427 Marked IsOrgUnit check true so that user can drag the summary level(Organization unit)
+            /*VIS_427 Bug Id 3422 Marked IsOrgUnit check true so that user can drag the summary level(Organization unit)
             to the tree (Which is marked organization unit true)*/
             else if (lstOrgUnits.IndexOf(id) > -1)
             {
