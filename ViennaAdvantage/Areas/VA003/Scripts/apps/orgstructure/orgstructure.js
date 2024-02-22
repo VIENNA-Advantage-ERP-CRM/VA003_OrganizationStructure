@@ -1993,7 +1993,9 @@
             }
             /*VIS_427 if selected record is organization unit and user uncheck cost centre and 
              profit centre ,then save the record it will show a popup message*/
-            if (!$chkIsLegal.is(':checked') && !$chkIsSummary.is(':checked') && !$chkIsProfitCenter.is(':checked') && !$chkIsCostCenter.is(':checked') && VIS.Utility.Util.getValueOfBoolean(node.attr("data-isorgunit"))) {
+            if (!$chkIsLegal.is(':checked') && !$chkIsSummary.is(':checked') && !$chkIsProfitCenter.is(':checked') && !$chkIsCostCenter.is(':checked') &&
+                (VIS.Utility.Util.getValueOfBoolean(node.attr("data-isorgunit")) || VIS.Utility.Util.getValueOfBoolean(node.attr("data-summary"))
+                    || VIS.Utility.Util.getValueOfBoolean(node.attr("data-legal")))) {
                 VIS.ADialog.info("VA003_CantConvertUnitOrgToNonLegal");
                 return;
             }
