@@ -150,13 +150,13 @@
                 e.preventDefault();
                 return false;
             }
-            if (!IsProfitCenter && !IsCostCenter) {
-                VIS.ADialog.info("VA003_SelectCostEitherProfitCenter");
+            if (LegalEntityValue == 0 || LegalEntityValue == null) {
+                VIS.ADialog.info("VA003_SelectLegalEntity");
                 e.preventDefault();
                 return false;
             }
-            if (LegalEntityValue == 0 || LegalEntityValue==null) {
-                VIS.ADialog.info("VA003_SelectLegalEntity");
+            if (!IsProfitCenter && !IsCostCenter) {
+                VIS.ADialog.info("VA003_SelectCostEitherProfitCenter");
                 e.preventDefault();
                 return false;
             }
@@ -170,7 +170,7 @@
             $bsyDiv[0].style.visibility = "visible";
             window.setTimeout(function () {
                 $.ajax({
-                    url: VIS.Application.contextUrl + "OrgStructure/AddOrgNode",
+                    url: VIS.Application.contextUrl + "OrgStructure/AddOrgNode1",
                     async: false,
                     data: { treeID: treID, name: VIS.Utility.encodeText($name.val().trim()), description: "", value: VIS.Utility.encodeText($value.val().trim()), windowNo: winNo, parentID: parent_ID, IsProfitCenter: IsProfitCenter, IsCostCenter: IsCostCenter, LegalEntityId: VIS.Utility.Util.getValueOfInt(LegalEntityValue) },
                     success: function (result) {

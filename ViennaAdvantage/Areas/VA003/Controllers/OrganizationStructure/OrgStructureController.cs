@@ -151,7 +151,26 @@ namespace VIS.Controllers
 
         [AjaxAuthorizeAttribute] // redirect to login page if request is not Authorized
         [AjaxSessionFilterAttribute] // redirect to Login/Home page if session expire
-        public ActionResult AddOrgNode(int treeID, string name, string description, string value, int windowNo, string parentID,bool IsProfitCenter,bool IsCostCenter, int LegalEntityId)
+        public ActionResult AddOrgNode(int treeID, string name, string description, string value, int windowNo, string parentID)
+        {
+            return AddOrgNode1(treeID, name, description, value, windowNo, parentID, false, false, 0);
+        }
+
+        [AjaxAuthorizeAttribute] // redirect to login page if request is not Authorized
+        [AjaxSessionFilterAttribute] // redirect to Login/Home page if session expire
+        ///<summary>BugID 5226 27/02/2024 This function creates the node</summary>
+        ///<param name="treeID">Tree Id under which node will be created</param>
+        ///<param name="name">Name of node</param>
+        ///<param name="description">Description</param>
+        ///<param name="value"></param>
+        ///<param name="windowNo">Window Number</param>
+        ///<param name="parentID"></param>
+        ///<param name="IsCostCenter">Cost Centre</param>
+        ///<param name="IsProfitCenter">Profit Centre</param>
+        ///<param name="LegalEntityId">Legal Entity</param>
+        ///<author>BugID 5226 VIS_427</author>
+        ///<returns>Returns data after adding node</returns>
+        public ActionResult AddOrgNode1(int treeID, string name, string description, string value, int windowNo, string parentID, bool IsProfitCenter, bool IsCostCenter, int LegalEntityId)
         {
             Ctx ctx = Session["ctx"] as Ctx;
             OrgStructure orgStrct = new OrgStructure(ctx);
