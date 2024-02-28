@@ -5,6 +5,7 @@
  * Chronological Development
  * Karan         2 July 2015
  ******************************************************/
+using CoreLibrary.DataBase;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -150,7 +151,34 @@ namespace VIS.Controllers
 
         [AjaxAuthorizeAttribute] // redirect to login page if request is not Authorized
         [AjaxSessionFilterAttribute] // redirect to Login/Home page if session expire
+        ///<summary>This function creates the node</summary>
+        ///<param name="treeID">Tree Id under which node will be created</param>
+        ///<param name="name">Name of node</param>
+        ///<param name="description">Description</param>
+        ///<param name="value">Search key</param>
+        ///<param name="windowNo">Window Number</param>
+        ///<param name="parentID">Parent Id</param>
+        ///<returns>Returns data after adding node</returns>
         public ActionResult AddOrgNode(int treeID, string name, string description, string value, int windowNo, string parentID)
+        {
+            return AddOrgNode1(treeID, name, description, value, windowNo, parentID, false, false, 0);
+        }
+
+        [AjaxAuthorizeAttribute] // redirect to login page if request is not Authorized
+        [AjaxSessionFilterAttribute] // redirect to Login/Home page if session expire
+        ///<summary>BugID 5226 27/02/2024 This function creates the node</summary>
+        ///<param name="treeID">Tree Id under which node will be created</param>
+        ///<param name="name">Name of node</param>
+        ///<param name="description">Description</param>
+        ///<param name="value">Search Key</param>
+        ///<param name="windowNo">Window Number</param>
+        ///<param name="parentID">Parent Id</param>
+        ///<param name="IsCostCenter">Cost Centre</param>
+        ///<param name="IsProfitCenter">Profit Centre</param>
+        ///<param name="LegalEntityId">Legal Entity</param>
+        ///<author>BugID 5226 VIS_427</author>
+        ///<returns>Returns data after adding node</returns>
+        public ActionResult AddOrgNode1(int treeID, string name, string description, string value, int windowNo, string parentID, bool IsProfitCenter, bool IsCostCenter, int LegalEntityId)
         {
             Ctx ctx = Session["ctx"] as Ctx;
             OrgStructure orgStrct = new OrgStructure(ctx);
@@ -161,7 +189,7 @@ namespace VIS.Controllers
             }
 
 
-            return Json(JsonConvert.SerializeObject(orgStrct.AddOrgNode(treeID, name, description, value, windowNo, @Url.Content("~/"), parentID)), JsonRequestBehavior.AllowGet);
+            return Json(JsonConvert.SerializeObject(orgStrct.AddOrgNode(treeID, name, description, value, windowNo, @Url.Content("~/"), parentID, IsProfitCenter, IsCostCenter, LegalEntityId)), JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>
@@ -292,6 +320,25 @@ namespace VIS.Controllers
             Ctx ctx = Session["ctx"] as Ctx;
             OrgStructure orgStrct = new OrgStructure(ctx);
             return Json(JsonConvert.SerializeObject(orgStrct.DeleteAD_TreeNode(TreeId, Parent_ID)), JsonRequestBehavior.AllowGet);
+        }
+        /// <summary>
+        /// This Method is used to return the column ID Of column (LegalEntityOrg)
+        /// </summary>
+        /// <param name="ColumnName">Name of the Column</param>
+        /// <returns>Column ID</returns>
+        /// <author>VIS_427 BugId 5226</author>
+        public JsonResult GetColumnID(string ColumnName)
+        {
+            string retJSON = "";
+            int Column_ID = 0;
+            if (Session["ctx"] != null)
+            {
+                Ctx ctx = Session["ctx"] as Ctx;
+                string sql = @"SELECT AD_Column_ID FROM AD_Column WHERE ColumnName ='" + ColumnName + "'";
+                Column_ID = Util.GetValueOfInt(DB.ExecuteScalar(sql));
+                retJSON = JsonConvert.SerializeObject(Column_ID);
+            }
+            return Json(retJSON, JsonRequestBehavior.AllowGet);
         }
 
     }

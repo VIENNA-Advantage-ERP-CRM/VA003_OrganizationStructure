@@ -841,3 +841,12 @@ ul.VA003-root-node, ul.VA003-root-node > li ul {
         /*width: 83%;*/
     }
 }
+.VA003-CheckBoxContainer {
+    display:inline-flex
+}
+.VA003-CostCenterwdiv{
+    margin-right:40px
+}
+.VA003-ControlDiv {
+    display: inline-flex
+}
