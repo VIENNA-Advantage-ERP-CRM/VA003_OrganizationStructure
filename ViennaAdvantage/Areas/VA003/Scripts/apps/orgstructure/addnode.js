@@ -56,6 +56,7 @@
                 $LegalEntityControlWrap.append($LegalEntityControl.getControl().attr('placeholder', ' ').attr('data-placeholder', '').attr('data-hasbtn', ' ')).append('<label>' + VIS.Msg.getMsg("VA003_SelectLegalEntity") + '</label>');
                 $LegalEntityDiv.append($LegalEntityControlWrap);
                 $LegalEntityButtonWrap.append($LegalEntityControl.getBtn(0));
+                $LegalEntityDiv.append($LegalEntityButtonWrap);
                 //VIS_427 BugId 5226 Added checkbox control to whether node created is of cost center /profit center
                 $CheckboxContainerwdiv = $("<div class='VA003-CheckBoxContainer'>");
                 $CheckboxCostCenterwdiv = $("<div class='VA003-CostCenterwdiv'>");
