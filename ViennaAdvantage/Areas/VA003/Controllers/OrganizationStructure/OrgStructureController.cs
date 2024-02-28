@@ -151,6 +151,14 @@ namespace VIS.Controllers
 
         [AjaxAuthorizeAttribute] // redirect to login page if request is not Authorized
         [AjaxSessionFilterAttribute] // redirect to Login/Home page if session expire
+        ///<summary>This function creates the node</summary>
+        ///<param name="treeID">Tree Id under which node will be created</param>
+        ///<param name="name">Name of node</param>
+        ///<param name="description">Description</param>
+        ///<param name="value">Search key</param>
+        ///<param name="windowNo">Window Number</param>
+        ///<param name="parentID">Parent Id</param>
+        ///<returns>Returns data after adding node</returns>
         public ActionResult AddOrgNode(int treeID, string name, string description, string value, int windowNo, string parentID)
         {
             return AddOrgNode1(treeID, name, description, value, windowNo, parentID, false, false, 0);
@@ -162,9 +170,9 @@ namespace VIS.Controllers
         ///<param name="treeID">Tree Id under which node will be created</param>
         ///<param name="name">Name of node</param>
         ///<param name="description">Description</param>
-        ///<param name="value"></param>
+        ///<param name="value">Search Key</param>
         ///<param name="windowNo">Window Number</param>
-        ///<param name="parentID"></param>
+        ///<param name="parentID">Parent Id</param>
         ///<param name="IsCostCenter">Cost Centre</param>
         ///<param name="IsProfitCenter">Profit Centre</param>
         ///<param name="LegalEntityId">Legal Entity</param>

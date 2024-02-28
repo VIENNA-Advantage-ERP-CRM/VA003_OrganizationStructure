@@ -125,6 +125,9 @@
          Organization unit */
         var IsOrgUnitTree = false;
         var IsOrganizationUnit = false;
+        /*VIS_427 BugId 5226 Defined boolean variable to check whether save button 
+         is clicked*/
+        var IsSaveBtnClicked = false
 
         /*
           Initialize Components
@@ -261,8 +264,7 @@
                 }
                 /*VIS_427 16/02/2024 If no legal entity is selected then on click of Add new 
                  Organization it will show a popup*/
-                if (!IsSelectedLegalEntity)
-                {
+                if (!IsSelectedLegalEntity) {
                     VIS.ADialog.info("VA003_SelectLegalEntityFirst");
                     return;
                 }
@@ -277,7 +279,13 @@
 
             });
 
-            $btnSave.on("click", save);
+            $btnSave.on("click", function (e) {
+                /*VIS_427 BugId 5226 if  save button
+                is clicked then mark the value as true*/
+                IsSaveBtnClicked = true
+                save(e)
+
+            });
             $btnUndo.on("click", undo);
             $lblimgUpload.on("change", changeOrgPic);
             $btnRemoveBtn.on("click", removeIcon);
@@ -1522,11 +1530,13 @@
                     if (data.costCenter || data.profitCenter) {
                         IsOrganizationUnit = true;
                     }
-                    else
-                    {
+                    else {
                         IsOrganizationUnit = false;
                     }
                     setOrgDataIntoFields(data, true);
+                    if (IsSaveBtnClicked) {
+                        SetbackGroundColorOfNode();
+                    }
                     $bsyDiv[0].style.visibility = "hidden";
                 },
                 error: function (eror) {
@@ -1680,32 +1690,28 @@
                 }
                 setMandatoryColor(false);
                 // VIS_427 16/02/2024 If the records is legal entity then disable all checkboxes
-                if (node != null) {
-                    if (!VIS.Utility.Util.getValueOfBoolean(node.attr("data-isorgunit"))) {
-                        $chkIsCostCenter.prop("disabled", true);
-                        $chkIsProfitCenter.prop("disabled", true);
-                    }
-                    else {
-                        /*VIS_427 if selected record is organization unit then we will not disable
-                         cost centre and profit centre beacuse user can change them*/
-                        $chkIsCostCenter.prop("disabled", false);
-                        $chkIsProfitCenter.prop("disabled", false);
-                    }
-                    $chkIsSummary.prop("disabled", true);
-                    $chkIsLegal.prop("disabled", true);
+                if (!IsOrganizationUnit) {
+                    $chkIsCostCenter.prop("disabled", true);
+                    $chkIsProfitCenter.prop("disabled", true);
                 }
+                else {
+                    /*VIS_427 if selected record is organization unit then we will not disable
+                     cost centre and profit centre beacuse user can change them*/
+                    $chkIsCostCenter.prop("disabled", false);
+                    $chkIsProfitCenter.prop("disabled", false);
+                }
+                $chkIsSummary.prop("disabled", true);
+                $chkIsLegal.prop("disabled", true);
             }
         };
         /*VIS_427 21/02/2024 this function is used to set background color once user save the 
          records on selection of record*/
         function SetbackGroundColorOfNode() {
-            var isActive = VIS.Utility.Util.getValueOfBoolean(node.attr("data-active")); 
-                if (isActive) {
-                    $((divLeftTree.data("kendoTreeView").select().find('.k-state-selected'))[0]).removeClass("k-state-selected");
-                }
-                else {
-                    $((divLeftTree.data("kendoTreeView").select().find('.k-state-selected'))[0]).removeClass("k-state-selected");
-                }  
+            $((divLeftTree.data("kendoTreeView").select().find('.k-state-selected'))[0]).removeClass("k-state-selected");
+            if (IsSaveBtnClicked) {
+                $(divLeftTree.find('input[value=' + ad_Org_ID + ']').parent()).addClass("k-state-selected");
+                IsSaveBtnClicked = false;
+            }
         }
 
         function hideImage() {
@@ -2137,6 +2143,10 @@
                                 changeOrgPic();
                                 $chkIsProfitCenter.prop("checked", false);
                                 $chkIsCostCenter.prop("checked", false);
+                                /*VIS_427 BugId 5226 If value is saved then same record will be loaded*/
+                                if (IsSaveBtnClicked) {
+                                    loadOrgData(ad_Org_ID, false);
+                                }
                                 VIS.ADialog.info('Saved');
                                 $bsyDiv[0].style.visibility = "hidden";
                             }
@@ -2785,7 +2795,7 @@
                         aa += ' data-isDefault="N" ';
                     }
 
-                    aa += ' data-orgunit=' + AllReportHierarchy[i].OrgUnit +' value=' + AllReportHierarchy[i].Key + '>' + VIS.Utility.encodeText(AllReportHierarchy[i].Name) + '</option>';
+                    aa += ' data-orgunit=' + AllReportHierarchy[i].IsOrgUnit + ' value=' + AllReportHierarchy[i].Key + '>' + VIS.Utility.encodeText(AllReportHierarchy[i].Name) + '</option>';
                     $cmbReportHirerchy.append(aa);
                 }
             }

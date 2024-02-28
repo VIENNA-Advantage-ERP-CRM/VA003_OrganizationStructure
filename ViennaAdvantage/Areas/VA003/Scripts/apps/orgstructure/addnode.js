@@ -44,30 +44,29 @@
 
             $btnOK = $('<button class="VIS_Pref_btn-2"  style="margin-top:0px;margin-bottom:0px;margin-right:10px;margin-left:10px;">' + VIS.Msg.getMsg("OK") + '</button>');
             $btnCancel = $('<button class="VIS_Pref_btn-2"  style="margin-bottom:0px;margin-top:0px;">' + VIS.Msg.getMsg("Cancel") + '</button>');
-            //VIS_427 BugId 5226 Added search control to select legal entity when creating nodes
-            $LegalEntityDiv = $('<div class="input-group vis-input-wrap">');
-            LegalEntityLookUp = VIS.MLookupFactory.getMLookUp(VIS.Env.getCtx(), winNo, GetColumnID("LegalEntityOrg"), VIS.DisplayType.Search);
-            $LegalEntityControl = new VIS.Controls.VTextBoxButton("AD_Org_ID", true, false, true, VIS.DisplayType.Search, LegalEntityLookUp);
-            $LegalEntityControl.setMandatory(true);
-            var $POP_cmbLECtrlwrp = $('<div class="vis-control-wrap VA003-ControlDiv">');
-            var $POP_cmbLEBtnwrp = $('<div class="input-group-append">');
-            $LegalEntityDiv.append($POP_cmbLECtrlwrp);
-            $POP_cmbLECtrlwrp.append($LegalEntityControl.getControl().attr('placeholder', ' ').attr('data-placeholder', '').attr('data-hasbtn', ' ')).append('<label>' + VIS.Msg.getMsg("VA003_SelectLegalEntity") + '</label>');
-            $LegalEntityDiv.append($POP_cmbLEBtnwrp);
-            $POP_cmbLEBtnwrp.append($LegalEntityControl.getBtn(0));
-             //VIS_427 BugId 5226 Added checkbox control to whether node created is of cost center /profit center
-            $CheckboxContainerwdiv = $("<div class='VA003-CheckBoxContainer'>");
-            $CheckboxCostCenterwdiv = $("<div class='VA003-CostCenterwdiv'>");
-            $IsCostCentercheckbox = new VIS.Controls.VCheckBox("IsCostCenter", false, false, true, VIS.Msg.getMsg("VA003_IsCostCenter"), null, false);
-            $CheckboxCostCenterwdiv.append($IsCostCentercheckbox.getControl().css({ "display": "inline-block" }));
-            $CheckboxProfitCenterwdiv = $("<div class='VA003-ProfitCenterwdiv'>");
-            $IsProfitCentercheckbox = new VIS.Controls.VCheckBox("IsProfitCenter", false, false, true, VIS.Msg.getMsg("VA003_IsProfitCenter"), null, false)
-            $CheckboxProfitCenterwdiv.append($IsProfitCentercheckbox.getControl().css({ "display": "inline-block" }));
-             //VIS_427 BugId 5226 if tree is of organization unit then the design will be appended
             if (IsOrgUnitTree) {
+                //VIS_427 BugId 5226 Added search control to select legal entity when creating nodes
+                $LegalEntityDiv = $('<div class="input-group vis-input-wrap">');
+                LegalEntityLookUp = VIS.MLookupFactory.getMLookUp(VIS.Env.getCtx(), winNo, GetColumnID("LegalEntityOrg"), VIS.DisplayType.Search);
+                $LegalEntityControl = new VIS.Controls.VTextBoxButton("AD_Org_ID", true, false, true, VIS.DisplayType.Search, LegalEntityLookUp);
+                $LegalEntityControl.setMandatory(true);
+                var $LegalEntityControlWrap = $('<div class="vis-control-wrap VA003-ControlDiv">');
+                var $LegalEntityButtonWrap = $('<div class="input-group-append">');
+                $LegalEntityDiv.append($LegalEntityControlWrap);
+                $LegalEntityControlWrap.append($LegalEntityControl.getControl().attr('placeholder', ' ').attr('data-placeholder', '').attr('data-hasbtn', ' ')).append('<label>' + VIS.Msg.getMsg("VA003_SelectLegalEntity") + '</label>');
+                $LegalEntityDiv.append($LegalEntityControlWrap);
+                $LegalEntityButtonWrap.append($LegalEntityControl.getBtn(0));
+                //VIS_427 BugId 5226 Added checkbox control to whether node created is of cost center /profit center
+                $CheckboxContainerwdiv = $("<div class='VA003-CheckBoxContainer'>");
+                $CheckboxCostCenterwdiv = $("<div class='VA003-CostCenterwdiv'>");
+                $IsCostCentercheckbox = new VIS.Controls.VCheckBox("IsCostCenter", false, false, true, VIS.Msg.getMsg("VA003_IsCostCenter"), null, false);
+                $CheckboxCostCenterwdiv.append($IsCostCentercheckbox.getControl().css({ "display": "inline-block" }));
+                $CheckboxProfitCenterwdiv = $("<div class='VA003-ProfitCenterwdiv'>");
+                $IsProfitCentercheckbox = new VIS.Controls.VCheckBox("IsProfitCenter", false, false, true, VIS.Msg.getMsg("VA003_IsProfitCenter"), null, false)
+                $CheckboxProfitCenterwdiv.append($IsProfitCentercheckbox.getControl().css({ "display": "inline-block" }));
                 $CheckboxContainerwdiv.append($CheckboxCostCenterwdiv).append($CheckboxProfitCenterwdiv);
                 $topfields.append($LegalEntityDiv);
-                $topfields.append($CheckboxContainerwdiv);  
+                $topfields.append($CheckboxContainerwdiv);
             }
 
             $root.append($topfields).append($btnCancel).append($btnOK);

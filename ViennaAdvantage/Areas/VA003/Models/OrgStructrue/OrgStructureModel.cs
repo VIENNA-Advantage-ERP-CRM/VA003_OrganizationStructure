@@ -1404,14 +1404,14 @@ namespace VIS.Models
                 for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                 {
                     //VIS_427 BugId 5226 Checking the tree for organization unit and appending its value to list
-                    string IsOrgUnit = "'N'";
-                    if (Util.GetValueOfString(ds.Tables[0].Rows[i]["WhereClause"]).Length > 0 && Util.GetValueOfString(ds.Tables[0].Rows[i]["WhereClause"]).Contains("IsOrgUnit"))
+                    bool IsOrgUnit = false;
+                    if (Util.GetValueOfString(ds.Tables[0].Rows[i]["WhereClause"]).Length > 0 && Util.GetValueOfString(ds.Tables[0].Rows[i]["WhereClause"]).Contains("IsOrgUnit='Y'"))
                     {
-                        IsOrgUnit = Util.GetValueOfString(ds.Tables[0].Rows[i]["WhereClause"]).Substring(Util.GetValueOfString(ds.Tables[0].Rows[i]["WhereClause"]).IndexOf("=") + 1);
+                        IsOrgUnit = true;
                     }
                    
                     bool ref_tree_org_id = Util.GetValueOfInt(ds.Tables[0].Rows[i]["ref_tree_org_id"]) > 0 ? true : false;
-                    data.AllReportHierarchy.Add(new OrgKeyVal { Key = Util.GetValueOfInt(ds.Tables[0].Rows[i]["AD_Tree_ID"]), Name = Util.GetValueOfString(ds.Tables[0].Rows[i]["Name"]), Selected = ref_tree_org_id, IsDefault = ref_tree_org_id, OrgUnit= (IsOrgUnit== "'Y'" ? true : false) });
+                    data.AllReportHierarchy.Add(new OrgKeyVal { Key = Util.GetValueOfInt(ds.Tables[0].Rows[i]["AD_Tree_ID"]), Name = Util.GetValueOfString(ds.Tables[0].Rows[i]["Name"]), Selected = ref_tree_org_id, IsDefault = ref_tree_org_id, IsOrgUnit= (IsOrgUnit ? true : false) });
                 }
             }
 
@@ -1708,7 +1708,17 @@ namespace VIS.Models
 
             return LstTrees;
         }
-
+        ///<summary> This function creates the node</summary>
+        ///<param name="treeID">Tree Id under which node will be created</param>
+        ///<param name="name">Name of node</param>
+        ///<param name="description">Description</param>
+        ///<param name="value">Search Key</param>
+        ///<param name="windowNo">Window Number</param>
+        ///<param name="parentID">Parent Id</param>
+        ///<param name="IsCostCenter">Cost Centre</param>
+        ///<param name="IsProfitCenter">Profit Centre</param>
+        ///<param name="LegalEntityId">Legal Entity</param>
+        ///<returns>Returns data after adding node</returns>
         public ReportHierarchy AddOrgNode(int treeID, string name, string description, string value, int windowNo, string url, string parentID, bool IsProfitCenter, bool IsCostCenter, int LegalEntityId)
         {
             ReportHierarchy rep = new ReportHierarchy();
@@ -2306,7 +2316,7 @@ namespace VIS.Models
         public int Key { get; set; }
         public bool Selected { get; set; }
         public bool IsDefault { get; set; }
-        public bool OrgUnit { get; set; }
+        public bool IsOrgUnit { get; set; }
     }
 
     public class TreeStructure
