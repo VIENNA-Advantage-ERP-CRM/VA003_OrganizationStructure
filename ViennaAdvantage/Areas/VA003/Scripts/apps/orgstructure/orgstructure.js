@@ -2073,10 +2073,6 @@
 
 
                 if (ad_Org_ID == 0 && oldValues != null && !oldValues.IsSummary) {
-                    //Applied check to get parent organization if user click on save button
-                    //if (node != null && !IsParentChangeNeeded) {
-                    //    seletedOrgID = node.val();
-                    //}
                     params["ParentOrg"] = seletedOrgID;
                 }
 
