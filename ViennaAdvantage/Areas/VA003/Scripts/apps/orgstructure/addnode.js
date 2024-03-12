@@ -26,10 +26,6 @@
         var $LegalEntityDiv = null;
         var LegalEntityLookUp = null;
         var $LegalEntityControl = null;
-        //VIS_427 BugId 5226 Defined variable to get the value of cost centre/profit center and legal entity
-        var LegalEntityValue = 0;
-        var IsCostCenter = false;
-        var IsProfitCenter=false;
 
         var $value = $('<input maxlength="' + valueLength + '" type="text" data-name="searchkey" placeholder=" " data-placeholder="">');
         var $name = $('<input class="vis-ev-col-mandatory" maxlength="' + nameLength + '"  type="text" data-name="name" placeholder=" " data-placeholder="">');
@@ -74,17 +70,6 @@
 
             $btnOK.on("click", ok);
             $btnCancel.on("click", cancel);
-            //VIS_427 BugId 5226 Fire value change events
-            $LegalEntityControl.fireValueChanged = function () {
-                LegalEntityValue = $LegalEntityControl.value;
-            };
-
-            $IsCostCentercheckbox.fireValueChanged = function () {
-                IsCostCenter = $IsCostCentercheckbox.getValue();
-            };
-            $IsProfitCentercheckbox.fireValueChanged = function () {
-                IsProfitCenter = $IsProfitCentercheckbox.getValue();
-            };
 
         };
 
@@ -144,21 +129,30 @@
         };
 
         function ok(e) {
+            //VIS_427 BugId 5226 Defined variable to get the value of cost centre/profit center and legal entity
+            var LegalEntityValue = 0;
+            var IsCostCenter = false;
+            var IsProfitCenter = false;
 
             if ($name.val().trim().length == 0) {
                 VIS.ADialog.info("EnterName");
                 e.preventDefault();
                 return false;
             }
-            if (LegalEntityValue == 0 || LegalEntityValue == null) {
-                VIS.ADialog.info("VA003_SelectLegalEntity");
-                e.preventDefault();
-                return false;
-            }
-            if (!IsProfitCenter && !IsCostCenter) {
-                VIS.ADialog.info("VA003_SelectCostEitherProfitCenter");
-                e.preventDefault();
-                return false;
+            if (IsOrgUnitTree) {
+                LegalEntityValue = VIS.Utility.Util.getValueOfInt($LegalEntityControl.getValue());
+                IsCostCenter = $IsCostCentercheckbox.getValue();
+                IsProfitCenter = $IsProfitCentercheckbox.getValue();
+                if (LegalEntityValue == 0) {
+                    VIS.ADialog.info("VA003_SelectLegalEntity");
+                    e.preventDefault();
+                    return false;
+                }
+                if (!IsCostCenter && !IsProfitCenter) {
+                    VIS.ADialog.info("VA003_SelectCostEitherProfitCenter");
+                    e.preventDefault();
+                    return false;
+                }
             }
 
             //if ($value.val().trim().length == 0) {
@@ -172,7 +166,7 @@
                 $.ajax({
                     url: VIS.Application.contextUrl + "OrgStructure/AddOrgNode1",
                     async: false,
-                    data: { treeID: treID, name: VIS.Utility.encodeText($name.val().trim()), description: "", value: VIS.Utility.encodeText($value.val().trim()), windowNo: winNo, parentID: parent_ID, IsProfitCenter: IsProfitCenter, IsCostCenter: IsCostCenter, LegalEntityId: VIS.Utility.Util.getValueOfInt(LegalEntityValue) },
+                    data: { treeID: treID, name: VIS.Utility.encodeText($name.val().trim()), description: "", value: VIS.Utility.encodeText($value.val().trim()), windowNo: winNo, parentID: parent_ID, IsProfitCenter: IsProfitCenter, IsCostCenter: IsCostCenter, LegalEntityId: LegalEntityValue },
                     success: function (result) {
                         var data = JSON.parse(result);
                         if (data.ErrorMsg != null && data.ErrorMsg.length > 0) {
