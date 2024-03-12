@@ -2046,7 +2046,7 @@ namespace VIS.Models
 
 
                 string sql = @"SELECT AD_Tree.AD_Tree_ID,
-                          AD_Tree.Name,PA_Hierarchy.AD_tree_org_id,PA_Hierarchy.ref_tree_org_ID
+                          AD_Tree.Name,PA_Hierarchy.AD_tree_org_id,PA_Hierarchy.ref_tree_org_ID,AD_Tree.WhereClause
                         FROM AD_Tree JOIN 
                         PA_Hierarchy ON AD_Tree.ad_tree_id       =PA_Hierarchy.AD_Tree_Org_ID"
                        + " WHERE AD_Tree.AD_Client_ID=" + ctx.GetAD_Client_ID() + " AND AD_Tree.AD_Table_ID=" + MTable.Get_Table_ID("AD_Org") + " AND AD_Tree.IsActive='Y' AND AD_Tree.IsAllNodes='Y' "
@@ -2059,15 +2059,22 @@ namespace VIS.Models
                 {
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
+                        //Handled query and identified whether the tree is of organization unit or not
+                        bool IsOrgUnitTree = false;
                         bool ref_tree_org_id = Util.GetValueOfInt(ds.Tables[0].Rows[i]["AD_tree_org_id"]) == tree.GetAD_Tree_ID() ? true : false;
+                        
+                        if (Util.GetValueOfString(ds.Tables[0].Rows[i]["WhereClause"]).Length > 0 && Util.GetValueOfString(ds.Tables[0].Rows[i]["WhereClause"]).Contains("IsOrgUnit='Y'"))
+                        {
+                            IsOrgUnitTree = true;
+                        }
 
                         if (Util.GetValueOfInt(ds.Tables[0].Rows[i]["ref_tree_org_ID"]) > 0)
                         {
-                            data.AllReportHierarchy.Add(new OrgKeyVal { Key = Util.GetValueOfInt(ds.Tables[0].Rows[i]["AD_Tree_ID"]), Name = Util.GetValueOfString(ds.Tables[0].Rows[i]["Name"]), Selected = ref_tree_org_id, IsDefault = true });
+                            data.AllReportHierarchy.Add(new OrgKeyVal { Key = Util.GetValueOfInt(ds.Tables[0].Rows[i]["AD_Tree_ID"]), Name = Util.GetValueOfString(ds.Tables[0].Rows[i]["Name"]), Selected = ref_tree_org_id, IsDefault = true, IsOrgUnit= (IsOrgUnitTree ? true : false) });
                         }
                         else
                         {
-                            data.AllReportHierarchy.Add(new OrgKeyVal { Key = Util.GetValueOfInt(ds.Tables[0].Rows[i]["AD_Tree_ID"]), Name = Util.GetValueOfString(ds.Tables[0].Rows[i]["Name"]), Selected = ref_tree_org_id, IsDefault = false });
+                            data.AllReportHierarchy.Add(new OrgKeyVal { Key = Util.GetValueOfInt(ds.Tables[0].Rows[i]["AD_Tree_ID"]), Name = Util.GetValueOfString(ds.Tables[0].Rows[i]["Name"]), Selected = ref_tree_org_id, IsDefault = false, IsOrgUnit= (IsOrgUnitTree ? true : false) });
                         }
                     }
                 }
