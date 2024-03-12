@@ -2268,6 +2268,8 @@
                         /*VIS_427 If user change any record then selects another record then previous record
                          will be saved after user confirmation and user will be redirected to selected record*/ 
                         if (SelectedRecord > 0) {
+                            //Made boolean value false when save button not clicked
+                            IsSaveBtnClicked = false;
                             loadOrgData(SelectedRecord, false);
                             SetbackGroundColorOfNode();
                             //Add class to selected record for background color
@@ -2298,6 +2300,8 @@
             changeorgLabelText(false);
             setMandatoryColor(false);
             if (SelectedRecord > 0) {
+                //Made boolean value false when save button not clicked
+                IsSaveBtnClicked = false;
                 loadOrgData(SelectedRecord, false);
                 //Add class to selected record for background color
                 SetbackGroundColorOfNode();
