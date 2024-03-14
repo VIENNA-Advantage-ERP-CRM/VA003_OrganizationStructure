@@ -360,7 +360,8 @@
 
         function checkActiveChild(lstChild) {
             var allowInActive = true;
-            if (lstChild != null && lstChild.length > 0) {
+            //VIS_427 Boolean value will only be false if parent organization is selected
+            if (lstChild != null && lstChild.length > 0 && seletedOrgID != 0) {
                 for (var i = 0; i < lstChild.length; i++) {
                     if ($(lstChild[i]).data("active")) {
                         allowInActive = false;
@@ -1037,7 +1038,6 @@
 
             if (isLegal) {
                 if (isActive) {
-                    $(e.sourceNode).data('uid')
                     $(divLeftTree.data("kendoTreeView").select().find('p')[0]).css('background-color', "#dc8a20");
                 }
                 else {
@@ -1323,6 +1323,7 @@
             else {                                          // if top level node is selected, then it is not an org, so disable all controls
                 parentNodeSelected();
                 IsSelectedLegalEntity = false;
+                IsOrganizationUnit = false;
                 setEanbleDisableControls(true);
                 isHeaderNode = true;
                 clearControls();
@@ -1436,6 +1437,29 @@
             $chkIsSummary.attr("disabled", false);
 
         };
+        /*VIS_427 This function is used disable or enable buttons on save/undo of record*/
+        function EnableButton() {
+            $btnSummary.prop("disabled", false);
+            $btnSummary.css('opacity', '1');
+
+            $btnNewLegalEntity.prop("disabled", false);
+            $btnNewLegalEntity.css('opacity', '1');
+
+            $btnaddNewOrg.prop("disabled", false);
+            $btnaddNewOrg.css('opacity', '1');
+            if (node != null && node.data('legal')) {
+                $btnSummary.prop("disabled", true);
+                $btnSummary.css('opacity', '0.5');
+                $btnNewLegalEntity.prop("disabled", true);
+                $btnNewLegalEntity.css('opacity', '0.5');
+            }
+            else if (node==null && $chkIsLegal.is(':checked')) {
+                $btnSummary.prop("disabled", true);
+                $btnSummary.css('opacity', '0.5');
+                $btnNewLegalEntity.prop("disabled", true);
+                $btnNewLegalEntity.css('opacity', '0.5');
+            }
+        }
 
         function updateSequence(oldSiblings, oldID, destinChild, newID, treeid, isSumarry, currentNodeID, newIDForOrgInfo) {
             //var queries = [];
@@ -1856,6 +1880,7 @@
             $chkIsProfitCenter.prop("checked", false);
             $chkIsCostCenter.prop("disabled", false);
             $chkIsProfitCenter.prop("disabled", false);
+            $chkIsActive.prop("disabled", true);
             $lblCostCenter.show();
             $lblProfitCenter.show();
         };
@@ -2260,6 +2285,7 @@
                             setStatus(true);
 
                         }
+                        EnableButton();
                         changeorgLabelText(false);
                         /*VIS_427 If user change any record then selects another record then previous record
                          will be saved after user confirmation and user will be redirected to selected record*/ 
@@ -2295,6 +2321,7 @@
             setStatus(true);
             changeorgLabelText(false);
             setMandatoryColor(false);
+            EnableButton();
             if (SelectedRecord > 0) {
                 //Made boolean value false when save button not clicked
                 IsSaveBtnClicked = false;
