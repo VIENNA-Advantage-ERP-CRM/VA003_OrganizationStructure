@@ -29,6 +29,7 @@ namespace VIS.Models
         Ctx ctx = null;
 
         private List<int> lstLegalEntities = new List<int>();
+        private List<int> lstNonLegalEntity = new List<int>();
         private List<int> lstOrgUnits = new List<int>();
         private List<int> lstSummary = new List<int>();
         private List<int> lstInsertedItems = new List<int>();
@@ -52,12 +53,29 @@ namespace VIS.Models
 
         private void LoadLegalEntities()
         {
-            DataSet ds = DB.ExecuteDataset("SELECT AD_Org_ID FROM AD_ORg WHERE islegalentity='Y'");
+            string sql = "SELECT AD_Org_ID FROM AD_ORg WHERE islegalentity='Y'";
+            sql = MRole.GetDefault(ctx).AddAccessSQL(sql, "AD_Org", MRole.SQL_FULLYQUALIFIED, MRole.SQL_RO);
+            DataSet ds = DB.ExecuteDataset(sql);
             if (ds != null && ds.Tables[0].Rows.Count > 0)
             {
                 for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                 {
                     lstLegalEntities.Add(Convert.ToInt32(ds.Tables[0].Rows[i]["AD_Org_ID"]));
+                }
+            }
+
+        }
+
+        private void LoadNonLegalEntities()
+        {
+            string sql = "SELECT AD_Org_ID FROM AD_Org WHERE IsSummary='N' AND islegalentity='N' AND IsCostCenter='N' AND IsProfitCenter='N'";
+            sql = MRole.GetDefault(ctx).AddAccessSQL(sql, "AD_Org", MRole.SQL_FULLYQUALIFIED, MRole.SQL_RO);
+            DataSet ds = DB.ExecuteDataset(sql);
+            if (ds != null && ds.Tables[0].Rows.Count > 0)
+            {
+                for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                {
+                    lstNonLegalEntity.Add(Convert.ToInt32(ds.Tables[0].Rows[i]["AD_Org_ID"]));
                 }
             }
 
@@ -70,8 +88,10 @@ namespace VIS.Models
         /// <param name="LegalEntityIds">Legal Entity IDs for filter data</param>
         private void LoadLOrganizationUnits(string LegalEntityIds)
         {
-            DataSet ds = DB.ExecuteDataset("SELECT AD_Org_ID FROM AD_Org WHERE " + (string.IsNullOrEmpty(LegalEntityIds) ? "  IsOrgUnit='Y' " :
-                         " IsOrgUnit='Y' AND " + VAdvantage.DataBase.DBFunctionCollection.TypecastColumnAsInt("LegalEntityOrg") + " IN (" + LegalEntityIds + ")"));
+            string sql = "SELECT AD_Org_ID FROM AD_Org WHERE " + (string.IsNullOrEmpty(LegalEntityIds) ? "  IsOrgUnit='Y' " :
+                         " IsOrgUnit='Y' AND " + VAdvantage.DataBase.DBFunctionCollection.TypecastColumnAsInt("LegalEntityOrg") + " IN (" + LegalEntityIds + ")");
+            sql = MRole.GetDefault(ctx).AddAccessSQL(sql, "AD_Org", MRole.SQL_FULLYQUALIFIED, MRole.SQL_RO);
+            DataSet ds = DB.ExecuteDataset(sql);
             if (ds != null && ds.Tables[0].Rows.Count > 0)
             {
                 for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
@@ -83,7 +103,10 @@ namespace VIS.Models
 
         private void LoadInActiveOrgs()
         {
-            DataSet ds = DB.ExecuteDataset("SELECT AD_Org_ID FROM AD_Org WHERE IsActive='N'");
+            string sql = "SELECT AD_Org_ID FROM AD_Org WHERE IsActive='N'";
+            
+            sql = MRole.GetDefault(ctx).AddAccessSQL(sql, "AD_Org", MRole.SQL_FULLYQUALIFIED, MRole.SQL_RO);
+            DataSet ds = DB.ExecuteDataset(sql);
             if (ds != null && ds.Tables[0].Rows.Count > 0)
             {
                 for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
@@ -96,7 +119,9 @@ namespace VIS.Models
 
         private void LoadInActiveOrgsInTree(int AD_Tree_ID)
         {
-            DataSet ds = DB.ExecuteDataset("SELECT Node_ID FROM AD_TreeNode WHERE IsActive='N' AND AD_Tree_ID=" + AD_Tree_ID);
+            string sql = "SELECT Node_ID FROM AD_TreeNode WHERE IsActive='N' AND AD_Tree_ID=" + AD_Tree_ID;
+            sql = MRole.GetDefault(ctx).AddAccessSQL(sql, "AD_OrgInfo", MRole.SQL_FULLYQUALIFIED, MRole.SQL_RO);
+            DataSet ds = DB.ExecuteDataset(sql);
             if (ds != null && ds.Tables[0].Rows.Count > 0)
             {
                 for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
@@ -112,17 +137,18 @@ namespace VIS.Models
 
 
             // string sql = "SELECT AD_Org_ID, parent_org_id FROM AD_OrgInfo";
-            string sql = @"SELECT ad_org.AD_Org_ID,  AD_OrgInfo.parent_org_id
-                        FROM AD_OrgInfo INNER JOIN AD_Org ON AD_OrgInfo.AD_Org_ID  =AD_Org.AD_Org_ID";
+            string sql = @"SELECT org.AD_Org_ID,  orginfo.parent_org_id
+                        FROM AD_OrgInfo orginfo INNER JOIN AD_Org org ON (orginfo.AD_Org_ID = org.AD_Org_ID)";
             if (!displayOrgUnits)
             {
                 MOrg Org = new MOrg(ctx, ctx.GetAD_Org_ID(), null);
                 // Applied check not to show Cost Centers in tree.
                 if (Org.Get_ColumnIndex("IsOrgUnit") > -1)
                 {
-                    sql += " WHERE AD_Org.IsCostCenter='N' AND AD_Org.IsProfitCenter='N'";
+                    sql += " WHERE org.IsCostCenter='N' AND org.IsProfitCenter='N'";
                 }
             }
+           // sql = MRole.GetDefault(ctx).AddAccessSQL(sql, "org", MRole.SQL_FULLYQUALIFIED, MRole.SQL_RO);
             // DataSet ds = DB.ExecuteDataset(MRole.GetDefault(ctx).AddAccessSQL(sql, "AD_OrgInfo", true, true));
             DataSet ds = DB.ExecuteDataset(sql);
 
@@ -362,6 +388,7 @@ namespace VIS.Models
         public List<TreeStructure> GetTree(int windowNo, string url, string tree_ID, bool showOrgUnits)
         {
             LoadLegalEntities();
+            LoadNonLegalEntities();
             LoadLOrganizationUnits(null);
             LoadInActiveOrgs();
             displayOrgUnits = showOrgUnits;
@@ -418,23 +445,21 @@ namespace VIS.Models
                 //}
 
 
-                sql = @"SELECT AD_OrgInfo.AD_Org_ID,
-                                              AD_OrgInfo.parent_org_id 
-                                            FROM AD_OrgInfo
-                                            JOIN AD_Org
-                                            ON AD_Org.AD_Org_ID =AD_OrgInfo.AD_Org_ID";
+                sql = @"SELECT orginfo.AD_Org_ID,
+                                             orginfo.parent_org_id 
+                                            FROM AD_OrgInfo orginfo
+                                            JOIN AD_Org org
+                                            ON (org.AD_Org_ID = orginfo.AD_Org_ID)";
                 if (!displayOrgUnits)
                 {
                     MOrg Org = new MOrg(ctx, ctx.GetAD_Org_ID(), null);
                     // Applied check not to show Cost Centers in tree.
                     if (Org.Get_ColumnIndex("IsOrgUnit") > -1)
                     {
-                        sql += " WHERE AD_Org.IsCostCenter='N' AND AD_Org.IsProfitCenter='N' ";
+                        sql += " WHERE org.IsCostCenter='N' AND org.IsProfitCenter='N' ";
                     }
                 }
-                sql += " ORDER BY ad_org.issummary DESC , AD_OrgInfo.AD_Org_ID ";
-
-                sql = MRole.GetDefault(ctx).AddAccessSQL(sql, "AD_Org", true, true);
+                sql += " ORDER BY org.IsSummary DESC , orginfo.AD_Org_ID ";
 
                 DataSet dsOrgInfo = DB.ExecuteDataset(sql);
 
@@ -547,6 +572,10 @@ namespace VIS.Models
                     {
                         continue;
                     }
+                }
+                if (!lstNonLegalEntity.Contains(vt.Node_ID) && !vt.IsSummary && !lstOrgUnits.Contains(vt.Node_ID) && !lstLegalEntities.Contains(vt.Node_ID))
+                {
+                    continue;
                 }
                 if (vt.IsSummary)
                 {
@@ -1283,6 +1312,7 @@ namespace VIS.Models
                 data.IsActive = org.IsActive();
                 data.profitCenter = org.IsProfitCenter();
                 data.costCenter = org.IsCostCenter();
+                data.LegalEntityOrg = Util.GetValueOfInt(org.Get_Value("LegalEntityOrg"));
 
                 MOrgInfo info = new MOrgInfo(ctx, org.GetAD_Org_ID(), null);
                 data.C_Location_ID = Util.GetValueOfInt(info.GetC_Location_ID());
@@ -1388,12 +1418,12 @@ namespace VIS.Models
             //          + "ORDER BY AD_Tree_ID desc";
 
 
-            sql = @"SELECT AD_Tree.AD_Tree_ID,AD_Tree.WhereClause,
-                          AD_Tree.Name,PA_Hierarchy.ref_tree_org_id
-                        FROM AD_Tree JOIN 
-                        PA_Hierarchy ON AD_Tree.ad_tree_id       =PA_Hierarchy.AD_Tree_Org_ID"
-                 + " WHERE AD_Tree.AD_Client_ID=" + ctx.GetAD_Client_ID() + " AND AD_Tree.AD_Table_ID=" + MTable.Get_Table_ID("AD_Org") + " AND AD_Tree.IsActive='Y' AND AD_Tree.IsAllNodes='Y' AND PA_Hierarchy.IsActive='Y' "
-                      + "ORDER BY AD_Tree.AD_Tree_ID DESC";
+            sql = @"SELECT tree.AD_Tree_ID,tree.WhereClause,
+                        tree.Name,pa.ref_tree_org_id
+                        FROM AD_Tree tree INNER JOIN 
+                        PA_Hierarchy pa ON tree.ad_tree_id = pa.AD_Tree_Org_ID"
+                        + " WHERE tree.AD_Client_ID=" + ctx.GetAD_Client_ID() + " AND tree.AD_Table_ID=" + MTable.Get_Table_ID("AD_Org") + " AND tree.IsActive='Y' AND tree.IsAllNodes='Y' AND pa.IsActive='Y' "
+                        + "ORDER BY tree.AD_Tree_ID DESC";
 
 
             ds = DB.ExecuteDataset(sql);
@@ -1615,12 +1645,12 @@ namespace VIS.Models
 
 
 
-            string sql = @"SELECT AD_Tree.AD_Tree_ID,
-                          AD_Tree.Name,PA_Hierarchy.ref_tree_org_id
-                        FROM AD_Tree JOIN 
-                        PA_Hierarchy ON AD_Tree.ad_tree_id       =PA_Hierarchy.AD_Tree_Org_ID"
-                 + " WHERE AD_Tree.AD_Client_ID=" + ctx.GetAD_Client_ID() + " AND AD_Tree.AD_Table_ID=" + MTable.Get_Table_ID("AD_Org") + " AND AD_Tree.IsActive='Y' AND AD_Tree.IsAllNodes='Y' AND PA_Hierarchy.IsActive='Y' "
-                      + "ORDER BY AD_Tree.AD_Tree_ID DESC";
+            string sql = @"SELECT tree.AD_Tree_ID,tree.WhereClause,
+                          tree.Name,pa.ref_tree_org_id
+                        FROM AD_Tree tree JOIN 
+                        PA_Hierarchy pa ON tree.ad_tree_id = pa.AD_Tree_Org_ID"
+                 + " WHERE tree.AD_Client_ID=" + ctx.GetAD_Client_ID() + " AND tree.AD_Table_ID=" + MTable.Get_Table_ID("AD_Org") + " AND tree.IsActive='Y' AND tree.IsAllNodes='Y' AND pa.IsActive='Y' "
+                      + "ORDER BY tree.AD_Tree_ID DESC";
 
 
 
@@ -1650,8 +1680,14 @@ namespace VIS.Models
                     {
                         tree_ID = Convert.ToInt32(ds.Tables[0].Rows[i]["AD_Tree_ID"]);
                     }
+                    //VIS_427 BugId 5226 Checking the tree for organization unit and appending its value to list
+                    bool IsOrgUnit = false;
+                    if (Util.GetValueOfString(ds.Tables[0].Rows[i]["WhereClause"]).Length > 0 && Util.GetValueOfString(ds.Tables[0].Rows[i]["WhereClause"]).Contains("IsOrgUnit='Y'"))
+                    {
+                        IsOrgUnit = true;
+                    }
                     bool ref_tree_org_id = Util.GetValueOfInt(ds.Tables[0].Rows[i]["ref_tree_org_id"]) > 0 ? true : false;
-                    Hie.AllReportHierarchy.Add(new OrgKeyVal { Key = Util.GetValueOfInt(ds.Tables[0].Rows[i]["AD_Tree_ID"]), Name = Util.GetValueOfString(ds.Tables[0].Rows[i]["Name"]), Selected = ref_tree_org_id, IsDefault = ref_tree_org_id });
+                    Hie.AllReportHierarchy.Add(new OrgKeyVal { Key = Util.GetValueOfInt(ds.Tables[0].Rows[i]["AD_Tree_ID"]), Name = Util.GetValueOfString(ds.Tables[0].Rows[i]["Name"]), Selected = ref_tree_org_id, IsDefault = ref_tree_org_id, IsOrgUnit = (IsOrgUnit ? true : false) });
                 }
 
                 MTree tree = new MTree(ctx, Convert.ToInt32(tree_ID), true, true, null);
@@ -1691,6 +1727,7 @@ namespace VIS.Models
         public List<TreeStructure> CreateTree1(int AD_Tree_ID, string url, int windowNo, string LegalEntityIds)
         {
             LoadLegalEntities();
+            LoadNonLegalEntities();
             LoadLOrganizationUnits(LegalEntityIds);
             LoadInActiveOrgsInTree(AD_Tree_ID);
             MTree tree = new MTree(ctx, Convert.ToInt32(AD_Tree_ID), true, true, null);
@@ -1825,6 +1862,7 @@ namespace VIS.Models
 
             LoadLegalEntities();
             LoadLOrganizationUnits(null);
+            LoadNonLegalEntities();
             MTree tre = new MTree(ctx, Convert.ToInt32(tree.GetAD_Tree_ID()), true, true, null);
             List<TreeStructure> LstTrees = new List<TreeStructure>();
             TreeStructure trees = new TreeStructure();
@@ -1905,7 +1943,10 @@ namespace VIS.Models
                 {
                     continue;
                 }
-
+                if (!lstNonLegalEntity.Contains(vt.Node_ID) && !vt.IsSummary && !lstOrgUnits.Contains(vt.Node_ID) && !lstLegalEntities.Contains(vt.Node_ID) )
+                {
+                    continue;
+                }
                 //VIS_0045: When Load Organization Unit, check it contains in the list or not
                 if (orgunit.Equals("'Y'") && !vt.IsSummary && !lstOrgUnits.Contains(vt.Node_ID))
                 {
@@ -2040,18 +2081,35 @@ namespace VIS.Models
                 tree.Set_Value("WhereClause", isorgunit ? "AD_Org.IsOrgUnit='Y'" : "AD_Org.IsOrgUnit='N'");
             }
 
-            if (tree.Save())
+            if (!tree.Save())
+            {
+                ValueNamePair vp = VLogger.RetrieveError();
+                if (vp != null)
+                {
+                    string val = vp.GetName();
+                    if (String.IsNullOrEmpty(val))
+                    {
+                        val = vp.GetValue();
+                    }
+                    data.errorMessage = val;
+                }
+                if (string.IsNullOrEmpty(data.errorMessage))
+                {
+                    data.errorMessage = Msg.GetMsg(ctx,"VA003_AlreadyExsist");
+                }
+                return data;
+            }
+            else
             {
                 CreateReportHeirarchy(tree);
 
 
-                string sql = @"SELECT AD_Tree.AD_Tree_ID,
-                          AD_Tree.Name,PA_Hierarchy.AD_tree_org_id,PA_Hierarchy.ref_tree_org_ID,AD_Tree.WhereClause
-                        FROM AD_Tree JOIN 
-                        PA_Hierarchy ON AD_Tree.ad_tree_id       =PA_Hierarchy.AD_Tree_Org_ID"
-                       + " WHERE AD_Tree.AD_Client_ID=" + ctx.GetAD_Client_ID() + " AND AD_Tree.AD_Table_ID=" + MTable.Get_Table_ID("AD_Org") + " AND AD_Tree.IsActive='Y' AND AD_Tree.IsAllNodes='Y' "
-                            + "ORDER BY AD_Tree.AD_Tree_ID DESC";
-
+                string sql = @"SELECT tree.AD_Tree_ID,
+                          tree.Name,pa.AD_tree_org_id,pa.ref_tree_org_ID,tree.WhereClause
+                        FROM AD_Tree tree JOIN 
+                        PA_Hierarchy pa ON (tree.ad_tree_id = pa.AD_Tree_Org_ID)"
+                       + " WHERE tree.AD_Client_ID=" + ctx.GetAD_Client_ID() + " AND tree.AD_Table_ID=" + MTable.Get_Table_ID("AD_Org") + " AND tree.IsActive='Y' AND tree.IsAllNodes='Y' "
+                            + "ORDER BY tree.AD_Tree_ID DESC";
                 DataSet ds = DB.ExecuteDataset(sql);
                 data.AllReportHierarchy = new List<OrgKeyVal>();
                 data.AllReportHierarchy.Add(new OrgKeyVal { Key = -1, Name = "" });
@@ -2062,7 +2120,7 @@ namespace VIS.Models
                         //Handled query and identified whether the tree is of organization unit or not
                         bool IsOrgUnitTree = false;
                         bool ref_tree_org_id = Util.GetValueOfInt(ds.Tables[0].Rows[i]["AD_tree_org_id"]) == tree.GetAD_Tree_ID() ? true : false;
-                        
+
                         if (Util.GetValueOfString(ds.Tables[0].Rows[i]["WhereClause"]).Length > 0 && Util.GetValueOfString(ds.Tables[0].Rows[i]["WhereClause"]).Contains("IsOrgUnit='Y'"))
                         {
                             IsOrgUnitTree = true;
@@ -2070,20 +2128,16 @@ namespace VIS.Models
 
                         if (Util.GetValueOfInt(ds.Tables[0].Rows[i]["ref_tree_org_ID"]) > 0)
                         {
-                            data.AllReportHierarchy.Add(new OrgKeyVal { Key = Util.GetValueOfInt(ds.Tables[0].Rows[i]["AD_Tree_ID"]), Name = Util.GetValueOfString(ds.Tables[0].Rows[i]["Name"]), Selected = ref_tree_org_id, IsDefault = true, IsOrgUnit= (IsOrgUnitTree ? true : false) });
+                            data.AllReportHierarchy.Add(new OrgKeyVal { Key = Util.GetValueOfInt(ds.Tables[0].Rows[i]["AD_Tree_ID"]), Name = Util.GetValueOfString(ds.Tables[0].Rows[i]["Name"]), Selected = ref_tree_org_id, IsDefault = true, IsOrgUnit = (IsOrgUnitTree ? true : false) });
                         }
                         else
                         {
-                            data.AllReportHierarchy.Add(new OrgKeyVal { Key = Util.GetValueOfInt(ds.Tables[0].Rows[i]["AD_Tree_ID"]), Name = Util.GetValueOfString(ds.Tables[0].Rows[i]["Name"]), Selected = ref_tree_org_id, IsDefault = false, IsOrgUnit= (IsOrgUnitTree ? true : false) });
+                            data.AllReportHierarchy.Add(new OrgKeyVal { Key = Util.GetValueOfInt(ds.Tables[0].Rows[i]["AD_Tree_ID"]), Name = Util.GetValueOfString(ds.Tables[0].Rows[i]["Name"]), Selected = ref_tree_org_id, IsDefault = false, IsOrgUnit = (IsOrgUnitTree ? true : false) });
                         }
                     }
                 }
 
                 return data;
-            }
-            else
-            {
-                return null;
             }
 
         }
@@ -2299,6 +2353,7 @@ namespace VIS.Models
         public bool showOrgUnit { get; set; }
         public bool costCenter { get; set; }
         public bool profitCenter { get; set; }
+        public int LegalEntityOrg { get;set; }
     }
 
     public class OrgStructureLookup
@@ -2315,6 +2370,7 @@ namespace VIS.Models
         public int EMailLength { get; set; }
         public int FaxLength { get; set; }
         public int TreeNameLength { get; set; }
+        public string errorMessage { get; set; }
     }
 
     public class OrgKeyVal

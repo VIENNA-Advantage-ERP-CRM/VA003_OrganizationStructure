@@ -128,6 +128,9 @@
         /*VIS_427 BugId 5226 Defined boolean variable to check whether save button 
          is clicked*/
         var IsSaveBtnClicked = false
+        var $LegalEntityDiv = null;
+        var LegalEntityLookUp = null;
+        var $LegalEntityControl = null;
 
         /*
           Initialize Components
@@ -699,7 +702,17 @@
 
             $txtLocation.fireValueChanged = locationChanged;
 
-
+            $LegalEntityDiv = $('<div class="input-group vis-input-wrap">');
+            LegalEntityLookUp = VIS.MLookupFactory.getMLookUp(VIS.Env.getCtx(), $self.windowNo, GetColumnID("LegalEntityOrg"), VIS.DisplayType.Search, 0, false, "IsActive='Y'");
+            $LegalEntityControl = new VIS.Controls.VTextBoxButton("AD_Org_ID", true, true, true, VIS.DisplayType.Search, LegalEntityLookUp);
+            var $LegalEntityControlWrap = $('<div class="vis-control-wrap VA003-ControlDiv">');
+            var $LegalEntityButtonWrap = $('<div class="input-group-append">');
+            $LegalEntityDiv.append($LegalEntityControlWrap);
+            $LegalEntityControlWrap.append($LegalEntityControl.getControl().attr('placeholder', ' ').attr('data-placeholder', '').attr('data-hasbtn', ' ')).append('<label>' + VIS.Msg.getMsg("VA003_LegalEntityOrg") + '</label>');
+            $LegalEntityDiv.append($LegalEntityControlWrap);
+            $LegalEntityButtonWrap.append($LegalEntityControl.getBtn(0));
+            $LegalEntityDiv.append($LegalEntityButtonWrap);
+            $divFullFields.append($LegalEntityDiv);
             //var lookup = VIS.MLookupFactory.getMLookUp(ctx, $self.windowNo, 10424, VIS.DisplayType.Search);
             //$txtOrgSuperviser = new VIS.Controls.VTextBoxButton("AD_User_ID", true, false, true, VIS.DisplayType.Search, lookup);
             //$($txtOrgSuperviser.getControl()).data("name", "orgsuperwiser");
@@ -837,6 +850,12 @@
 
 
         };
+
+        //VIS_427 VIS_427 BugId 5226 This Function returns the column id
+        var GetColumnID = function (ColumnName) {
+            var Column_ID = VIS.dataContext.getJSONData(VIS.Application.contextUrl + "OrgStructure/GetColumnID", { "ColumnName": ColumnName }, null);
+            return Column_ID;
+        }
 
         function onDrop(e) {
 
@@ -1624,6 +1643,7 @@
 
         function setOrgDataIntoFields(data, updateOldValues) {
             $chkIsSummary.attr("disabled", false);
+            $LegalEntityDiv.hide();
             if (!isLegalDisable) {
                 $chkIsLegal.attr("disabled", false);
             }
@@ -1662,7 +1682,12 @@
                     $txtLocation.setValue(data.C_Location_ID);
                 }
                 // $txtOrgSuperviser.setValue(data.OrgSupervisor);
-
+                if (data.LegalEntityOrg == 0) {
+                    $LegalEntityControl.setValue(null);
+                }
+                else {
+                    $LegalEntityControl.setValue(data.LegalEntityOrg);
+                }
 
 
                 if (data.IsLegalEntity != null && data.IsLegalEntity != "") {
@@ -1704,17 +1729,21 @@
                 //set cost center and profit center
                 if (data.profitCenter != undefined && data.profitCenter != null && data.profitCenter != "") {
                     $chkIsProfitCenter.prop("checked", data.profitCenter);
+                    $LegalEntityDiv.show();
                 }
                 else {
                     $chkIsProfitCenter.prop("checked", false);
                 }
                 if (data.costCenter != undefined && data.costCenter != null && data.costCenter != "") {
                     $chkIsCostCenter.prop("checked", data.costCenter);
+                    $LegalEntityDiv.show();
                 }
                 else {
                     $chkIsCostCenter.prop("checked", false);
                 }
-
+                if (!data.IsSummary && !data.IsLegalEntity && !data.costCenter && !data.profitCenter) {
+                    $LegalEntityDiv.show();
+                }
                 if (data.OrgImage != null && data.OrgImage != undefined && data.OrgImage.length > 0) {
                     $imageControl.show();
                     $($imageControl.parent()).css("background-color", "white");
@@ -1773,7 +1802,7 @@
                 oldValues = {
                     "Tenant": data.Tenant, "SearchKey": data.SearchKey, "Name": data.Name, "TaxID": data.TaxID,
                     "EmailAddess": data.EmailAddess, "Phone": data.Phone, "Fax": data.Fax,
-                    "C_Location_ID": data.C_Location_ID, "IsSummary": data.IsSummary, "IsLegalEntity": data.IsLegalEntity, "OrgImage": data.OrgImage, 'IsActive': data.IsActive,
+                    "C_Location_ID": data.C_Location_ID, "LegalEntityOrg": data.LegalEntityOrg, "IsSummary": data.IsSummary, "IsLegalEntity": data.IsLegalEntity, "OrgImage": data.OrgImage, 'IsActive': data.IsActive,
                     "costCenter": data.costCenter, "profitCenter": data.profitCenter, "OrgId": data.OrgID
                 };
             }
@@ -1781,7 +1810,7 @@
                 oldValues = {
                     "Tenant": "", "SearchKey": "", "Name": "", "TaxID": "",
                     "EmailAddess": "", "Phone": "", "Fax": "",
-                    "C_Location_ID": "", "IsSummary": "", "IsLegalEntity": "", "OrgImage": "", 'IsActive': "", "costCenter": "", "profitCenter": "", "OrgId":""
+                    "C_Location_ID": "", "LegalEntityOrg":"", "IsSummary": "", "IsLegalEntity": "", "OrgImage": "", 'IsActive': "", "costCenter": "", "profitCenter": "", "OrgId":""
                 };
             }
         };
@@ -1883,6 +1912,8 @@
             $chkIsActive.prop("disabled", true);
             $lblCostCenter.show();
             $lblProfitCenter.show();
+            $LegalEntityDiv.show();
+            $LegalEntityControl.setValue(seletedOrgID != 0 ? seletedOrgID : null);
         };
 
         function enableNameValue() {
@@ -1914,12 +1945,14 @@
             $txtTax.val("");
             //  $cmbWarehouse.val(-1);
             $txtLocation.setValue(null);
+            $LegalEntityControl.setValue(null);
 
             $chkIsLegal.prop("checked", false);
             $chkIsSummary.prop("checked", false);
             $chkIsCostCenter.prop("checked", false);
             $chkIsProfitCenter.prop("checked", false);
             $chkIsActive.prop("checked", true);
+            $LegalEntityDiv.hide();
             //$imageControl.attr('src', VIS.Application.contextUrl + 'Areas/VIS/Images/login/logo.PNG');
             hideImage();
 
@@ -2317,6 +2350,7 @@
             IsChangeNeededOnSelection = false;
             //assigning old value when user click add new icon and then click undo button
             ad_Org_ID = VIS.Utility.Util.getValueOfInt(oldValues.OrgId);
+            $LegalEntityDiv.hide();
             setOrgDataIntoFields(oldValues, false);
             setStatus(true);
             changeorgLabelText(false);
@@ -2779,7 +2813,9 @@
 
                 $btnSlider.find('a').removeClass('VA003-toggle-icon');
                 $btnSlider.find('a').addClass('VA003-edit-icon');
-
+                if (VIS.Utility.Util.getValueOfInt($LegalEntityControl.getValue()) == 0){
+                    $LegalEntityDiv.hide();
+                }
             }
             else {
                 closeSlider();
@@ -2798,6 +2834,12 @@
                     });
                 $btnSlider.find('a').addClass('VA003-toggle-icon');
                 $btnSlider.find('a').removeClass('VA003-edit-icon');
+                if (VIS.Utility.Util.getValueOfInt($LegalEntityControl.getValue()) == 0) {
+                    $LegalEntityDiv.hide();
+                }
+                else {
+                    $LegalEntityDiv.show();
+                }
             }
 
         };
@@ -2851,6 +2893,11 @@
                         if (data == null || data == undefined) {
                             $bsyDiv[0].style.visibility = "hidden";
                             return null;
+                        }
+                        if (data.errorMessage != "" || data.errorMessage != null) {
+                            VIS.ADialog.info("VA003_AlreadyExist");
+                            $bsyDiv[0].style.visibility = "hidden";
+                            return false;
                         }
                         $cmbReportHirerchy.empty();
                         var AllReportHierarchy = data.AllReportHierarchy;
