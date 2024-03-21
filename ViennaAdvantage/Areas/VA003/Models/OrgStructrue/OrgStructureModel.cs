@@ -54,6 +54,7 @@ namespace VIS.Models
         private void LoadLegalEntities()
         {
             string sql = "SELECT AD_Org_ID FROM AD_ORg WHERE islegalentity='Y'";
+            //VIS_427 BugId 5473 applied role based check to fetch those records which has access of particular role
             sql = MRole.GetDefault(ctx).AddAccessSQL(sql, "AD_Org", MRole.SQL_FULLYQUALIFIED, MRole.SQL_RO);
             DataSet ds = DB.ExecuteDataset(sql);
             if (ds != null && ds.Tables[0].Rows.Count > 0)
@@ -65,7 +66,11 @@ namespace VIS.Models
             }
 
         }
-
+        /// <summary>
+        /// 21/03/2024 BugId 5473 This function return the list of non legal entity which have role access in which user logged in
+        /// </summary>
+        /// <returns>list of non legal entity</returns>
+        /// <author>VIS_427</author>
         private void LoadNonLegalEntities()
         {
             string sql = "SELECT AD_Org_ID FROM AD_Org WHERE IsSummary='N' AND islegalentity='N' AND IsCostCenter='N' AND IsProfitCenter='N'";
@@ -90,6 +95,7 @@ namespace VIS.Models
         {
             string sql = "SELECT AD_Org_ID FROM AD_Org WHERE " + (string.IsNullOrEmpty(LegalEntityIds) ? "  IsOrgUnit='Y' " :
                          " IsOrgUnit='Y' AND " + VAdvantage.DataBase.DBFunctionCollection.TypecastColumnAsInt("LegalEntityOrg") + " IN (" + LegalEntityIds + ")");
+            //VIS_427 BugId 5473 applied role based check to fetch those records which has access of particular role
             sql = MRole.GetDefault(ctx).AddAccessSQL(sql, "AD_Org", MRole.SQL_FULLYQUALIFIED, MRole.SQL_RO);
             DataSet ds = DB.ExecuteDataset(sql);
             if (ds != null && ds.Tables[0].Rows.Count > 0)
@@ -104,7 +110,7 @@ namespace VIS.Models
         private void LoadInActiveOrgs()
         {
             string sql = "SELECT AD_Org_ID FROM AD_Org WHERE IsActive='N'";
-            
+            //VIS_427 BugId 5473 applied role based check to fetch those records which has access of particular role
             sql = MRole.GetDefault(ctx).AddAccessSQL(sql, "AD_Org", MRole.SQL_FULLYQUALIFIED, MRole.SQL_RO);
             DataSet ds = DB.ExecuteDataset(sql);
             if (ds != null && ds.Tables[0].Rows.Count > 0)
@@ -120,7 +126,6 @@ namespace VIS.Models
         private void LoadInActiveOrgsInTree(int AD_Tree_ID)
         {
             string sql = "SELECT Node_ID FROM AD_TreeNode WHERE IsActive='N' AND AD_Tree_ID=" + AD_Tree_ID;
-            sql = MRole.GetDefault(ctx).AddAccessSQL(sql, "AD_OrgInfo", MRole.SQL_FULLYQUALIFIED, MRole.SQL_RO);
             DataSet ds = DB.ExecuteDataset(sql);
             if (ds != null && ds.Tables[0].Rows.Count > 0)
             {
@@ -148,8 +153,6 @@ namespace VIS.Models
                     sql += " WHERE org.IsCostCenter='N' AND org.IsProfitCenter='N'";
                 }
             }
-           // sql = MRole.GetDefault(ctx).AddAccessSQL(sql, "org", MRole.SQL_FULLYQUALIFIED, MRole.SQL_RO);
-            // DataSet ds = DB.ExecuteDataset(MRole.GetDefault(ctx).AddAccessSQL(sql, "AD_OrgInfo", true, true));
             DataSet ds = DB.ExecuteDataset(sql);
 
             if (ds != null && ds.Tables[0].Rows.Count > 0)
@@ -573,6 +576,8 @@ namespace VIS.Models
                         continue;
                     }
                 }
+                /*VIS_427 BugId 5473 if non legal entity don't have access of role in which user logged in 
+                 then it will continue the loop*/
                 if (!lstNonLegalEntity.Contains(vt.Node_ID) && !vt.IsSummary && !lstOrgUnits.Contains(vt.Node_ID) && !lstLegalEntities.Contains(vt.Node_ID))
                 {
                     continue;
@@ -1943,6 +1948,8 @@ namespace VIS.Models
                 {
                     continue;
                 }
+                /*VIS_427 BugId 5473 if non legal entity don't have access of role in which user logged in 
+                 then it will continue the loop*/
                 if (!lstNonLegalEntity.Contains(vt.Node_ID) && !vt.IsSummary && !lstOrgUnits.Contains(vt.Node_ID) && !lstLegalEntities.Contains(vt.Node_ID) )
                 {
                     continue;
@@ -2083,6 +2090,7 @@ namespace VIS.Models
 
             if (!tree.Save())
             {
+                //If tree is not save the a popup will aperar on form
                 ValueNamePair vp = VLogger.RetrieveError();
                 if (vp != null)
                 {

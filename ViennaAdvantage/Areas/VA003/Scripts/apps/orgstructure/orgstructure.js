@@ -701,7 +701,7 @@
             //valueChangeEvent($txtLocation.getControl());
 
             $txtLocation.fireValueChanged = locationChanged;
-
+            //VIS_427 Cretaed legal entity org control
             $LegalEntityDiv = $('<div class="input-group vis-input-wrap">');
             LegalEntityLookUp = VIS.MLookupFactory.getMLookUp(VIS.Env.getCtx(), $self.windowNo, GetColumnID("LegalEntityOrg"), VIS.DisplayType.Search, 0, false, "IsActive='Y'");
             $LegalEntityControl = new VIS.Controls.VTextBoxButton("AD_Org_ID", true, true, true, VIS.DisplayType.Search, LegalEntityLookUp);
@@ -851,7 +851,7 @@
 
         };
 
-        //VIS_427 VIS_427 BugId 5226 This Function returns the column id
+        //VIS_427 This Function returns the column id
         var GetColumnID = function (ColumnName) {
             var Column_ID = VIS.dataContext.getJSONData(VIS.Application.contextUrl + "OrgStructure/GetColumnID", { "ColumnName": ColumnName }, null);
             return Column_ID;
@@ -1741,7 +1741,7 @@
                 else {
                     $chkIsCostCenter.prop("checked", false);
                 }
-                if (!data.IsSummary && !data.IsLegalEntity && !data.costCenter && !data.profitCenter) {
+                if (!data.IsSummary && !data.IsLegalEntity && !data.costCenter && !data.profitCenter && data.LegalEntityOrg != "") {
                     $LegalEntityDiv.show();
                 }
                 if (data.OrgImage != null && data.OrgImage != undefined && data.OrgImage.length > 0) {
@@ -2894,7 +2894,7 @@
                             $bsyDiv[0].style.visibility = "hidden";
                             return null;
                         }
-                        if (data.errorMessage != "" || data.errorMessage != null) {
+                        if (data.errorMessage != null && data.errorMessage != "") {
                             VIS.ADialog.info("VA003_AlreadyExist");
                             $bsyDiv[0].style.visibility = "hidden";
                             return false;
