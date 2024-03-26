@@ -703,7 +703,7 @@
             $txtLocation.fireValueChanged = locationChanged;
             //VIS_427 Cretaed legal entity org control
             $LegalEntityDiv = $('<div class="input-group vis-input-wrap">');
-            LegalEntityLookUp = VIS.MLookupFactory.getMLookUp(VIS.Env.getCtx(), $self.windowNo, GetColumnID("LegalEntityOrg"), VIS.DisplayType.Search, 0, false, "IsActive='Y'");
+            LegalEntityLookUp = VIS.MLookupFactory.getMLookUp(VIS.Env.getCtx(), $self.windowNo, GetColumnID("LegalEntityOrg"), VIS.DisplayType.Search);
             $LegalEntityControl = new VIS.Controls.VTextBoxButton("AD_Org_ID", true, true, true, VIS.DisplayType.Search, LegalEntityLookUp);
             var $LegalEntityControlWrap = $('<div class="vis-control-wrap VA003-ControlDiv">');
             var $LegalEntityButtonWrap = $('<div class="input-group-append">');
@@ -2895,7 +2895,7 @@
                             return null;
                         }
                         if (data.errorMessage != null && data.errorMessage != "") {
-                            VIS.ADialog.info("VA003_AlreadyExist");
+                            VIS.ADialog.info("", "", data.errorMessage);
                             $bsyDiv[0].style.visibility = "hidden";
                             return false;
                         }

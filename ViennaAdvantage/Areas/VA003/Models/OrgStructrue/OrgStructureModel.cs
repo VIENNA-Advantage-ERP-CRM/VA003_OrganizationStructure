@@ -464,6 +464,8 @@ namespace VIS.Models
                 }
                 sql += " ORDER BY org.IsSummary DESC , orginfo.AD_Org_ID ";
 
+                sql = MRole.GetDefault(ctx).AddAccessSQL(sql, "AD_Org", true, true);
+
                 DataSet dsOrgInfo = DB.ExecuteDataset(sql);
 
 
