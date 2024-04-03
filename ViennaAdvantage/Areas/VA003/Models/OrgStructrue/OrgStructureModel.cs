@@ -30,6 +30,8 @@ namespace VIS.Models
 
         private List<int> lstLegalEntities = new List<int>();
         private List<int> lstOrgUnits = new List<int>();
+        //VIS_427 BugId 5473 Created object of list
+        private List<int> lstNonLegalEntity = new List<int>();
         private List<int> lstSummary = new List<int>();
         private List<int> lstInsertedItems = new List<int>();
         List<TreeStructure> LstTrees = new List<TreeStructure>();
@@ -52,7 +54,10 @@ namespace VIS.Models
 
         private void LoadLegalEntities()
         {
-            DataSet ds = DB.ExecuteDataset("SELECT AD_Org_ID FROM AD_ORg WHERE islegalentity='Y'");
+            string sql = "SELECT AD_Org_ID FROM AD_ORg WHERE islegalentity='Y'";
+            //VIS_427 BugId 5473 Applied role based condition to fetch only those records which has access of particular role
+            sql = MRole.GetDefault(ctx).AddAccessSQL(sql, "AD_Org", MRole.SQL_FULLYQUALIFIED, MRole.SQL_RO);
+            DataSet ds = DB.ExecuteDataset(sql);
             if (ds != null && ds.Tables[0].Rows.Count > 0)
             {
                 for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
@@ -62,7 +67,25 @@ namespace VIS.Models
             }
 
         }
+        /// <summary>
+        /// 21/03/2024 BugId 5473 This Function used to fetch those Non legal entity which has Role access
+        /// </summary>
+        /// <returns>list of non legal entity</returns>
+        /// <author>VIS_427</author>
+        private void LoadNonLegalEntities()
+        {
+            string sql = "SELECT AD_Org_ID FROM AD_Org WHERE IsSummary='N' AND islegalentity='N' AND IsCostCenter='N' AND IsProfitCenter='N'";
+            sql = MRole.GetDefault(ctx).AddAccessSQL(sql, "AD_Org", MRole.SQL_FULLYQUALIFIED, MRole.SQL_RO);
+            DataSet ds = DB.ExecuteDataset(sql);
+            if (ds != null && ds.Tables[0].Rows.Count > 0)
+            {
+                for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                {
+                    lstNonLegalEntity.Add(Convert.ToInt32(ds.Tables[0].Rows[i]["AD_Org_ID"]));
+                }
+            }
 
+        }
         /// <summary>
         /// Load Organization Units
         /// VIS0060: 28 Sep 2022 
@@ -70,8 +93,11 @@ namespace VIS.Models
         /// <param name="LegalEntityIds">Legal Entity IDs for filter data</param>
         private void LoadLOrganizationUnits(string LegalEntityIds)
         {
-            DataSet ds = DB.ExecuteDataset("SELECT AD_Org_ID FROM AD_Org WHERE " + (string.IsNullOrEmpty(LegalEntityIds) ? "  IsOrgUnit='Y' " :
-                         " IsOrgUnit='Y' AND " + VAdvantage.DataBase.DBFunctionCollection.TypecastColumnAsInt("LegalEntityOrg") + " IN (" + LegalEntityIds + ")"));
+            string sql = "SELECT AD_Org_ID FROM AD_Org WHERE " + (string.IsNullOrEmpty(LegalEntityIds) ? "  IsOrgUnit='Y' " :
+                         " IsOrgUnit='Y' AND " + VAdvantage.DataBase.DBFunctionCollection.TypecastColumnAsInt("LegalEntityOrg") + " IN (" + LegalEntityIds + ")");
+            //VIS_427 BugId 5473 Applied role based condition to fetch only those records which has access of particular role
+            sql = MRole.GetDefault(ctx).AddAccessSQL(sql, "AD_Org", MRole.SQL_FULLYQUALIFIED, MRole.SQL_RO);
+            DataSet ds = DB.ExecuteDataset(sql);
             if (ds != null && ds.Tables[0].Rows.Count > 0)
             {
                 for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
@@ -83,7 +109,10 @@ namespace VIS.Models
 
         private void LoadInActiveOrgs()
         {
-            DataSet ds = DB.ExecuteDataset("SELECT AD_Org_ID FROM AD_Org WHERE IsActive='N'");
+            string sql = "SELECT AD_Org_ID FROM AD_Org WHERE IsActive='N'";
+            sql= MRole.GetDefault(ctx).AddAccessSQL(sql, "AD_Org", MRole.SQL_FULLYQUALIFIED, MRole.SQL_RO);
+            //VIS_427 BugId 5473 Applied role based condition to fetch only those records which has access of particular role
+            DataSet ds = DB.ExecuteDataset(sql);
             if (ds != null && ds.Tables[0].Rows.Count > 0)
             {
                 for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
@@ -362,6 +391,8 @@ namespace VIS.Models
         public List<TreeStructure> GetTree(int windowNo, string url, string tree_ID, bool showOrgUnits)
         {
             LoadLegalEntities();
+            //VIS_427 BugId 5473 Called function to fetch non legal entity
+            LoadNonLegalEntities();
             LoadLOrganizationUnits(null);
             LoadInActiveOrgs();
             displayOrgUnits = showOrgUnits;
@@ -547,6 +578,12 @@ namespace VIS.Models
                     {
                         continue;
                     }
+                }
+                /*VIS_427 BugId 5473 if role don't have access of non legal entity in which
+                user is logged in then it will continue the loop*/
+                if (!lstNonLegalEntity.Contains(vt.Node_ID) && !vt.IsSummary && !lstOrgUnits.Contains(vt.Node_ID) && !lstLegalEntities.Contains(vt.Node_ID))
+                {
+                    continue;
                 }
                 if (vt.IsSummary)
                 {
@@ -1653,6 +1690,8 @@ namespace VIS.Models
         public List<TreeStructure> CreateTree1(int AD_Tree_ID, string url, int windowNo, string LegalEntityIds)
         {
             LoadLegalEntities();
+            //VIS_427 Called function to fetch non legal entity
+            LoadNonLegalEntities();
             LoadLOrganizationUnits(LegalEntityIds);
             LoadInActiveOrgsInTree(AD_Tree_ID);
             MTree tree = new MTree(ctx, Convert.ToInt32(AD_Tree_ID), true, true, null);
@@ -1776,6 +1815,8 @@ namespace VIS.Models
             //rep.Tree = CreateTree(treeID, url, windowNo);
 
             LoadLegalEntities();
+            //VIS_427 Called function to fetch non legal entity
+            LoadNonLegalEntities();
             LoadLOrganizationUnits(null);
             MTree tre = new MTree(ctx, Convert.ToInt32(tree.GetAD_Tree_ID()), true, true, null);
             List<TreeStructure> LstTrees = new List<TreeStructure>();
@@ -1854,6 +1895,12 @@ namespace VIS.Models
             {
                 VTreeNode vt = (VTreeNode)item;
                 if (lstInActiveOrgInTree.Contains(vt.Node_ID))
+                {
+                    continue;
+                }
+                /*VIS_427 BugId 5473 if role don't have access of non legal entity in which
+                user is logged in then it will continue the loop*/
+                if (!lstNonLegalEntity.Contains(vt.Node_ID) && !vt.IsSummary && !lstOrgUnits.Contains(vt.Node_ID) && !lstLegalEntities.Contains(vt.Node_ID))
                 {
                     continue;
                 }
