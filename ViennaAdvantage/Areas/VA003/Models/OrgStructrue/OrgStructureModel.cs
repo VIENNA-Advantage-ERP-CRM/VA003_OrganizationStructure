@@ -10,6 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -91,6 +92,7 @@ namespace VIS.Models
         /// VIS0060: 28 Sep 2022 
         /// </summary>
         /// <param name="LegalEntityIds">Legal Entity IDs for filter data</param>
+
         private void LoadLOrganizationUnits(string LegalEntityIds)
         {
             string sql = "SELECT AD_Org_ID FROM AD_Org WHERE " + (string.IsNullOrEmpty(LegalEntityIds) ? "  IsOrgUnit='Y' " :
@@ -1229,7 +1231,7 @@ namespace VIS.Models
 
             if (newOrg == null)
                 newOrg = new MOrg(ctx, 0, null);
-
+                
             newOrg.SetAD_Client_ID(ctx.GetAD_Client_ID());
             newOrg.SetDescription(description);
             newOrg.SetIsActive(active == 'Y');
@@ -2226,19 +2228,29 @@ namespace VIS.Models
                 {
                     string sql = @"INSERT INTO AD_TreeNode (AD_Client_ID, AD_Org_ID, AD_Tree_ID, Created, CreatedBy, IsActive, Node_ID, Parent_ID, Updated, Updatedby,seqNo) VALUES(" +
                      ctx.GetAD_Client_ID() + "," +
-                     ctx.GetAD_Org_ID() + "," +
-                     TreeIds + "," +
+                     ctx.GetAD_Org_ID() + ", " +
+                      "@TreeID," +
                      "sysdate," +
                      ctx.GetAD_User_ID() + "," +
                      "'" + IsActive[i] + "'," +
-                     Chidrens[i] + "," +
-                     ParentID + "," +
+                      "@NodeID," +
+                      "@ParentID," +
                      "sysdate," +
-                     ctx.GetAD_User_ID() + "," + (ChildCount + 10) + ") ";
+                     ctx.GetAD_User_ID() + ",  @SeqNo)";
+                    //+ (ChildCount + 10) + ") ";
+
+                    SqlParameter[] param =
+                    {
+                    new SqlParameter("@TreeID", TreeIds),
+                    new SqlParameter("@NodeID",  Util.GetValueOfInt(Chidrens[i])),
+                    new SqlParameter("@ParentID", ParentID),
+                    new SqlParameter("@SeqNo", ChildCount + 10)
+                    };
                     ChildCount = ChildCount + 10;
                     try
                     {
-                        res = DB.ExecuteQuery(sql, null, null);
+                      //  res = DB.ExecuteQuery(sql, param, null);
+                        res =VAdvantage.DataBase.DB.ExecuteQuery(sql, param, null);
                     }
                     catch (Exception)
                     {
@@ -2266,18 +2278,36 @@ namespace VIS.Models
                 {
                     for (int i = 0; i < OldSibling.Length; i++)
                     {
-                        string sql = @"UPDATE " + TableName + " SET Parent_ID=" + OldID + ", SeqNo=" + i + ", Updated=SysDate" +
-                                     "WHERE AD_Tree_ID=" + TreeId + " AND Node_ID=" + OldSibling[i];
-                        res = DB.ExecuteQuery(sql, null, null);
+                        /*   string sql = @"UPDATE " + TableName + " SET Parent_ID=" + OldID + ", SeqNo=" + i + ", Updated=SysDate" +
+                                        "WHERE AD_Tree_ID=" + TreeId + " AND Node_ID=" + OldSibling[i];*/
+                        string sql = @"UPDATE " + TableName + " SET Parent_ID=@ParentID, SeqNo=" + i + ", Updated=SysDate " +
+                                    "WHERE AD_Tree_ID= @TreeId AND Node_ID=@NodeID";
+                        SqlParameter[] param =
+                        {
+                         new SqlParameter("@ParentID", OldID),
+                         new SqlParameter("@TreeId",   TreeId),
+                         new SqlParameter("@NodeID",   OldSibling[i])
+                         };
+                        res =VAdvantage.DataBase.DB.ExecuteQuery(sql, param, null);
+                       
                     }
                 }
                 if (NodId != null && NodId.Length > 0)
                 {
                     for (int i = 0; i < NodId.Length; i++)
                     {
-                        string sql = @"UPDATE " + TableName + " SET Parent_ID=" + NewId + ", SeqNo=" + i + ", Updated=SysDate" +
-                                     " WHERE AD_Tree_ID=" + TreeId + " AND Node_ID=" + NodId[i];
-                        res = DB.ExecuteQuery(sql, null, null);
+                        /*string sql = @"UPDATE " + TableName + " SET Parent_ID=" + NewId + ", SeqNo=" + i + ", Updated=SysDate" +
+                                     " WHERE AD_Tree_ID=" + TreeId + " AND Node_ID=" + NodId[i];*/
+                        string sql = @"UPDATE " + TableName + " SET Parent_ID=@ParentID, SeqNo=@SeqNo, Updated=SysDate" +
+                                     " WHERE AD_Tree_ID=@TreeId AND Node_ID=@NodeID";
+                        SqlParameter[] param2 =
+                        {
+                            new SqlParameter("@ParentID", NewId),
+                            new SqlParameter("@SeqNo", i),
+                            new SqlParameter("@TreeId", TreeId),
+                            new SqlParameter("@NodeID", NodId[i])
+                        };
+                        res =VAdvantage.DataBase.DB.ExecuteQuery(sql, param2, null);
                     }
                 }
             }
@@ -2318,8 +2348,14 @@ namespace VIS.Models
         /// <returns></returns>
         public int UpdateOrgnization(string Name, int Ad_Org_Id)
         {
-            string sql = @"UPDATE AD_Org SET name='" + Name + "' WHERE AD_Org_ID=" + Ad_Org_Id;
-            return DB.ExecuteQuery(sql, null, null);
+           // string sql = @"UPDATE AD_Org SET name='" + Name + "' WHERE AD_Org_ID=" + Ad_Org_Id;
+            string sql = @"UPDATE AD_Org SET Name = @Name WHERE AD_Org_ID = @OrgID";
+            SqlParameter[] param =
+            {
+                new SqlParameter("@Name", Name),
+                new SqlParameter("@OrgID", Ad_Org_Id)
+            };
+            return VAdvantage.DataBase.DB.ExecuteQuery(sql, param, null);
         }
         /// <summary>
         /// This function is used to Delete Node of the tree

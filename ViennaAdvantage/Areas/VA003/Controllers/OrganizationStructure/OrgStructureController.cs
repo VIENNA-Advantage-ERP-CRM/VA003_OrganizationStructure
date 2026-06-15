@@ -144,10 +144,35 @@ namespace VIS.Controllers
         [AjaxSessionFilterAttribute] // redirect to Login/Home page if session expire
         public ActionResult FRPTCreateTree(int windowNo, int treeID, string LegalEntityIds)
         {
-            Ctx ctx = Session["ctx"] as Ctx;
-            OrgStructure orgStrct = new OrgStructure(ctx);
-            return Json(JsonConvert.SerializeObject(orgStrct.CreateTree1(treeID, @Url.Content("~/"), windowNo, LegalEntityIds)), JsonRequestBehavior.AllowGet);
+            try
+            {
+                string validatedLegalEntityIds = string.Empty;
+                if (!string.IsNullOrWhiteSpace(LegalEntityIds))
+                {
+                    var legalEntityIdList = LegalEntityIds
+               .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+               .Select(id => id.Trim())
+               .Where(id => int.TryParse(id, out _))   // Prevent injection / invalid values
+               .Select(int.Parse)
+               .Distinct()
+               .ToList();
+
+                    validatedLegalEntityIds = string.Join(",", legalEntityIdList);
+                }
+                Ctx ctx = Session["ctx"] as Ctx;
+                OrgStructure orgStrct = new OrgStructure(ctx);
+                return Json(JsonConvert.SerializeObject(orgStrct.CreateTree1(treeID, @Url.Content("~/"), windowNo, validatedLegalEntityIds)),JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(JsonConvert.SerializeObject(new { success = false, message = ex.Message }), JsonRequestBehavior.AllowGet);
+            }
+            // Ctx ctx = Session["ctx"] as Ctx;
+           // OrgStructure orgStrct = new OrgStructure(ctx);
+          //  return Json(JsonConvert.SerializeObject(orgStrct.CreateTree1(treeID, @Url.Content("~/"), windowNo, LegalEntityIds)), JsonRequestBehavior.AllowGet);
         }
+
+
 
         [AjaxAuthorizeAttribute] // redirect to login page if request is not Authorized
         [AjaxSessionFilterAttribute] // redirect to Login/Home page if session expire
